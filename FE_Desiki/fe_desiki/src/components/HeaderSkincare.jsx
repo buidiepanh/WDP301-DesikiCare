@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -12,14 +12,32 @@ import {
   PersonOutline,
   VerifiedUser,
   Phone,
-  ExpandMore,
 } from "@mui/icons-material";
 import { Input } from "antd";
+import { useNavigate } from "react-router-dom";
+
 import styles from "./HeaderSkincare.module.css"; // CSS module
 
 const HeaderSkincare = () => {
+  const [userName, setUserName] = useState(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    // Kiểm tra localStorage để lấy tên người dùng sau khi đăng nhập Google
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUserName(parsedUser.name); // hoặc parsedUser.displayName tùy Google trả về gì
+    }
+  }, []);
+
+
+
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
+
   return (
-       <AppBar position="fixed" className={styles.appBar}>
+    <AppBar position="fixed" className={styles.appBar}>
       <Toolbar className={styles.toolbar}>
         {/* Logo & slogan */}
         <Box className={styles.logoSloganBox}>
@@ -52,12 +70,11 @@ const HeaderSkincare = () => {
         {/* Icon menu */}
         <Box className={styles.iconsMenu}>
           <Box className={styles.iconBox}>
-            <IconButton color="inherit">
+            <IconButton color="inherit" onClick={handleLoginClick}>
               <PersonOutline />
             </IconButton>
-            <Typography variant="caption" onClick={() => window.location.href = '/login'}>
-              Đăng nhập / Đăng ký
-              {/* <ExpandMore fontSize="small" /> */}
+            <Typography variant="caption" onClick={handleLoginClick}>
+              {userName ? `Xin chào, ${userName}` : "Đăng nhập / Đăng ký"}
             </Typography>
           </Box>
 
@@ -82,9 +99,7 @@ const HeaderSkincare = () => {
           </Box>
         </Box>
       </Toolbar>
-      
     </AppBar>
-    
   );
 };
 

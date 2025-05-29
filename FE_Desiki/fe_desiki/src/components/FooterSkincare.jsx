@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Typography, Grid, TextField, Button } from "@mui/material";
 import { Facebook, Instagram, YouTube } from "@mui/icons-material";
 import "./FooterSkincare.css";
-
+import code from "../assets/code.png"; // Assuming you have a QR code image in your assets
 const defaultIcon = "https://via.placeholder.com/60?text=None";
 const defaultBanner = "https://via.placeholder.com/150?text=Payment";
 
@@ -56,9 +56,9 @@ const FooterSkincare = () => {
 
         <Grid item xs={12} sm={3}>
           <Typography fontWeight="bold" gutterBottom>
-            VỀ HASAKI.VN
+            VỀ DeskiCare.VN
           </Typography>
-          <Typography>Giới thiệu Hasaki.vn</Typography>
+          <Typography>Giới thiệu DeskiCare.vn</Typography>
           <Typography>Tuyển Dụng</Typography>
           <Typography>Chính sách bảo mật</Typography>
           <Typography>Điều khoản sử dụng</Typography>
@@ -69,8 +69,8 @@ const FooterSkincare = () => {
           <Typography fontWeight="bold" gutterBottom>
             HỢP TÁC & LIÊN KẾT
           </Typography>
-          <Typography>https://hasaki.vn/clinic</Typography>
-          <Typography>Hasaki cẩm nang</Typography>
+          <Typography>https://desikicare.vn/clinic</Typography>
+          <Typography>DeskiCare cẩm nang</Typography>
           <Box mt={2} display="flex" gap={2}>
             <Facebook />
             <Instagram />
@@ -97,7 +97,7 @@ const FooterSkincare = () => {
             </Button>
           </Box>
           <Box className="footer-apps">
-            <img src={"https://media.hcdn.vn/hsk/icons/qr_download_app.png"} alt="qr" width={60} />
+            <img src={code} alt="qr" width={60} />
             <Box style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <img src={"https://media.hcdn.vn/hsk/icons/dl_apple.png"} alt="App Store" width={120} />
               <img src={"https://hotro.hasaki.vn/images/graphics/img_google_play.jpg"} alt="Google Play" width={120} style={{ marginTop: 8 }} />

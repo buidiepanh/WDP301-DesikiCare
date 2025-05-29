@@ -1,5 +1,14 @@
 import React from "react";
-import { Layout, Form, Input, Button, Typography, Divider, Space } from "antd";
+import {
+  Layout,
+  Form,
+  Input,
+  Button,
+  Typography,
+  Divider,
+  Space,
+  message,
+} from "antd";
 import {
   UserOutlined,
   LockOutlined,
@@ -8,13 +17,49 @@ import {
   FacebookFilled,
 } from "@ant-design/icons";
 import image1 from "../../../../assets/authen_background1.jpg";
+import { auth, provider } from "../../../../config/firebase";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  signInWithPopup,
+} from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;
 
 const Register = () => {
-  const onFinish = (values) => {
-    console.log("Register success:", values);
+  const navigate = useNavigate();
+
+  const onFinish = async (values) => {
+    try {
+      const { username, phone, password } = values;
+      const email = `${phone}@desiki.com`; // Firebase requires email format
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      await updateProfile(userCredential.user, {
+        displayName: username,
+      });
+      message.success("Account created successfully!");
+      navigate("/home");
+    } catch (error) {
+      console.error("Registration error:", error);
+      message.error(error.message);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      message.success(`Welcome ${result.user.displayName}`);
+      navigate("/home");
+    } catch (error) {
+      console.error("Google signup error:", error);
+      message.error(error.message);
+    }
   };
 
   return (
@@ -74,9 +119,7 @@ const Register = () => {
           and effective products designed to nourish your skin deeply and
           promote lasting health. At Desiki Care, every step of your skincare
           routine becomes a relaxing ritual that empowers you to shine with
-          confidence and radiance every day. Join us as we explore innovative
-          beauty solutions and embark on a journey toward comprehensive skin
-          wellness.
+          confidence and radiance every day.
         </Text>
       </Content>
 
@@ -132,9 +175,7 @@ const Register = () => {
             <Form.Item
               label="Username"
               name="username"
-              rules={[
-                { required: true, message: "Please enter your username!" },
-              ]}
+              rules={[{ required: true, message: "Please enter your username!" }]}
             >
               <Input
                 prefix={<UserOutlined />}
@@ -146,9 +187,7 @@ const Register = () => {
             <Form.Item
               label="Phone Number"
               name="phone"
-              rules={[
-                { required: true, message: "Please enter your phone number!" },
-              ]}
+              rules={[{ required: true, message: "Please enter your phone number!" }]}
             >
               <Input
                 prefix={<PhoneOutlined />}
@@ -160,9 +199,7 @@ const Register = () => {
             <Form.Item
               label="Password"
               name="password"
-              rules={[
-                { required: true, message: "Please enter your password!" },
-              ]}
+              rules={[{ required: true, message: "Please enter your password!" }]}
             >
               <Input.Password
                 prefix={<LockOutlined />}
@@ -216,7 +253,7 @@ const Register = () => {
             <Divider style={{ borderColor: "#f0f0f0" }}>or</Divider>
 
             <Space direction="vertical" style={{ width: "100%" }}>
-              <Button icon={<GoogleOutlined />} block>
+              <Button icon={<GoogleOutlined />} block onClick={handleGoogleSignup}>
                 Sign up with Google
               </Button>
               <Button
@@ -237,7 +274,7 @@ const Register = () => {
               marginTop: "20px",
             }}
           >
-            © 2025 BeautyCare. All rights reserved.
+            © 2025 Desiki Care. All rights reserved.
           </Text>
         </div>
       </Content>

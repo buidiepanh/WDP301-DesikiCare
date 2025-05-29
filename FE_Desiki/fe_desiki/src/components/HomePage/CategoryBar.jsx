@@ -12,7 +12,7 @@ const CategoryBar = () => {
           DANH MỤC
         </Typography>
         <span className={styles.divider}>|</span>
-        <Typography className={styles.categoryItem}>HASAKI DEALS</Typography>
+        <Typography className={styles.categoryItem}>DeskiCare DEALS</Typography>
         <Typography className={styles.categoryItem}>HOT DEALS</Typography>
         <Typography className={styles.categoryItem}>THƯƠNG HIỆU</Typography>
         <Typography className={styles.categoryItem}>HÀNG MỚI VỀ</Typography>
