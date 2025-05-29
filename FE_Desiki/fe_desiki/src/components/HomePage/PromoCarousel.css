@@ -1,0 +1,51 @@
+.slider-container {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  margin: auto;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.slide-image {
+ max-width: 100%;
+  display: block;
+}
+
+.nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background-color: white;
+  opacity: 0.8;
+}
+
+.nav-button.left {
+  left: 10px;
+}
+
+.nav-button.right {
+  right: 10px;
+}
+
+.dot-container {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+.dot.active {
+  background-color: #000;
+}
