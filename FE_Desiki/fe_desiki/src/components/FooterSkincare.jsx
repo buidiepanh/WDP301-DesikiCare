@@ -8,7 +8,7 @@ const defaultBanner = "https://via.placeholder.com/150?text=Payment";
 
 const FooterSkincare = () => {
   return (
-    <Box className="footer-container">
+    <Box className="footer-container"> 
       {/* Top feature icons */}
       <Box className="footer-icons">
         <Box className="footer-icon-box">
@@ -31,10 +31,7 @@ const FooterSkincare = () => {
           <Typography fontWeight="bold" fontSize="20px">HOTLINE CSKH</Typography>
           <Typography variant="h6" className="footer-hotline">1800 6324</Typography>
         </Box>
-        {/* <Box className="footer-icon-box">
-          <Typography fontWeight="bold" fontSize="20px">TÌM CHI NHÁNH</Typography>
-          <Button variant="h6"  className="footer-branch-btn">Hệ thống Hasaki</Button>
-        </Box> */}
+       
       </Box>
 
       {/* Footer links */}
@@ -110,3 +107,5 @@ const FooterSkincare = () => {
 };
 
 export default FooterSkincare;
+
+// done quaa choiogit 
