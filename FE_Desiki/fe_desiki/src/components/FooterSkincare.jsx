@@ -108,4 +108,4 @@ const FooterSkincare = () => {
 
 export default FooterSkincare;
 
-// done 
+// done quaa choiogit 
