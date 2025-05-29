@@ -1,0 +1,63 @@
+.appBar {
+  background-color: #2b6644;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* để menuSearchBox xuống dòng đúng */
+  flex-wrap: wrap;
+}
+
+.logoSloganBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logoImg {
+  height: 60px;
+  border-radius: 40px;
+}
+
+.menuSearchBox {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1; /* chiếm hết phần trống giữa logo và icon */
+  color: white;
+  margin-left: 56px;
+  margin-right: 36px;
+}
+
+.menuItems {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.searchInput {
+  width: 400px !important;
+  margin-left: 59px;
+}
+
+.iconsMenu {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  color: white;
+  margin-left: 16px;
+}
+
+.iconBox {
+  text-align: center;
+}
+
+.shoppingCartIcon {
+  color: white;
+}

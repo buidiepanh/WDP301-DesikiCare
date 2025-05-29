@@ -1,5 +1,14 @@
 import React from "react";
-import { Layout, Form, Input, Button, Typography, Divider, Space } from "antd";
+import {
+  Layout,
+  Form,
+  Input,
+  Button,
+  Typography,
+  Divider,
+  Space,
+  message,
+} from "antd";
 import {
   UserOutlined,
   LockOutlined,
@@ -7,13 +16,40 @@ import {
   FacebookFilled,
 } from "@ant-design/icons";
 import image2 from "../../../../assets/authen_background2.jpg";
+import { useNavigate } from "react-router-dom";
+import { auth, provider } from "../../../../config/firebase";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;
 
 const Login = () => {
-  const onFinish = (values) => {
-    console.log("Login success:", values);
+  const navigate = useNavigate();
+
+  const onFinish = async (values) => {
+    const { email, password } = values;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      message.success("Login successful!");
+      navigate("/home");
+    } catch (error) {
+      console.error("Login error:", error);
+      message.error(error.message);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      message.success(`Welcome ${result.user.displayName}`);
+      navigate("/home");
+    } catch (error) {
+      console.error("Google login error:", error);
+      message.error(error.message);
+    }
   };
 
   return (
@@ -41,11 +77,10 @@ const Login = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.4)", // darker overlay
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
             zIndex: 1,
           }}
         />
-
         <div style={{ position: "relative", zIndex: 2, textAlign: "center" }}>
           <Title style={{ color: "#fff", marginTop: 0 }}>Desiki Care</Title>
           <Text
@@ -54,8 +89,6 @@ const Login = () => {
               maxWidth: "360px",
               fontSize: "16px",
               lineHeight: 1.5,
-              position: "relative",
-              zIndex: 2,
               marginTop: "16px",
             }}
           >
@@ -64,8 +97,7 @@ const Login = () => {
             with medical-grade cosmetics ensures you receive only the best in
             beauty and wellness. Log in to access personalized skincare
             solutions, exclusive offers, and expert advice tailored just for
-            you. Let’s nurture your natural beauty together with care and
-            confidence.
+            you.
           </Text>
         </div>
       </Content>
@@ -169,7 +201,11 @@ const Login = () => {
             <Divider style={{ borderColor: "#f0f0f0" }}>or</Divider>
 
             <Space direction="vertical" style={{ width: "100%" }}>
-              <Button icon={<GoogleOutlined />} block>
+              <Button
+                icon={<GoogleOutlined />}
+                block
+                onClick={handleGoogleLogin}
+              >
                 Sign in with Google
               </Button>
               <Button
@@ -190,7 +226,7 @@ const Login = () => {
               marginTop: "20px",
             }}
           >
-            © 2025 BeautyCare. All rights reserved.
+            © 2025 Desiki Care. All rights reserved.
           </Text>
         </div>
       </Content>
