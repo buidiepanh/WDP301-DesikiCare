@@ -3,17 +3,18 @@ import { Layout, Form, Input, Button, Typography, Divider, Space } from "antd";
 import {
   UserOutlined,
   LockOutlined,
+  PhoneOutlined,
   GoogleOutlined,
   FacebookFilled,
 } from "@ant-design/icons";
-import image2 from "../../../../assets/authen_background2.jpg";
+import image1 from "../../../../assets/authen_background1.jpg";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;
 
-const Login = () => {
+const Register = () => {
   const onFinish = (values) => {
-    console.log("Login success:", values);
+    console.log("Register success:", values);
   };
 
   return (
@@ -21,10 +22,11 @@ const Login = () => {
       <Content
         style={{
           flex: 1.5,
-          backgroundImage: `url(${image2})`,
-          backgroundSize: "cover",
+          backgroundImage: `url(${image1})`,
+          backgroundSize: "auto 100%",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
+          imageRendering: "crisp-edges",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -41,39 +43,50 @@ const Login = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.4)", // darker overlay
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
             zIndex: 1,
           }}
         />
-
-        <div style={{ position: "relative", zIndex: 2, textAlign: "center" }}>
-          <Title style={{ color: "#fff", marginTop: 0 }}>Desiki Care</Title>
-          <Text
-            style={{
-              color: "#eee",
-              maxWidth: "360px",
-              fontSize: "16px",
-              lineHeight: 1.5,
-              position: "relative",
-              zIndex: 2,
-              marginTop: "16px",
-            }}
-          >
-            Welcome back to Desiki Care, where your journey to radiant, healthy
-            skin continues. Our commitment to blending professional skincare
-            with medical-grade cosmetics ensures you receive only the best in
-            beauty and wellness. Log in to access personalized skincare
-            solutions, exclusive offers, and expert advice tailored just for
-            you. Let’s nurture your natural beauty together with care and
-            confidence.
-          </Text>
-        </div>
+        <Title
+          style={{
+            color: "#fff",
+            textAlign: "center",
+            marginTop: 0,
+            position: "relative",
+            zIndex: 2,
+          }}
+        >
+          Desiki Care
+        </Title>
+        <Text
+          style={{
+            textAlign: "center",
+            color: "#eee",
+            maxWidth: "360px",
+            fontSize: "16px",
+            lineHeight: 1.5,
+            position: "relative",
+            zIndex: 2,
+          }}
+        >
+          Desiki Care is a pioneering skincare brand that seamlessly blends
+          natural beauty with modern science. We are dedicated to providing safe
+          and effective products designed to nourish your skin deeply and
+          promote lasting health. At Desiki Care, every step of your skincare
+          routine becomes a relaxing ritual that empowers you to shine with
+          confidence and radiance every day. Join us as we explore innovative
+          beauty solutions and embark on a journey toward comprehensive skin
+          wellness.
+        </Text>
       </Content>
 
       <Content
         style={{
           flex: 1,
-          background: "#fff",
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1526045431048-c5e4e2a3d1c4')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -86,6 +99,7 @@ const Login = () => {
             maxWidth: "400px",
             padding: "40px",
             borderRadius: "16px",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
             boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
             border: "1px solid #f3c6d3",
             display: "flex",
@@ -105,27 +119,40 @@ const Login = () => {
             level={2}
             style={{ color: "#c2185b", textAlign: "center", marginBottom: 0 }}
           >
-            Sign In
+            Create Account
           </Title>
           <Text
             type="secondary"
             style={{ textAlign: "center", fontSize: "14px" }}
           >
-            Welcome back! Please login to your account.
+            Join Desiki Care to unlock your beauty journey.
           </Text>
 
-          <Form layout="vertical" name="loginForm" onFinish={onFinish}>
+          <Form layout="vertical" name="registerForm" onFinish={onFinish}>
             <Form.Item
-              label="Email"
-              name="email"
+              label="Username"
+              name="username"
               rules={[
-                { required: true, message: "Please enter your email!" },
-                { type: "email", message: "Invalid email format!" },
+                { required: true, message: "Please enter your username!" },
               ]}
             >
               <Input
                 prefix={<UserOutlined />}
-                placeholder="Enter your email"
+                placeholder="Enter your name"
+                size="large"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Phone Number"
+              name="phone"
+              rules={[
+                { required: true, message: "Please enter your phone number!" },
+              ]}
+            >
+              <Input
+                prefix={<PhoneOutlined />}
+                placeholder="Enter your phone number"
                 size="large"
               />
             </Form.Item>
@@ -144,25 +171,45 @@ const Login = () => {
               />
             </Form.Item>
 
+            <Form.Item
+              label="Confirm Password"
+              name="confirm"
+              dependencies={["password"]}
+              rules={[
+                { required: true, message: "Please confirm your password!" },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue("password") === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error("Passwords do not match!"));
+                  },
+                }),
+              ]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder="Confirm your password"
+                size="large"
+              />
+            </Form.Item>
+
             <Form.Item>
               <Button
                 type="primary"
                 htmlType="submit"
                 size="large"
                 block
-                style={{
-                  backgroundColor: "#ec407a",
-                  borderColor: "#ec407a",
-                }}
+                style={{ backgroundColor: "#ec407a", borderColor: "#ec407a" }}
               >
-                Login
+                Register
               </Button>
             </Form.Item>
 
             <Text style={{ display: "block", textAlign: "center" }}>
-              Don’t have an account?{" "}
-              <Link href="/register" style={{ color: "#c2185b" }}>
-                Create one
+              Already have an account?{" "}
+              <Link href="/login" style={{ color: "#c2185b" }}>
+                Login now
               </Link>
             </Text>
 
@@ -170,14 +217,14 @@ const Login = () => {
 
             <Space direction="vertical" style={{ width: "100%" }}>
               <Button icon={<GoogleOutlined />} block>
-                Sign in with Google
+                Sign up with Google
               </Button>
               <Button
                 icon={<FacebookFilled />}
                 block
                 style={{ backgroundColor: "#3b5998", color: "#fff" }}
               >
-                Sign in with Facebook
+                Sign up with Facebook
               </Button>
             </Space>
           </Form>
@@ -198,4 +245,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
