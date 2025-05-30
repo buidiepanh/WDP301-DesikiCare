@@ -2,36 +2,55 @@ import React from "react";
 import { Box, Typography, Grid, TextField, Button } from "@mui/material";
 import { Facebook, Instagram, YouTube } from "@mui/icons-material";
 import "./FooterSkincare.css";
-import code from "../assets/code.png"; // Assuming you have a QR code image in your assets
+import code from "../../assets/code.png";
 const defaultIcon = "https://via.placeholder.com/60?text=None";
 const defaultBanner = "https://via.placeholder.com/150?text=Payment";
 
 const FooterSkincare = () => {
   return (
-    <Box className="footer-container"> 
+    <Box className="footer-container">
       {/* Top feature icons */}
       <Box className="footer-icons">
         <Box className="footer-icon-box">
-          <img src={"https://media.hcdn.vn/hsk/icons/icon_footer_1.png"} alt="cod" width={85} />
+          <img
+            src={"https://media.hcdn.vn/hsk/icons/icon_footer_1.png"}
+            alt="cod"
+            width={85}
+          />
           <Typography mt={1}>Thanh toán khi nhận hàng</Typography>
         </Box>
         <Box className="footer-icon-box">
-          <img src={"https://media.hcdn.vn/hsk/icons/icon_footer_2.png"} alt="free2h" width={120} />
+          <img
+            src={"https://media.hcdn.vn/hsk/icons/icon_footer_2.png"}
+            alt="free2h"
+            width={120}
+          />
           <Typography mt={1}>Giao nhanh miễn phí 2H</Typography>
         </Box>
         <Box className="footer-icon-box">
-          <img src={"https://media.hcdn.vn/hsk/icons/icon_footer_2.png"} alt="return30" width={120} />
+          <img
+            src={"https://media.hcdn.vn/hsk/icons/icon_footer_2.png"}
+            alt="return30"
+            width={120}
+          />
           <Typography mt={1}>30 ngày đổi trả miễn phí</Typography>
         </Box>
         <Box className="footer-icon-box">
-          <img src={"https://media.hcdn.vn/hsk/icons/icon_footer_4.png"} alt="authentic" width={85} />
+          <img
+            src={"https://media.hcdn.vn/hsk/icons/icon_footer_4.png"}
+            alt="authentic"
+            width={85}
+          />
           <Typography mt={1}>Thương hiệu uy tín toàn cầu</Typography>
         </Box>
         <Box className="footer-icon-box">
-          <Typography fontWeight="bold" fontSize="20px">HOTLINE CSKH</Typography>
-          <Typography variant="h6" className="footer-hotline">1800 6324</Typography>
+          <Typography fontWeight="bold" fontSize="20px">
+            HOTLINE CSKH
+          </Typography>
+          <Typography variant="h6" className="footer-hotline">
+            1800 6324
+          </Typography>
         </Box>
-       
       </Box>
 
       {/* Footer links */}
@@ -74,7 +93,11 @@ const FooterSkincare = () => {
             <YouTube />
           </Box>
           <Box mt={2}>
-            <img src={"https://media.hcdn.vn/hsk/icons/visa.png"} alt="payment" width={150} />
+            <img
+              src={"https://media.hcdn.vn/hsk/icons/visa.png"}
+              alt="payment"
+              width={150}
+            />
           </Box>
         </Grid>
 
@@ -89,15 +112,39 @@ const FooterSkincare = () => {
               size="small"
               className="footer-input"
             />
-            <Button variant="contained" sx={{ backgroundColor: "#ff6a00", fontWeight: "bold", borderRadius: 20 }} >
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#ff6a00",
+                fontWeight: "bold",
+                borderRadius: 20,
+              }}
+            >
               Đăng ký
             </Button>
           </Box>
           <Box className="footer-apps">
             <img src={code} alt="qr" width={60} />
-            <Box style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <img src={"https://media.hcdn.vn/hsk/icons/dl_apple.png"} alt="App Store" width={120} />
-              <img src={"https://hotro.hasaki.vn/images/graphics/img_google_play.jpg"} alt="Google Play" width={120} style={{ marginTop: 8 }} />
+            <Box
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <img
+                src={"https://media.hcdn.vn/hsk/icons/dl_apple.png"}
+                alt="App Store"
+                width={120}
+              />
+              <img
+                src={
+                  "https://hotro.hasaki.vn/images/graphics/img_google_play.jpg"
+                }
+                alt="Google Play"
+                width={120}
+                style={{ marginTop: 8 }}
+              />
             </Box>
           </Box>
         </Grid>
@@ -108,4 +155,4 @@ const FooterSkincare = () => {
 
 export default FooterSkincare;
 
-// done quaa choiogit 
+// done quaa choiogit

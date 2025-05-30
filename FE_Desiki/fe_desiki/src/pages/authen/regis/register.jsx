@@ -16,14 +16,15 @@ import {
   GoogleOutlined,
   FacebookFilled,
 } from "@ant-design/icons";
-import image1 from "../../../../assets/authen_background1.jpg";
-import { auth, provider } from "../../../../config/firebase";
+import image1 from "../../../assets/authen/authen_background1.jpg";
+import { auth, provider } from "../../../config/firebase";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
   signInWithPopup,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { EmailOutlined } from "@mui/icons-material";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;
@@ -114,12 +115,12 @@ const Register = () => {
             zIndex: 2,
           }}
         >
-          Desiki Care is a pioneering skincare brand that seamlessly blends
-          natural beauty with modern science. We are dedicated to providing safe
-          and effective products designed to nourish your skin deeply and
-          promote lasting health. At Desiki Care, every step of your skincare
-          routine becomes a relaxing ritual that empowers you to shine with
-          confidence and radiance every day.
+          Desiki Care là thương hiệu chăm sóc da tiên phong kết hợp hài hòa giữa
+          vẻ đẹp tự nhiên và khoa học hiện đại. Chúng tôi cam kết mang đến các
+          sản phẩm an toàn và hiệu quả, giúp nuôi dưỡng làn da từ sâu bên trong
+          và thúc đẩy sức khỏe lâu dài. Tại Desiki Care, mỗi bước trong quy
+          trình chăm sóc da đều trở thành một nghi thức thư giãn, giúp bạn tỏa
+          sáng với sự tự tin và rạng rỡ mỗi ngày.
         </Text>
       </Content>
 
@@ -162,71 +163,81 @@ const Register = () => {
             level={2}
             style={{ color: "#c2185b", textAlign: "center", marginBottom: 0 }}
           >
-            Create Account
+            Đăng ký tài khoản
           </Title>
           <Text
             type="secondary"
             style={{ textAlign: "center", fontSize: "14px" }}
           >
-            Join Desiki Care to unlock your beauty journey.
+            Tham gia Desiki Care để mở ra hành trình làm đẹp của riêng bạn.
           </Text>
 
           <Form layout="vertical" name="registerForm" onFinish={onFinish}>
             <Form.Item
-              label="Username"
+              label="Tên người dùng"
               name="username"
-              rules={[{ required: true, message: "Please enter your username!" }]}
+              rules={[
+                { required: true, message: "Vui lòng nhập tên của bạn!" },
+              ]}
             >
               <Input
                 prefix={<UserOutlined />}
-                placeholder="Enter your name"
+                placeholder="Vui lòng nhập tên của bạn"
                 size="large"
               />
             </Form.Item>
 
             <Form.Item
-              label="Phone Number"
-              name="phone"
-              rules={[{ required: true, message: "Please enter your phone number!" }]}
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, message: "Vui lòng nhập email!" },
+                { type: "email", message: "Email không hợp lệ!" },
+              ]}
             >
               <Input
-                prefix={<PhoneOutlined />}
-                placeholder="Enter your phone number"
+                prefix={<EmailOutlined />}
+                placeholder="Vui lòng nhập email"
                 size="large"
               />
             </Form.Item>
 
             <Form.Item
-              label="Password"
+              label="Mật khẩu"
               name="password"
-              rules={[{ required: true, message: "Please enter your password!" }]}
+              rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
             >
               <Input.Password
                 prefix={<LockOutlined />}
-                placeholder="Enter your password"
+                placeholder="Vui lòng nhập mật khẩu"
                 size="large"
               />
             </Form.Item>
 
             <Form.Item
-              label="Confirm Password"
+              label="Xác nhận lại mật khẩu"
               name="confirm"
               dependencies={["password"]}
               rules={[
-                { required: true, message: "Please confirm your password!" },
+                {
+                  required: true,
+                  message: "Vui lòng xác nhận lại mật khẩu của bạn!",
+                },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (!value || getFieldValue("password") === value) {
                       return Promise.resolve();
                     }
-                    return Promise.reject(new Error("Passwords do not match!"));
+                    return Promise.reject(
+                      new Error("Mật khẩu không trùng khớp!")
+                    );
                   },
                 }),
               ]}
             >
               <Input.Password
                 prefix={<LockOutlined />}
-                placeholder="Confirm your password"
+                placeholder="Vui lòng xác nhận lại mật khẩu của bạn"
                 size="large"
               />
             </Form.Item>
@@ -239,29 +250,33 @@ const Register = () => {
                 block
                 style={{ backgroundColor: "#ec407a", borderColor: "#ec407a" }}
               >
-                Register
+                Đăng ký
               </Button>
             </Form.Item>
 
             <Text style={{ display: "block", textAlign: "center" }}>
-              Already have an account?{" "}
+              Đã có tài khoản?{" "}
               <Link href="/login" style={{ color: "#c2185b" }}>
-                Login now
+                Đăng nhập ngay
               </Link>
             </Text>
 
             <Divider style={{ borderColor: "#f0f0f0" }}>or</Divider>
 
             <Space direction="vertical" style={{ width: "100%" }}>
-              <Button icon={<GoogleOutlined />} block onClick={handleGoogleSignup}>
-                Sign up with Google
+              <Button
+                icon={<GoogleOutlined />}
+                block
+                onClick={handleGoogleSignup}
+              >
+                Đăng ký tài khoản với Google
               </Button>
               <Button
                 icon={<FacebookFilled />}
                 block
                 style={{ backgroundColor: "#3b5998", color: "#fff" }}
               >
-                Sign up with Facebook
+                Đăng ký tài khoản với Facebook
               </Button>
             </Space>
           </Form>
@@ -274,7 +289,7 @@ const Register = () => {
               marginTop: "20px",
             }}
           >
-            © 2025 Desiki Care. All rights reserved.
+            © 2025 Desiki Care. Đã đăng ký bản quyền.
           </Text>
         </div>
       </Content>
