@@ -22,11 +22,10 @@ const HeaderSkincare = () => {
   const [userName, setUserName] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
-    // Kiểm tra localStorage để lấy tên người dùng sau khi đăng nhập Google
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      setUserName(parsedUser.name); // hoặc parsedUser.displayName tùy Google trả về gì
+      setUserName(parsedUser.name); 
     }
   }, []);
 
@@ -45,7 +44,6 @@ const HeaderSkincare = () => {
       }}
     >
       <Toolbar className={styles.toolbar}>
-        {/* Logo & slogan */}
         <Box className={styles.logoSloganBox}>
           <img
             src={logo}
@@ -60,7 +58,6 @@ const HeaderSkincare = () => {
           </Box>
         </Box>
 
-        {/* Menu + Search */}
         <Box className={styles.menuSearchBox}>
           <Box className={styles.menuItems}>
             <span>Kem Chống Nắng</span>
@@ -76,15 +73,36 @@ const HeaderSkincare = () => {
           />
         </Box>
 
-        {/* Icon menu */}
         <Box className={styles.iconsMenu}>
           <Box className={styles.iconBox}>
             <IconButton color="inherit" onClick={handleLoginClick}>
               <PersonOutline />
             </IconButton>
-            <Typography variant="caption" onClick={handleLoginClick}>
-              {userName ? `Xin chào, ${userName}` : "Đăng nhập / Đăng ký"}
-            </Typography>
+            {userName ? (
+              <Typography variant="caption" className={styles.loginText}>
+                Xin chào, {userName}
+              </Typography>
+            ) : (
+              <Box className={styles.loginActions}>
+                <Typography
+                  variant="caption"
+                  onClick={() => navigate("/login")}
+                  className={styles.loginText}
+                >
+                  Đăng nhập
+                </Typography>
+                <Typography variant="caption" style={{ color: "#fff" }}> / </Typography>
+                <Typography
+                  variant="caption"
+                  onClick={() => navigate("/register")}
+                  className={styles.loginText}
+                >
+                  Đăng ký
+                </Typography>
+              </Box>
+            )}
+
+
           </Box>
 
           <Box className={styles.iconBox}>
