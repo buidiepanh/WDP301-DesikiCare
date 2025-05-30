@@ -15,13 +15,11 @@ import {
   GoogleOutlined,
   FacebookFilled,
 } from "@ant-design/icons";
-import image2 from "../../../../assets/authen_background2.jpg";
+import image2 from "../../../assets/authen/authen_background2.jpg";
 import { useNavigate } from "react-router-dom";
-import { auth, provider } from "../../../../config/firebase";
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-} from "firebase/auth";
+import { auth, provider } from "../../../config/firebase";
+import { signInWithPopup } from "firebase/auth";
+import toast from "react-hot-toast";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;
@@ -29,26 +27,30 @@ const { Content } = Layout;
 const Login = () => {
   const navigate = useNavigate();
 
-  const onFinish = async (values) => {
+  const onFinish = (values) => {
     const { email, password } = values;
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      message.success("Login successful!");
-      navigate("/home");
+      // await signInWithEmailAndPassword(auth, email, password);
+      if (email === "buidiepanh@gmail.com" && password === "123") {
+        toast.success("Đăng nhập thành công!");
+        navigate("/");
+      } else {
+        toast.error("Email hoặc mật khẩu đúng. Vui lòng thử lại!");
+      }
     } catch (error) {
       console.error("Login error:", error);
-      message.error(error.message);
+      toast.error(error.message);
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      message.success(`Welcome ${result.user.displayName}`);
-      navigate("/home");
+      toast.success(`Chào mừng ${result.user.displayName}`);
+      navigate("/");
     } catch (error) {
       console.error("Google login error:", error);
-      message.error(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -92,12 +94,13 @@ const Login = () => {
               marginTop: "16px",
             }}
           >
-            Welcome back to Desiki Care, where your journey to radiant, healthy
-            skin continues. Our commitment to blending professional skincare
-            with medical-grade cosmetics ensures you receive only the best in
-            beauty and wellness. Log in to access personalized skincare
-            solutions, exclusive offers, and expert advice tailored just for
-            you.
+            Chào mừng bạn quay trở lại với Desiki Care, nơi hành trình hướng tới
+            làn da khỏe mạnh và rạng rỡ của bạn được tiếp nối. Chúng tôi cam kết
+            kết hợp giữa chăm sóc da chuyên nghiệp và mỹ phẩm đạt chuẩn y khoa,
+            mang đến cho bạn những gì tốt nhất trong lĩnh vực làm đẹp và chăm
+            sóc sức khỏe. Hãy đăng nhập để khám phá các giải pháp chăm sóc da cá
+            nhân hóa, những ưu đãi độc quyền và lời khuyên chuyên sâu được thiết
+            kế riêng dành cho bạn.
           </Text>
         </div>
       </Content>
@@ -137,13 +140,13 @@ const Login = () => {
             level={2}
             style={{ color: "#c2185b", textAlign: "center", marginBottom: 0 }}
           >
-            Sign In
+            Đăng nhập
           </Title>
           <Text
             type="secondary"
             style={{ textAlign: "center", fontSize: "14px" }}
           >
-            Welcome back! Please login to your account.
+            Chào mừng quay trở lại! Vui lòng đăng nhập tài khoản của bạn.
           </Text>
 
           <Form layout="vertical" name="loginForm" onFinish={onFinish}>
@@ -151,13 +154,13 @@ const Login = () => {
               label="Email"
               name="email"
               rules={[
-                { required: true, message: "Please enter your email!" },
-                { type: "email", message: "Invalid email format!" },
+                { required: true, message: "Vui lòng nhập email!" },
+                { type: "email", message: "Email không hợp lệ!" },
               ]}
             >
               <Input
                 prefix={<UserOutlined />}
-                placeholder="Enter your email"
+                placeholder="Vui lòng nhập email"
                 size="large"
               />
             </Form.Item>
@@ -165,13 +168,11 @@ const Login = () => {
             <Form.Item
               label="Password"
               name="password"
-              rules={[
-                { required: true, message: "Please enter your password!" },
-              ]}
+              rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
             >
               <Input.Password
                 prefix={<LockOutlined />}
-                placeholder="Enter your password"
+                placeholder="Vui lòng nhập mật khẩu"
                 size="large"
               />
             </Form.Item>
@@ -187,14 +188,14 @@ const Login = () => {
                   borderColor: "#ec407a",
                 }}
               >
-                Login
+                Đăng nhập
               </Button>
             </Form.Item>
 
             <Text style={{ display: "block", textAlign: "center" }}>
-              Don’t have an account?{" "}
+              Chưa có tài khoản?{" "}
               <Link href="/register" style={{ color: "#c2185b" }}>
-                Create one
+                Đăng ký ngay
               </Link>
             </Text>
 
@@ -206,14 +207,14 @@ const Login = () => {
                 block
                 onClick={handleGoogleLogin}
               >
-                Sign in with Google
+                Đăng nhập với Google
               </Button>
               <Button
                 icon={<FacebookFilled />}
                 block
                 style={{ backgroundColor: "#3b5998", color: "#fff" }}
               >
-                Sign in with Facebook
+                Đăng nhập với Facebook
               </Button>
             </Space>
           </Form>
@@ -226,7 +227,7 @@ const Login = () => {
               marginTop: "20px",
             }}
           >
-            © 2025 Desiki Care. All rights reserved.
+            © 2025 Desiki Care. Đã đăng ký bản quyền.
           </Text>
         </div>
       </Content>

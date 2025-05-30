@@ -1,46 +1,51 @@
 import React from "react";
 import { Typography, Box, Container } from "@mui/material";
 import { Input, Card, Row, Col } from "antd";
-import HeaderSkincare from "../../../components/HeaderSkincare";
-import FooterSkincare from "../../../components/FooterSkincare";
-import CategoryBar from "../../../components/HomePage/CategoryBar";
-import PromoCarousel from "../../../components/HomePage/PromoCarousel";
-import FlashSale from "../../../components/HomePage/FlashSale";
-import ProductGrid from "../../../components/HomePage/ProductGrid";
+import HeaderSkincare from "../../../components/Header/HeaderSkincare";
+import FooterSkincare from "../../../components/Footer/FooterSkincare";
+import CategoryBar from "../../../components/HomePage/CategoryBar/CategoryBar";
+import PromoCarousel from "../../../components/HomePage/Carousel/PromoCarousel";
+import FlashSale from "../../../components/HomePage/FlashSale/FlashSale";
+import ProductGrid from "../../../components/HomePage/Grid/ProductGrid";
 const { Search } = Input;
 const { Meta } = Card;
-
-
 
 export default function App() {
   return (
     <>
-      {/* Custom Header */}
-      <HeaderSkincare />
-
       {/* Banner + CategoryBar */}
-       <Box sx={{ backgroundColor: "#e6f9f2", marginTop: 10, padding:1,     overflow: 'hidden',          
-            borderRadius: 2,             
-            boxShadow: 2,  }}>
-          <CategoryBar />
-           
-        </Box>
-       <Box
-          sx={{
-            overflow: 'hidden',          
-            borderRadius: 2,             
-                          
-            backgroundColor: '#fff',     
-          }}
-        >
-          <PromoCarousel />
-        </Box>
-<Box sx={{ padding: 2, textAlign: "center" , overflow: 'hidden',          
-            borderRadius: 2,             
-                            
-            backgroundColor: '#fff', }}>
+      <Box
+        sx={{
+          backgroundColor: "#e6f9f2",
+          marginTop: 10,
+          padding: 1,
+          overflow: "hidden",
+          borderRadius: 2,
+          boxShadow: 2,
+        }}
+      >
+        <CategoryBar />
+      </Box>
+      <Box
+        sx={{
+          overflow: "hidden",
+          borderRadius: 2,
 
-        
+          backgroundColor: "#fff",
+        }}
+      >
+        <PromoCarousel />
+      </Box>
+      <Box
+        sx={{
+          padding: 2,
+          textAlign: "center",
+          overflow: "hidden",
+          borderRadius: 2,
+
+          backgroundColor: "#fff",
+        }}
+      >
         <FlashSale />
       </Box>
       {/* Danh sách sản phẩm */}
@@ -49,11 +54,7 @@ export default function App() {
           Sản phẩm nổi bật
         </Typography>
         <ProductGrid />
-       
       </Container>
-
-      {/* Footer */}
-      <FooterSkincare />
     </>
   );
 }

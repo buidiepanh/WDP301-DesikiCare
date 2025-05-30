@@ -1,16 +1,24 @@
 import { Route, Routes } from "react-router";
 import Home from "../pages/user/home/home";
-import Login from "../pages/user/authen/login/login";
-import Register from "../pages/user/authen/regis/register";
+import Login from "../pages/authen/login/login";
+import Register from "../pages/authen/regis/register";
+import HeaderSkincare from "../components/Header/HeaderSkincare";
+import FooterSkincare from "../components/Footer/FooterSkincare";
 
 function UserRouter() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-       <Route path="/home" element={<Home />} />
-    </Routes>
+    <>
+      <HeaderSkincare />
+      <div style={{ marginTop: "80px", marginBottom: "-75px" }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </div>
+
+      <FooterSkincare />
+    </>
   );
 }
 
