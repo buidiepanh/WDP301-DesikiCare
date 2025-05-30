@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import ProductCard from './ProductCard';
-import { Button, Row, Col } from 'antd';
+import ProductCard from "../ProductCard/ProductCard";
+import { Button, Row, Col } from "antd";
 const products = [
   {
     img: "https://image.hsv-tech.io/600x600/bbx/common/ced0c2df-afd0-44ef-bc6c-9924cc24e600.webp",
@@ -83,7 +83,7 @@ const products = [
     discount: 33,
     sold: 72,
   },
-   {
+  {
     img: "https://image.hsv-tech.io/600x600/bbx/common/ced0c2df-afd0-44ef-bc6c-9924cc24e600.webp",
     name: "Nước Tẩy Trang L'Oreal Làm Sạch Sâu Trang Điểm 400ml",
     price: 158000,
@@ -163,7 +163,7 @@ const products = [
     discount: 33,
     sold: 72,
   },
-   {
+  {
     img: "https://image.hsv-tech.io/600x600/bbx/common/ced0c2df-afd0-44ef-bc6c-9924cc24e600.webp",
     name: "Nước Tẩy Trang L'Oreal Làm Sạch Sâu Trang Điểm 400ml",
     price: 158000,
@@ -243,10 +243,7 @@ const products = [
     discount: 33,
     sold: 72,
   },
- 
 ];
-
-
 
 const ProductGrid = () => {
   const [visibleCount, setVisibleCount] = useState(8);
@@ -266,7 +263,7 @@ const ProductGrid = () => {
       </Row>
 
       {visibleCount < products.length && (
-        <div style={{ textAlign: 'center', marginTop: 24 }}>
+        <div style={{ textAlign: "center", marginTop: 24 }}>
           <Button onClick={handleLoadMore} type="primary">
             Xem thêm
           </Button>
