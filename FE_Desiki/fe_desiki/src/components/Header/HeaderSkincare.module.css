@@ -7,7 +7,7 @@
 .toolbar {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; /* để menuSearchBox xuống dòng đúng */
+  align-items: flex-start; 
   flex-wrap: wrap;
 }
 
@@ -63,6 +63,24 @@
 .shoppingCartIcon {
   color: white;
 }
+.loginActions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginText {
+  cursor: pointer;
+  transition: color 0.3s ease, text-decoration 0.3s ease, transform 0.2s ease;
+}
+
+.loginText:hover {
+  color: #ffd54f;
+  text-decoration: underline;
+  transform: scale(1.05);
+}
+
 .loginActions {
   display: flex;
   gap: 4px;

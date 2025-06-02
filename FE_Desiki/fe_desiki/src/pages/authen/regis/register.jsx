@@ -12,19 +12,19 @@ import {
 import {
   UserOutlined,
   LockOutlined,
-  PhoneOutlined,
   GoogleOutlined,
   FacebookFilled,
 } from "@ant-design/icons";
-import image1 from "../../../assets/authen/authen_background1.jpg";
-import { auth, provider } from "../../../config/firebase";
+import { EmailOutlined } from "@mui/icons-material";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
   signInWithPopup,
 } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import { EmailOutlined } from "@mui/icons-material";
+import { auth, provider } from "../../../config/firebase";
+import image1 from "../../../assets/authen/authen_background1.webp";
+import "./Register.css";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;
@@ -35,7 +35,7 @@ const Register = () => {
   const onFinish = async (values) => {
     try {
       const { username, phone, password } = values;
-      const email = `${phone}@desiki.com`; // Firebase requires email format
+      const email = `${phone}@desiki.com`;
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -64,111 +64,37 @@ const Register = () => {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh", flexDirection: "row" }}>
+    <Layout className="register-layout">
       <Content
-        style={{
-          flex: 1.5,
-          backgroundImage: `url(${image1})`,
-          backgroundSize: "auto 100%",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          imageRendering: "crisp-edges",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          padding: "40px",
-          color: "#fff",
-          position: "relative",
-        }}
+        className="register-left"
+        style={{ backgroundImage: `url(${image1})` }}
       >
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.4)",
-            zIndex: 1,
-          }}
-        />
-        <Title
-          style={{
-            color: "#fff",
-            textAlign: "center",
-            marginTop: 0,
-            position: "relative",
-            zIndex: 2,
-          }}
-        >
-          Desiki Care
-        </Title>
-        <Text
-          style={{
-            textAlign: "center",
-            color: "#eee",
-            maxWidth: "360px",
-            fontSize: "16px",
-            lineHeight: 1.5,
-            position: "relative",
-            zIndex: 2,
-          }}
-        >
-          Desiki Care là thương hiệu chăm sóc da tiên phong kết hợp hài hòa giữa
-          vẻ đẹp tự nhiên và khoa học hiện đại. Chúng tôi cam kết mang đến các
-          sản phẩm an toàn và hiệu quả, giúp nuôi dưỡng làn da từ sâu bên trong
-          và thúc đẩy sức khỏe lâu dài. Tại Desiki Care, mỗi bước trong quy
-          trình chăm sóc da đều trở thành một nghi thức thư giãn, giúp bạn tỏa
-          sáng với sự tự tin và rạng rỡ mỗi ngày.
-        </Text>
+        <div className="register-overlay" />
+        <div className="register-left-content">
+          <Title level={1}>Desiki Care</Title>
+          <Text className="register-description">
+            Desiki Care là thương hiệu chăm sóc da tiên phong kết hợp hài hòa giữa
+            vẻ đẹp tự nhiên và khoa học hiện đại. Chúng tôi cam kết mang đến các
+            sản phẩm an toàn và hiệu quả, giúp nuôi dưỡng làn da từ sâu bên trong
+            và thúc đẩy sức khỏe lâu dài.
+          </Text>
+        </div>
       </Content>
 
-      <Content
-        style={{
-          flex: 1,
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1526045431048-c5e4e2a3d1c4')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "40px",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            maxWidth: "400px",
-            padding: "40px",
-            borderRadius: "16px",
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-            border: "1px solid #f3c6d3",
-            display: "flex",
-            flexDirection: "column",
-            gap: "16px",
-          }}
-        >
+      <Content className="register-right">
+        <div className="register-form-container">
           <div style={{ textAlign: "center" }}>
             <img
               src="https://cdn-icons-png.flaticon.com/512/3771/3771541.png"
               alt="logo"
-              style={{ width: "60px", marginBottom: "10px" }}
+              className="register-logo"
             />
           </div>
 
-          <Title
-            level={2}
-            style={{ color: "#c2185b", textAlign: "center", marginBottom: 0 }}
-          >
+          <Title level={2} className="register-title">
             Đăng ký tài khoản
           </Title>
-          <Text
-            type="secondary"
-            style={{ textAlign: "center", fontSize: "14px" }}
-          >
+          <Text type="secondary" className="register-subtext">
             Tham gia Desiki Care để mở ra hành trình làm đẹp của riêng bạn.
           </Text>
 
@@ -189,15 +115,14 @@ const Register = () => {
 
             <Form.Item
               label="Email"
-              name="email"
+              name="phone"
               rules={[
-                { required: true, message: "Vui lòng nhập email!" },
-                { type: "email", message: "Email không hợp lệ!" },
+                { required: true, message: "Vui lòng nhập số điện thoại!" },
               ]}
             >
               <Input
                 prefix={<EmailOutlined />}
-                placeholder="Vui lòng nhập email"
+                placeholder="Nhập số điện thoại của bạn"
                 size="large"
               />
             </Form.Item>
@@ -237,7 +162,7 @@ const Register = () => {
             >
               <Input.Password
                 prefix={<LockOutlined />}
-                placeholder="Vui lòng xác nhận lại mật khẩu của bạn"
+                placeholder="Xác nhận lại mật khẩu"
                 size="large"
               />
             </Form.Item>
@@ -248,7 +173,7 @@ const Register = () => {
                 htmlType="submit"
                 size="large"
                 block
-                style={{ backgroundColor: "#ec407a", borderColor: "#ec407a" }}
+                className="register-button"
               >
                 Đăng ký
               </Button>
@@ -281,14 +206,7 @@ const Register = () => {
             </Space>
           </Form>
 
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: "12px",
-              color: "#aaa",
-              marginTop: "20px",
-            }}
-          >
+          <Text className="register-footer">
             © 2025 Desiki Care. Đã đăng ký bản quyền.
           </Text>
         </div>
