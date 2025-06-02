@@ -70,11 +70,24 @@ export const CreateGameModal: React.FC<CreateGameProps> = ({
   const [configJson, setConfigJson] = useState<ConfigJson | null>(null);
   // HOOKS
   useEffect(() => {
+    reset();
     setGameTypes(gameTypesData);
     setIsLoading(false);
   }, []);
 
   // FUNCTIONS
+  const reset = () => {
+    setIsLoading(true);
+    setEventName("");
+    setEventDescription("");
+    setGameName("");
+    setStartDate(today);
+    setEndDate(today);
+    setGameTypes([]);
+    setGameTypeId(0);
+    setConfigJson(null);
+  };
+
   const handleChangeGameType = (event: SelectChangeEvent<string>) => {
     setGameTypeId(Number(event.target.value));
   };
@@ -215,7 +228,7 @@ export const CreateGameModal: React.FC<CreateGameProps> = ({
               <p>Đợi xíu đang load...</p>
             )}
 
-            <div className="mt-10 p-5 bg-gray-100 rounded-xl shadow-md ">
+            <div className="mt-10 mb-5 p-5 bg-gray-100 rounded-xl shadow-md ">
               <GameConfigLoader
                 gameTypeId={gameTypeId}
                 configJson={configJson}
