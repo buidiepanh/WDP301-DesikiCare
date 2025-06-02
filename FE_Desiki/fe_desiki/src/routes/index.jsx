@@ -4,6 +4,8 @@ import Login from "../pages/authen/login/login";
 import Register from "../pages/authen/regis/register";
 import HeaderSkincare from "../components/Header/HeaderSkincare";
 import FooterSkincare from "../components/Footer/FooterSkincare";
+import Cart from "../pages/user/cart/cart";
+import Details from "../pages/user/product-detail/details";
 
 function UserRouter() {
   return (
@@ -14,6 +16,8 @@ function UserRouter() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/products/:productId" element={<Details />} />
         </Routes>
       </div>
 
