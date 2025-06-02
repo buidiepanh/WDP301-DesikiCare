@@ -153,7 +153,7 @@ const FlashSale = () => {
         <Typography.Text className="flash-sale-timer">
           {formatTime(timeLeft)}
         </Typography.Text>
-        <Button type="link" className="flash-sale-view-all">
+        <Button type="link" className="flash-sale-view-all" href="/flash-deal-sale">
           Xem tất cả
         </Button>
       </div>

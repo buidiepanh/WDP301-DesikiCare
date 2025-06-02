@@ -1,0 +1,38 @@
+.card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease;
+  background: white;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card img {
+  width: 100%;
+  height: 220px;         /* chỉnh chiều cao ảnh */
+  object-fit: cover;     /* không bị méo, ảnh sẽ cắt đúng tỉ lệ */
+  display: block;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-category {
+  font-size: 0.75rem;
+  color: #777;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.4;
+}

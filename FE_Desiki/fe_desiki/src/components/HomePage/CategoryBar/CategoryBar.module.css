@@ -16,26 +16,14 @@
   flex-wrap: wrap;
 }
 
-.rightMenu {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
 .categoryItem {
   cursor: pointer;
-  transition: color 0.2s;
+  transition: color 0.2s ease;
 }
 
-.categoryItem:hover,
-.linkItem:hover {
+.categoryItem:hover {
   color: #1a4030;
   text-decoration: underline;
-}
-
-.linkItem {
-  cursor: pointer;
 }
 
 .divider {

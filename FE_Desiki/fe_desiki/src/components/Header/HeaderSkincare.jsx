@@ -12,6 +12,7 @@ import {
   PersonOutline,
   VerifiedUser,
   Phone,
+  Logout,
 } from "@mui/icons-material";
 import { Input } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -21,31 +22,50 @@ import logo from "../../assets/logo.jpg";
 const HeaderSkincare = () => {
   const [userName, setUserName] = useState(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    // Kiểm tra localStorage để lấy tên người dùng sau khi đăng nhập Google
+
+  const loadUser = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      setUserName(parsedUser.name); // hoặc parsedUser.displayName tùy Google trả về gì
+      setUserName(parsedUser.name);
+    } else {
+      setUserName(null);
     }
+  };
+
+  useEffect(() => {
+    loadUser();
+
+    // Lắng nghe sự kiện 'userChanged'
+    const handleUserChanged = () => loadUser();
+
+    window.addEventListener("userChanged", handleUserChanged);
+
+    return () => {
+      window.removeEventListener("userChanged", handleUserChanged);
+    };
   }, []);
 
   const handleLoginClick = () => {
     navigate("/login");
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.dispatchEvent(new Event("userChanged"));
+    navigate("/login");
+  };
+  const handleWarranty = () => {
+    navigate("/warranty-policy"); // Điều hướng đến trang chính sách bảo hành
+  }
   return (
     <AppBar
       position="fixed"
       className={styles.appBar}
-      sx={{
-        backgroundColor: "#ec407a",
-        paddingTop: "8px",
-        paddingBottom: "8px",
-      }}
+      sx={{ backgroundColor: "#ec407a", paddingTop: "8px", paddingBottom: "8px" }}
     >
       <Toolbar className={styles.toolbar}>
-        {/* Logo & slogan */}
+        {/* Logo và slogan */}
         <Box className={styles.logoSloganBox}>
           <img
             src={logo}
@@ -54,13 +74,11 @@ const HeaderSkincare = () => {
             onClick={() => navigate("/")}
           />
           <Box>
-            <Typography fontSize={14}>
-              Chất lượng thật - Giá trị thật
-            </Typography>
+            <Typography fontSize={14}>Chất lượng thật - Giá trị thật</Typography>
           </Box>
         </Box>
 
-        {/* Menu + Search */}
+        {/* Menu tìm kiếm */}
         <Box className={styles.menuSearchBox}>
           <Box className={styles.menuItems}>
             <span>Kem Chống Nắng</span>
@@ -79,10 +97,14 @@ const HeaderSkincare = () => {
         {/* Icon menu */}
         <Box className={styles.iconsMenu}>
           <Box className={styles.iconBox}>
-            <IconButton color="inherit" onClick={handleLoginClick}>
-              <PersonOutline />
+            <IconButton color="inherit" onClick={userName ? handleLogout : handleLoginClick}>
+              {userName ? <Logout /> : <PersonOutline />}
             </IconButton>
-            <Typography variant="caption" onClick={handleLoginClick}>
+            <Typography
+              variant="caption"
+              onClick={userName ? handleLogout : handleLoginClick}
+              className={styles.loginText}
+            >
               {userName ? `Xin chào, ${userName}` : "Đăng nhập / Đăng ký"}
             </Typography>
           </Box>
@@ -91,7 +113,7 @@ const HeaderSkincare = () => {
             <IconButton color="inherit">
               <VerifiedUser />
             </IconButton>
-            <Typography variant="caption">Chính Sách Bảo Hành</Typography>
+            <Typography variant="caption" onClick={handleWarranty}>Chính Sách Bảo Hành</Typography>
           </Box>
 
           <Box className={styles.iconBox}>
