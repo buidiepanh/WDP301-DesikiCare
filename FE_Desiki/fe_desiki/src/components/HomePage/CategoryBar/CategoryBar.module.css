@@ -1,0 +1,32 @@
+.categoryContainer {
+  background-color: #e5f9f2;
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #2b6644;
+  flex-wrap: wrap;
+}
+
+.leftMenu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.categoryItem {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.categoryItem:hover {
+  color: #1a4030;
+  text-decoration: underline;
+}
+
+.divider {
+  color: #2b6644;
+  opacity: 0.9;
+}

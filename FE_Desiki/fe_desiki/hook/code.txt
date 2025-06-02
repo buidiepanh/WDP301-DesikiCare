@@ -1,0 +1,151 @@
+import React, { useState } from "react";
+import { Box, Typography, MenuItem, Popper, Paper, ClickAwayListener } from "@mui/material";
+import { Menu } from "@mui/icons-material";
+import styles from "./CategoryBar.module.css";
+import { useNavigate } from "react-router-dom";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+
+const CategoryBar = () => {
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [hoveredCategory, setHoveredCategory] = useState(null);
+
+  const handleBanner = () => navigate("/hot-deal");
+  const handleDeals = () => navigate("/flash-deal-sale");
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+    setOpen((prev) => !prev);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setHoveredCategory(null);
+  };
+
+  const categories = [
+    "Sức Khỏe - Làm Đẹp",
+    "Mỹ Phẩm High-End",
+    "Chăm Sóc Da Mặt",
+    "Trang Điểm",
+    "Chăm Sóc Tóc Và Da Đầu",
+    "Chăm Sóc Cơ Thể",
+    "Chăm Sóc Cá Nhân",
+    "Nước Hoa",
+    "Thực Phẩm Chức Năng",
+    "DermaHair",
+  ];
+
+  const subcategories = {
+    "Trang Điểm": [
+      {
+        title: "TRANG ĐIỂM MẶT",
+        items: ["Cushion", "Kem Nền", "Phấn Phủ", "Che Khuyết Điểm", "Kem Lót", "Phấn Má Hồng", "Tạo Khối"],
+      },
+      {
+        title: "TRANG ĐIỂM MÔI",
+        items: ["Son Thỏi", "Son Kem - Tint", "Son Dưỡng Môi - Đặc Trị", "Son Bóng"],
+      },
+      {
+        title: "TRANG ĐIỂM MẮT",
+        items: ["Phấn Mắt", "Mascara", "Kẻ Chân Mày", "Kẻ Mắt"],
+      },
+      {
+        title: "PHỤ KIỆN TRANG ĐIỂM",
+        items: ["Cọ trang điểm", "Bông Mút trang điểm", "Phụ Kiện Trang Điểm Khác"],
+      },
+      {
+        title: "TRANG ĐIỂM THUẦN CHAY",
+        items: [],
+      },
+    ],
+    "Sức Khỏe - Làm Đẹp": [
+      {
+        title: "TRANG ĐIỂM MẶT",
+        items: ["Cushion", "Kem Nền", "Phấn Phủ", "Che Khuyết Điểm", "Kem Lót", "Phấn Má Hồng", "Tạo Khối"],
+      },
+      {
+        title: "TRANG ĐIỂM MÔI",
+        items: ["Son Thỏi", "Son Kem - Tint", "Son Dưỡng Môi - Đặc Trị", "Son Bóng"],
+      },
+      {
+        title: "TRANG ĐIỂM MẮT",
+        items: ["Phấn Mắt", "Mascara", "Kẻ Chân Mày", "Kẻ Mắt"],
+      },
+      {
+        title: "PHỤ KIỆN TRANG ĐIỂM",
+        items: ["Cọ trang điểm", "Bông Mút trang điểm", "Phụ Kiện Trang Điểm Khác"],
+      },
+      {
+        title: "TRANG ĐIỂM THUẦN CHAY",
+        items: [],
+      },
+    ],
+  };
+
+  return (
+    <Box className={styles.categoryContainer}>
+      <Box className={styles.leftMenu}>
+        <Box display="flex" alignItems="center" onClick={handleClick} style={{ cursor: "pointer" }}> 
+          <Menu fontSize="small" />
+          <Typography fontWeight="bold" style={{ marginLeft: 4 }}>DANH MỤC</Typography>
+        </Box>
+
+        <span className={styles.divider}>|</span>
+        <Typography className={styles.categoryItem} onClick={handleDeals}>DeskiCare DEALS</Typography>
+        <Typography className={styles.categoryItem} onClick={handleBanner}>HOT DEALS</Typography>
+        <Typography className={styles.categoryItem}>Sản Phẩm</Typography>
+        <Typography className={styles.categoryItem}>Chăm Sóc Da</Typography>
+        <Typography className={styles.categoryItem}>Tạp Chí Làm Đẹp</Typography>
+        <Typography className={styles.categoryItem}>Sản Phẩm Mới</Typography>
+      </Box>
+
+      <Popper open={open} anchorEl={anchorEl} placement="bottom-start">
+        <ClickAwayListener onClickAway={handleClose}>
+          <Paper elevation={3} sx={{ display: 'flex', minWidth: 500, padding: 1 }}>
+            <Box sx={{ width: 240 }}>
+              {categories.map((cat, index) => (
+                <MenuItem
+                  key={index}
+                  onMouseEnter={() => setHoveredCategory(cat)}
+                  onClick={handleClose}
+                  sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                >
+                  <Typography>{cat}</Typography>
+                  {cat === "Trang Điểm" && <ChevronRightIcon fontSize="small" />}
+                </MenuItem>
+              ))}
+            </Box>
+            {hoveredCategory === "Trang Điểm" && (
+              <Box sx={{ paddingLeft: 2, display: 'flex', gap: 4 }}>
+                {subcategories["Trang Điểm"].map((group, idx) => (
+                  <Box key={idx}>
+                    <Typography fontWeight="bold" gutterBottom>{group.title}</Typography>
+                    {group.items.map((item, i) => (
+                      <Typography key={i} variant="body2" sx={{ cursor: 'pointer', mb: 0.5 }}>{item}</Typography>
+                    ))}
+                  </Box>
+                ))}
+              </Box>
+            )}
+             {hoveredCategory === "Sức Khỏe - Làm Đẹp" && (
+              <Box sx={{ paddingLeft: 2, display: 'flex', gap: 4 }}>
+                {subcategories["Trang Điểm"].map((group, idx) => (
+                  <Box key={idx}>
+                    <Typography fontWeight="bold" gutterBottom>{group.title}</Typography>
+                    {group.items.map((item, i) => (
+                      <Typography key={i} variant="body2" sx={{ cursor: 'pointer', mb: 0.5 }}>{item}</Typography>
+                    ))}
+                  </Box>
+                ))}
+              </Box>
+            )}
+          </Paper>
+        </ClickAwayListener>
+      </Popper>
+    </Box>
+  );
+};
+
+export default CategoryBar;
