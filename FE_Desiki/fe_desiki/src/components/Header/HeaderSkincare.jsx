@@ -57,7 +57,8 @@ const HeaderSkincare = () => {
   };
   const handleWarranty = () => {
     navigate("/warranty-policy"); // Điều hướng đến trang chính sách bảo hành
-  }
+  } //done
+
   return (
     <AppBar
       position="fixed"
@@ -134,4 +135,4 @@ const HeaderSkincare = () => {
   );
 };
 
-export default HeaderSkincare;
+export default HeaderSkincare; //fomne 
