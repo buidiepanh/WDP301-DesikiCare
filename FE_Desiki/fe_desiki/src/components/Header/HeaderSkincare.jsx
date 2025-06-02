@@ -101,7 +101,7 @@ const HeaderSkincare = () => {
             <Typography variant="caption">Hỗ trợ khách hàng</Typography>
           </Box>
 
-          <Box className={styles.iconBox}>
+          <Box className={styles.iconBox} onClick={() => navigate("/cart")}>
             <Badge badgeContent={0} color="error">
               <ShoppingCartOutlined className={styles.shoppingCartIcon} />
             </Badge>

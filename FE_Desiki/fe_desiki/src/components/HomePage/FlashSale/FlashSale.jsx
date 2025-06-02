@@ -2,9 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Typography, Button, Card, Progress } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import "./FlashSale.css";
+import { useNavigate } from "react-router";
 
 const mockProducts = [
   {
+    id: 1,
     img: "https://media.hcdn.vn/catalog/product/n/u/nuoc-tay-trang-loreal-lam-sach-sau-trang-diem-400ml-img-600x600.jpg",
     name: "Nước Tẩy Trang LOreal Làm Sạch Sâu Trang Điểm 400ml",
     price: 158000,
@@ -13,6 +15,7 @@ const mockProducts = [
     sold: 40,
   },
   {
+    id: 2,
     img: "https://media.hcdn.vn/catalog/product/p/r/promotions-auto-phan-phu-carslan-dang-nen-vo-den-mau-tim-8g_mXWarNbriAiTaU6E_img_50x50_6fe371_fit_center.png",
     name: "Phấn Phủ Carslan Dạng Nén Vỏ Đen Màu Tím 8g",
     price: 221000,
@@ -21,6 +24,7 @@ const mockProducts = [
     sold: 25,
   },
   {
+    id: 3,
     img: "https://media.hcdn.vn/catalog/product/t/a/tay-da-chet-toan-than-cocoon-ca-phe-dak-lak-200ml-img-600x600.jpg",
     name: "Tẩy Da Chết Toàn Thân Cocoon Cà Phê Đắk Lắk 200ml",
     price: 66000,
@@ -29,6 +33,7 @@ const mockProducts = [
     sold: 83,
   },
   {
+    id: 4,
     img: "https://media.hcdn.vn/catalog/product/s/u/sua-rua-mat-cetaphil-diu-lanh-cho-da-nhay-cam-500ml-img-600x600.jpg",
     name: "Sữa Rửa Mặt Cetaphil Dịu Lành Cho Da Nhạy Cảm 500ml",
     price: 320000,
@@ -37,6 +42,7 @@ const mockProducts = [
     sold: 51,
   },
   {
+    id: 5,
     img: "https://media.hcdn.vn/catalog/product/s/u/sua-rua-mat-simple-giup-da-sach-thoang-150ml-img-600x600.jpg",
     name: "Sữa Rửa Mặt Simple Giúp Da Sạch Thoáng 150ml",
     price: 81000,
@@ -45,6 +51,7 @@ const mockProducts = [
     sold: 49,
   },
   {
+    id: 6,
     img: "https://media.hcdn.vn/catalog/product/s/m/smoothie-tay-da-chet-huong-luu-do-298g-img-600x600.jpg",
     name: "Smoothie Tẩy Da Chết Hương Lựu Đỏ 298g",
     price: 119000,
@@ -53,6 +60,7 @@ const mockProducts = [
     sold: 64,
   },
   {
+    id: 7,
     img: "https://media.hcdn.vn/catalog/product/n/u/nuoc-tay-trang-loreal-lam-sach-sau-trang-diem-400ml-img-600x600.jpg",
     name: "Nước Tẩy Trang LOreal Làm Sạch Sâu Trang Điểm 400ml",
     price: 158000,
@@ -61,6 +69,7 @@ const mockProducts = [
     sold: 40,
   },
   {
+    id: 8,
     img: "https://media.hcdn.vn/catalog/product/p/r/promotions-auto-phan-phu-carslan-dang-nen-vo-den-mau-tim-8g_mXWarNbriAiTaU6E_img_50x50_6fe371_fit_center.png",
     name: "Phấn Phủ Carslan Dạng Nén Vỏ Đen Màu Tím 8g",
     price: 221000,
@@ -69,6 +78,7 @@ const mockProducts = [
     sold: 25,
   },
   {
+    id: 9,
     img: "https://media.hcdn.vn/catalog/product/t/a/tay-da-chet-toan-than-cocoon-ca-phe-dak-lak-200ml-img-600x600.jpg",
     name: "Tẩy Da Chết Toàn Thân Cocoon Cà Phê Đắk Lắk 200ml",
     price: 66000,
@@ -77,6 +87,7 @@ const mockProducts = [
     sold: 83,
   },
   {
+    id: 10,
     img: "https://media.hcdn.vn/catalog/product/s/u/sua-rua-mat-cetaphil-diu-lanh-cho-da-nhay-cam-500ml-img-600x600.jpg",
     name: "Sữa Rửa Mặt Cetaphil Dịu Lành Cho Da Nhạy Cảm 500ml",
     price: 320000,
@@ -85,6 +96,7 @@ const mockProducts = [
     sold: 51,
   },
   {
+    id: 11,
     img: "https://media.hcdn.vn/catalog/product/s/u/sua-rua-mat-simple-giup-da-sach-thoang-150ml-img-600x600.jpg",
     name: "Sữa Rửa Mặt Simple Giúp Da Sạch Thoáng 150ml",
     price: 81000,
@@ -93,6 +105,7 @@ const mockProducts = [
     sold: 49,
   },
   {
+    id: 12,
     img: "https://media.hcdn.vn/catalog/product/s/m/smoothie-tay-da-chet-huong-luu-do-298g-img-600x600.jpg",
     name: "Smoothie Tẩy Da Chết Hương Lựu Đỏ 298g",
     price: 119000,
@@ -105,6 +118,7 @@ const mockProducts = [
 const FlashSale = () => {
   const [timeLeft, setTimeLeft] = useState(7200); // 2 hours in seconds
   const listRef = useRef(null);
+  const navigation = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -151,6 +165,7 @@ const FlashSale = () => {
         <div className="product-list" ref={listRef}>
           {mockProducts.map((p, idx) => (
             <Card
+              onClick={() => navigation(`/products/${p?.id}`)}
               key={idx}
               className="product-card"
               hoverable
