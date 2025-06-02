@@ -12,6 +12,7 @@ import {
   PersonOutline,
   VerifiedUser,
   Phone,
+  Logout,
 } from "@mui/icons-material";
 import { Input } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -22,10 +23,11 @@ const HeaderSkincare = () => {
   const [userName, setUserName] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
+    // Kiểm tra localStorage để lấy tên người dùng sau khi đăng nhập Google
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      setUserName(parsedUser.name); 
+      setUserName(parsedUser.name); // hoặc parsedUser.displayName tùy Google trả về gì
     }
   }, []);
 
@@ -33,17 +35,22 @@ const HeaderSkincare = () => {
     navigate("/login");
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.dispatchEvent(new Event("userChanged"));
+    navigate("/login");
+  };
+  const handleWarranty = () => {
+    navigate("/warranty-policy"); // Điều hướng đến trang chính sách bảo hành
+  }
   return (
     <AppBar
       position="fixed"
       className={styles.appBar}
-      sx={{
-        backgroundColor: "#ec407a",
-        paddingTop: "8px",
-        paddingBottom: "8px",
-      }}
+      sx={{ backgroundColor: "#ec407a", paddingTop: "8px", paddingBottom: "8px" }}
     >
       <Toolbar className={styles.toolbar}>
+        {/* Logo & slogan */}
         <Box className={styles.logoSloganBox}>
           <img
             src={logo}
@@ -52,12 +59,11 @@ const HeaderSkincare = () => {
             onClick={() => navigate("/")}
           />
           <Box>
-            <Typography fontSize={14}>
-              Chất lượng thật - Giá trị thật
-            </Typography>
+            <Typography fontSize={14}>Chất lượng thật - Giá trị thật</Typography>
           </Box>
         </Box>
 
+        {/* Menu + Search */}
         <Box className={styles.menuSearchBox}>
           <Box className={styles.menuItems}>
             <span>Kem Chống Nắng</span>
@@ -75,41 +81,19 @@ const HeaderSkincare = () => {
 
         <Box className={styles.iconsMenu}>
           <Box className={styles.iconBox}>
-            <IconButton color="inherit" onClick={handleLoginClick}>
-              <PersonOutline />
+            <IconButton color="inherit" onClick={userName ? handleLogout : handleLoginClick}>
+              {userName ? <Logout /> : <PersonOutline />}
             </IconButton>
-            {userName ? (
-              <Typography variant="caption" className={styles.loginText}>
-                Xin chào, {userName}
-              </Typography>
-            ) : (
-              <Box className={styles.loginActions}>
-                <Typography
-                  variant="caption"
-                  onClick={() => navigate("/login")}
-                  className={styles.loginText}
-                >
-                  Đăng nhập
-                </Typography>
-                <Typography variant="caption" style={{ color: "#fff" }}> / </Typography>
-                <Typography
-                  variant="caption"
-                  onClick={() => navigate("/register")}
-                  className={styles.loginText}
-                >
-                  Đăng ký
-                </Typography>
-              </Box>
-            )}
-
-
+            <Typography variant="caption" onClick={handleLoginClick}>
+              {userName ? `Xin chào, ${userName}` : "Đăng nhập / Đăng ký"}
+            </Typography>
           </Box>
 
           <Box className={styles.iconBox}>
             <IconButton color="inherit">
               <VerifiedUser />
             </IconButton>
-            <Typography variant="caption">Chính Sách Bảo Hành</Typography>
+            <Typography variant="caption" onClick={handleWarranty}>Chính Sách Bảo Hành</Typography>
           </Box>
 
           <Box className={styles.iconBox}>
@@ -119,7 +103,7 @@ const HeaderSkincare = () => {
             <Typography variant="caption">Hỗ trợ khách hàng</Typography>
           </Box>
 
-          <Box className={styles.iconBox}>
+          <Box className={styles.iconBox} onClick={() => navigate("/cart")}>
             <Badge badgeContent={0} color="error">
               <ShoppingCartOutlined className={styles.shoppingCartIcon} />
             </Badge>

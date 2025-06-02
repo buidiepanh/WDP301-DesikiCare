@@ -56,6 +56,7 @@
 }
 
 .iconBox {
+  cursor: pointer;
   text-align: center;
 }
 

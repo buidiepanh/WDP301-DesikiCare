@@ -1,0 +1,36 @@
+.warranty-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+  color: #333;
+  font-family: sans-serif;
+  line-height: 1.6;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 24px;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: 20px;
+  margin-top: 24px;
+  font-weight: bold;
+}
+
+h3 {
+  margin-top: 16px;
+  font-weight: 600;
+}
+
+ul {
+  margin-left: 24px;
+  list-style: disc;
+}
+
+.warranty-policy {
+  background-color: #fff;
+}
