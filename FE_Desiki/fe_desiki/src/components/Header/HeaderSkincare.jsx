@@ -22,13 +22,28 @@ import logo from "../../assets/logo.jpg";
 const HeaderSkincare = () => {
   const [userName, setUserName] = useState(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    // Kiểm tra localStorage để lấy tên người dùng sau khi đăng nhập Google
+
+  const loadUser = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      setUserName(parsedUser.name); // hoặc parsedUser.displayName tùy Google trả về gì
+      setUserName(parsedUser.name);
+    } else {
+      setUserName(null);
     }
+  };
+
+  useEffect(() => {
+    loadUser();
+
+    // Lắng nghe sự kiện 'userChanged'
+    const handleUserChanged = () => loadUser();
+
+    window.addEventListener("userChanged", handleUserChanged);
+
+    return () => {
+      window.removeEventListener("userChanged", handleUserChanged);
+    };
   }, []);
 
   const handleLoginClick = () => {
@@ -50,7 +65,7 @@ const HeaderSkincare = () => {
       sx={{ backgroundColor: "#ec407a", paddingTop: "8px", paddingBottom: "8px" }}
     >
       <Toolbar className={styles.toolbar}>
-        {/* Logo & slogan */}
+        {/* Logo và slogan */}
         <Box className={styles.logoSloganBox}>
           <img
             src={logo}
@@ -63,7 +78,7 @@ const HeaderSkincare = () => {
           </Box>
         </Box>
 
-        {/* Menu + Search */}
+        {/* Menu tìm kiếm */}
         <Box className={styles.menuSearchBox}>
           <Box className={styles.menuItems}>
             <span>Kem Chống Nắng</span>
@@ -79,12 +94,17 @@ const HeaderSkincare = () => {
           />
         </Box>
 
+        {/* Icon menu */}
         <Box className={styles.iconsMenu}>
           <Box className={styles.iconBox}>
             <IconButton color="inherit" onClick={userName ? handleLogout : handleLoginClick}>
               {userName ? <Logout /> : <PersonOutline />}
             </IconButton>
-            <Typography variant="caption" onClick={handleLoginClick}>
+            <Typography
+              variant="caption"
+              onClick={userName ? handleLogout : handleLoginClick}
+              className={styles.loginText}
+            >
               {userName ? `Xin chào, ${userName}` : "Đăng nhập / Đăng ký"}
             </Typography>
           </Box>
