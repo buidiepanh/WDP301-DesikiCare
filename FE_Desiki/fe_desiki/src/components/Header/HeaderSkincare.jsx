@@ -100,13 +100,36 @@ const HeaderSkincare = () => {
             <IconButton color="inherit" onClick={userName ? handleLogout : handleLoginClick}>
               {userName ? <Logout /> : <PersonOutline />}
             </IconButton>
-            <Typography
-              variant="caption"
-              onClick={userName ? handleLogout : handleLoginClick}
-              className={styles.loginText}
-            >
-              {userName ? `Xin chào, ${userName}` : "Đăng nhập / Đăng ký"}
-            </Typography>
+            {userName ? (
+              <>
+                <Typography
+                  variant="caption"
+                  onClick={handleLogout}
+                  className={styles.loginText}
+                >
+                  Xin chào, {userName}
+                </Typography>
+              </>
+            ) : (
+              <Box className={styles.authButtons}>
+                <Typography
+                  variant="caption"
+                  onClick={() => navigate("/login")}
+                  className={styles.loginText}
+                >
+                  Đăng nhập
+                </Typography>
+                <span style={{ margin: "0 4px" }}>/</span>
+                <Typography
+                  variant="caption"
+                  onClick={() => navigate("/register")}
+                  className={styles.loginText}
+                >
+                  Đăng ký
+                </Typography>
+              </Box>
+            )}
+
           </Box>
 
           <Box className={styles.iconBox}>
