@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Layout,
-  Form,
-  Input,
-  Button,
-  Typography,
-  Divider,
-  Space,
-} from "antd";
+import { Layout, Form, Input, Button, Typography, Divider, Space } from "antd";
 import {
   UserOutlined,
   LockOutlined,
@@ -31,7 +23,7 @@ const Login = () => {
     const { email, password } = values;
     try {
       if (email === "buidiepanh@gmail.com" && password === "123") {
-        const user = { name: "Diệp Ánh", email };
+        const user = { name: "Diệp Anh", email };
         localStorage.setItem("user", JSON.stringify(user));
         window.dispatchEvent(new Event("userChanged"));
         console.log("User logged in:", user);
@@ -169,7 +161,11 @@ const Login = () => {
             <Divider style={{ borderColor: "#f0f0f0" }}>hoặc</Divider>
 
             <Space direction="vertical" style={{ width: "100%" }}>
-              <Button icon={<GoogleOutlined />} block onClick={handleGoogleLogin}>
+              <Button
+                icon={<GoogleOutlined />}
+                block
+                onClick={handleGoogleLogin}
+              >
                 Đăng nhập với Google
               </Button>
               <Button
