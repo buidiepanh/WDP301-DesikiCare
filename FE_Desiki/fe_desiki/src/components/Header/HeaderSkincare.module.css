@@ -28,7 +28,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
-  flex: 1; /* chiếm hết phần trống giữa logo và icon */
+  flex: 1; 
   color: white;
   margin-left: 56px;
   margin-right: 36px;
@@ -97,4 +97,10 @@
   color: #ffd54f;
   text-decoration: underline;
   transform: scale(1.05);
+}
+
+.authButtons {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }

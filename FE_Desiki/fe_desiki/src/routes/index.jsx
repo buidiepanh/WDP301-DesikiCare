@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router";
+
 import Home from "../pages/user/home/home";
 import Login from "../pages/authen/login/login";
 import Register from "../pages/authen/regis/register";
@@ -10,7 +11,15 @@ import BannerSection from "../pages/user/hot-deal/BannerSection";
 import FlashDealSale from "../pages/user/sale/FlashDealSale";
 import BlogGrid from "../pages/user/blog/BlogGrid";
 import WarrantyPolicy from "../pages/user/policy/WarrantyPolicy";
+
 import Admin from "../pages/admin/admin";
+
+import ProductManagement from "../pages/manager/ProductManagement";
+import InventoryManagement from "../pages/manager/InventoryManagement";
+import OrderManagement from "../pages/manager/OrderManagement";
+import Statistics from "../pages/manager/Statistics";
+import CustomerInfo from "../pages/manager/CustomerInfo";
+import ManagerLayout from "../layouts/manager/ManagerLayout"; 
 
 function UserRouter() {
   return (
@@ -29,7 +38,6 @@ function UserRouter() {
           <Route path="/blog-grid" element={<BlogGrid />} />
         </Routes>
       </div>
-
       <FooterSkincare />
     </>
   );
@@ -47,7 +55,16 @@ export function AppRouter() {
   return (
     <Routes>
       <Route path="/*" element={<UserRouter />} />
+
       <Route path="/admin" element={<AdminRouter />} />
+
+      <Route path="/manager" element={<ManagerLayout />}>
+        <Route path="products" element={<ProductManagement />} />
+        <Route path="inventory" element={<InventoryManagement />} />
+        <Route path="orders" element={<OrderManagement />} />
+        <Route path="statistics" element={<Statistics />} />
+        <Route path="customers" element={<CustomerInfo />} />
+      </Route>
     </Routes>
   );
 }
