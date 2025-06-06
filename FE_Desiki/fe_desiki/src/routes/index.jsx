@@ -19,7 +19,7 @@ import InventoryManagement from "../pages/manager/InventoryManagement";
 import OrderManagement from "../pages/manager/OrderManagement";
 import Statistics from "../pages/manager/Statistics";
 import CustomerInfo from "../pages/manager/CustomerInfo";
-import ManagerLayout from "../layouts/manager/ManagerLayout"; 
+import ManagerLayout from "../layouts/manager/ManagerLayout";
 
 function UserRouter() {
   return (
@@ -51,6 +51,20 @@ function AdminRouter() {
   );
 }
 
+function ManagerRouter() {
+  return (
+    <Routes>
+      <Route path="/" element={<ManagerLayout />}>
+        <Route path="products" element={<ProductManagement />} />
+        <Route path="inventory" element={<InventoryManagement />} />
+        <Route path="orders" element={<OrderManagement />} />
+        <Route path="statistics" element={<Statistics />} />
+        <Route path="customers" element={<CustomerInfo />} />
+      </Route>
+    </Routes>
+  );
+}
+
 export function AppRouter() {
   return (
     <Routes>
@@ -58,13 +72,7 @@ export function AppRouter() {
 
       <Route path="/admin" element={<AdminRouter />} />
 
-      <Route path="/manager" element={<ManagerLayout />}>
-        <Route path="products" element={<ProductManagement />} />
-        <Route path="inventory" element={<InventoryManagement />} />
-        <Route path="orders" element={<OrderManagement />} />
-        <Route path="statistics" element={<Statistics />} />
-        <Route path="customers" element={<CustomerInfo />} />
-      </Route>
+      <Route path="/manager/*" element={<ManagerRouter />} />
     </Routes>
   );
 }

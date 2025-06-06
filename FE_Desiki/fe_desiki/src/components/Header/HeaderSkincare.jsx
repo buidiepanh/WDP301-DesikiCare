@@ -18,6 +18,7 @@ import { Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import styles from "./HeaderSkincare.module.css";
 import logo from "../../assets/logo.jpg";
+import toast from "react-hot-toast";
 
 const HeaderSkincare = () => {
   const [userName, setUserName] = useState(null);
@@ -53,16 +54,21 @@ const HeaderSkincare = () => {
   const handleLogout = () => {
     localStorage.removeItem("user");
     window.dispatchEvent(new Event("userChanged"));
+    toast.success("Đăng xuất thành công!");
     navigate("/login");
   };
   const handleWarranty = () => {
-    navigate("/warranty-policy"); // Điều hướng đến trang chính sách bảo hành
-  }
+    navigate("/warranty-policy");
+  };
   return (
     <AppBar
       position="fixed"
       className={styles.appBar}
-      sx={{ backgroundColor: "#ec407a", paddingTop: "8px", paddingBottom: "8px" }}
+      sx={{
+        backgroundColor: "#ec407a",
+        paddingTop: "8px",
+        paddingBottom: "8px",
+      }}
     >
       <Toolbar className={styles.toolbar}>
         {/* Logo và slogan */}
@@ -74,7 +80,9 @@ const HeaderSkincare = () => {
             onClick={() => navigate("/")}
           />
           <Box>
-            <Typography fontSize={14}>Chất lượng thật - Giá trị thật</Typography>
+            <Typography fontSize={14}>
+              Chất lượng thật - Giá trị thật
+            </Typography>
           </Box>
         </Box>
 
@@ -97,7 +105,10 @@ const HeaderSkincare = () => {
         {/* Icon menu */}
         <Box className={styles.iconsMenu}>
           <Box className={styles.iconBox}>
-            <IconButton color="inherit" onClick={userName ? handleLogout : handleLoginClick}>
+            <IconButton
+              color="inherit"
+              onClick={userName ? handleLogout : handleLoginClick}
+            >
               {userName ? <Logout /> : <PersonOutline />}
             </IconButton>
             {userName ? (
@@ -129,14 +140,15 @@ const HeaderSkincare = () => {
                 </Typography>
               </Box>
             )}
-
           </Box>
 
           <Box className={styles.iconBox}>
             <IconButton color="inherit">
               <VerifiedUser />
             </IconButton>
-            <Typography variant="caption" onClick={handleWarranty}>Chính Sách Bảo Hành</Typography>
+            <Typography variant="caption" onClick={handleWarranty}>
+              Chính Sách Bảo Hành
+            </Typography>
           </Box>
 
           <Box className={styles.iconBox}>
