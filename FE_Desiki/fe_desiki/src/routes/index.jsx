@@ -12,7 +12,10 @@ import FlashDealSale from "../pages/user/sale/FlashDealSale";
 import BlogGrid from "../pages/user/blog/BlogGrid";
 import WarrantyPolicy from "../pages/user/policy/WarrantyPolicy";
 
-import Admin from "../pages/admin/admin";
+import UserManagement from "../pages/admin/UserManagement";
+import CustomerPoints from "../pages/admin/CustomerPoints";
+import GameManagement from "../pages/admin/GameManagement";
+import ChatbotContent from "../pages/admin/ChatbotContent";
 
 import ProductManagement from "../pages/manager/ProductManagement";
 import InventoryManagement from "../pages/manager/InventoryManagement";
@@ -20,6 +23,7 @@ import OrderManagement from "../pages/manager/OrderManagement";
 import Statistics from "../pages/manager/Statistics";
 import CustomerInfo from "../pages/manager/CustomerInfo";
 import ManagerLayout from "../layouts/manager/ManagerLayout";
+import AdminLayout from "../layouts/admin/AdminLayout";
 
 function UserRouter() {
   return (
@@ -46,7 +50,12 @@ function UserRouter() {
 function AdminRouter() {
   return (
     <Routes>
-      <Route path="/" element={<Admin />} />
+      <Route path="/" element={<AdminLayout />}>
+        <Route path="users" element={<UserManagement />} />
+        <Route path="points" element={<CustomerPoints />} />
+        <Route path="game" element={<GameManagement />} />
+        <Route path="chatbot" element={<ChatbotContent />} />
+      </Route>
     </Routes>
   );
 }
@@ -69,9 +78,7 @@ export function AppRouter() {
   return (
     <Routes>
       <Route path="/*" element={<UserRouter />} />
-
-      <Route path="/admin" element={<AdminRouter />} />
-
+      <Route path="/admin/*" element={<AdminRouter />} />
       <Route path="/manager/*" element={<ManagerRouter />} />
     </Routes>
   );
