@@ -71,7 +71,7 @@ function Details() {
           </Paragraph>
           <Row align="middle" gutter={16} style={{ marginTop: 16 }}>
             <Col>
-              <Text>Số lượng:</Text>
+              <Text>Còn lại:</Text>
             </Col>
             <Col>
               <InputNumber min={1} defaultValue={100} disabled />

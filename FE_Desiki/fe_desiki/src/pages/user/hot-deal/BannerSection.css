@@ -8,13 +8,23 @@
 
 .banner-item img {
   width: 100%;
+  cursor: pointer;
   border-radius: 8px;
   object-fit: cover;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out, filter 0.4s ease-in-out;
 }
+
+.banner-item img:hover {
+  transform: scale(1.07); 
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  filter: brightness(1.08);
+}
+
 .banner-caption {
   margin-top: 8px;
   font-size: 28px;
   color: #333;
-  text-align: bold  ;
+  font-weight: bold;
+  text-align: center;
 }
