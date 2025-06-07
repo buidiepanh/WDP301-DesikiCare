@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./InventoryManagement.module.css";
+import styles from "./ManagerPages.module.css";
 
 const InventoryManagement = () => {
   const data = [

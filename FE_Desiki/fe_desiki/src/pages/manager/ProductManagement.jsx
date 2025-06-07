@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./ProductManagement.module.css";
+import styles from "./ManagerPages.module.css";
 
 const ProductManagement = () => {
   const data = [
