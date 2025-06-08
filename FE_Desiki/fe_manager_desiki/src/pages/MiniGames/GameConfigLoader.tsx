@@ -4,21 +4,28 @@ import MemoryCatchingConfig from "../../components/games/MemoryCatching";
 import ScratchCardConfig from "../../components/games/ScratchCard";
 import MissingWordsConfig from "../../components/games/MissingWord";
 
-// Import các game khác tương tự...
-
 type ConfigJson = {
   [key: string]: any;
 };
 
-type Props = {
-  gameTypeId: number;
-  configJson: ConfigJson | null;
-  setConfigJson: React.Dispatch<React.SetStateAction<ConfigJson | null>>;
-};
+interface GameTypeImageBase64 {
+  id: number;
+  imageBase64: string;
+}
 
-const GameConfigLoader: React.FC<Props> = ({
+interface GameConfigLoaderProps {
+  gameTypeId: number;
+  configJson: ConfigJson;
+  setConfigJson: React.Dispatch<React.SetStateAction<ConfigJson | null>>;
+  gameTypeImageBase64s: GameTypeImageBase64[];
+  handleUploadImages: (images: GameTypeImageBase64[]) => void;
+}
+
+const GameConfigLoader: React.FC<GameConfigLoaderProps> = ({
   gameTypeId,
   configJson,
+  gameTypeImageBase64s,
+  handleUploadImages,
   setConfigJson,
 }) => {
   switch (gameTypeId) {
@@ -27,6 +34,8 @@ const GameConfigLoader: React.FC<Props> = ({
         <SpinWheelConfig
           configJson={configJson}
           setConfigJson={setConfigJson}
+          gameTypeImageBase64s={gameTypeImageBase64s}
+          handleUploadImages={handleUploadImages}
         />
       );
     case 2:
@@ -34,6 +43,8 @@ const GameConfigLoader: React.FC<Props> = ({
         <MemoryCatchingConfig
           configJson={configJson}
           setConfigJson={setConfigJson}
+          gameTypeImageBase64s={gameTypeImageBase64s}
+          handleUploadImages={handleUploadImages}
         />
       );
     case 3:
@@ -41,6 +52,8 @@ const GameConfigLoader: React.FC<Props> = ({
         <ScratchCardConfig
           configJson={configJson}
           setConfigJson={setConfigJson}
+          gameTypeImageBase64s={gameTypeImageBase64s}
+          handleUploadImages={handleUploadImages}
         />
       );
     case 4:
@@ -48,6 +61,8 @@ const GameConfigLoader: React.FC<Props> = ({
         <MissingWordsConfig
           configJson={configJson}
           setConfigJson={setConfigJson}
+          gameTypeImageBase64s={gameTypeImageBase64s}
+          handleUploadImages={handleUploadImages}
         />
       );
     default:

@@ -1,6 +1,7 @@
 import { Checkbox, TextField, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { SpinWheelUI } from "./SpinWheelUI";
+import type { GameConfigJson } from "../../../data/types";
 
 interface Segment {
   value: number;
@@ -9,40 +10,47 @@ interface Segment {
   text: string;
 }
 
-type ConfigJson = {
-  sectors: Segment[];
-  maxSpin: number;
-  isDuplicate: boolean;
+type GameTypeImageBase64 = {
+  id: number;
+  imageBase64: string;
 };
 
 type Props = {
-  configJson: ConfigJson | null;
-  setConfigJson: React.Dispatch<React.SetStateAction<ConfigJson | null>>;
+  configJson: GameConfigJson | null;
+  setConfigJson: React.Dispatch<React.SetStateAction<GameConfigJson | null>>;
+  gameTypeImageBase64s: GameTypeImageBase64[];
+  handleUploadImages: (images: GameTypeImageBase64[]) => void;
 };
 
-const SpinWheelConfig: React.FC<Props> = ({ configJson, setConfigJson }) => {
-  // States riêng để điều khiển UI
-  const [numOfSectors, setNumOfSectors] = useState(0);
-  const [isDuplicate, setIsDuplicate] = useState(false);
-  const [maxSpin, setMaxSpin] = useState(0);
-
-  // Test UI state
+const SpinWheelConfig: React.FC<Props> = ({
+  configJson,
+  setConfigJson,
+  gameTypeImageBase64s,
+  handleUploadImages,
+}) => {
   const [showUI, setShowUI] = useState(false);
 
-  // Khi configJson thay đổi thì đồng bộ lên state UI
   useEffect(() => {
-    if (configJson) {
-      setNumOfSectors(configJson.sectors?.length || 0);
-      setMaxSpin(configJson.maxSpin || 0);
-      setIsDuplicate(configJson.isDuplicate || false);
-    }
-  }, [configJson]);
+    const isEmptyObject =
+      configJson &&
+      Object.keys(configJson).length === 0 &&
+      configJson.constructor === Object;
 
-  // Cập nhật số lượng sectors, tự động tạo mảng sectors mới nếu tăng
+    if (!configJson || isEmptyObject) {
+      setConfigJson({
+        numOfSectors: 0,
+        maxSpin: 0,
+        isDuplicate: false,
+        sectors: [],
+      });
+    } else {
+      console.log("Config Json:", configJson);
+    }
+  }, [configJson, setConfigJson]);
+
   const handleNumOfSectorsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     if (val > 12) return;
-    setNumOfSectors(val);
 
     const oldSectors = configJson?.sectors || [];
     let newSectors: Segment[] = [];
@@ -63,11 +71,11 @@ const SpinWheelConfig: React.FC<Props> = ({ configJson, setConfigJson }) => {
 
     setConfigJson({
       ...configJson,
+      numOfSectors: val,
       sectors: newSectors,
     });
   };
 
-  // Cập nhật thông tin sector tại vị trí index
   const handleSectorChange = (
     index: number,
     key: keyof Segment,
@@ -85,78 +93,69 @@ const SpinWheelConfig: React.FC<Props> = ({ configJson, setConfigJson }) => {
     });
   };
 
-  // Cập nhật maxSpin và isDuplicate
   const handleMaxSpinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMaxSpin(Number(e.target.value));
+    const max = Number(e.target.value);
     setConfigJson({
       ...configJson,
-      maxSpin: Number(e.target.value),
+      maxSpin: max,
     });
   };
 
   const handleIsDuplicateChange = () => {
-    setIsDuplicate(!isDuplicate);
+    const newVal = !configJson?.isDuplicate;
     setConfigJson({
       ...configJson,
-      isDuplicate: !isDuplicate,
+      isDuplicate: newVal,
     });
   };
 
   return (
     <div className="bg-white p-4 flex flex-col">
-      {/* HEADER */}
       <p className="text-xl font-bold text-cyan-600">Config Spin Wheel Game</p>
 
-      {/* CONFIG AREA */}
       <div className="my-5 grid grid-cols-2">
-        {/* INPUT AREA */}
         <div className="w-full flex flex-col">
-          {/* Number Of Sectors */}
           <div className="mt-3 flex flex-col mr-5">
             <p className="mb-3 font-semibold text-gray-700">
               Số lượng ô của vòng quay (max 12 ô)
             </p>
             <TextField
-              value={numOfSectors}
+              value={configJson?.numOfSectors || 0}
               type="number"
               onChange={handleNumOfSectorsChange}
             />
           </div>
 
-          {/* Number Of Spin Turn */}
           <div className="mt-3 flex flex-col mr-5">
             <p className="mb-3 font-semibold text-gray-700">
               Số lượt quay tối đa
             </p>
             <TextField
-              value={maxSpin}
+              value={configJson?.maxSpin || 0}
               type="number"
               onChange={handleMaxSpinChange}
             />
           </div>
 
-          {/* Is Deleted After Reward */}
           <div className="mt-3 flex items-center mr-5">
             <p className="font-semibold text-gray-700">
               Giữ giải thưởng sau khi quay trúng ?
             </p>
             <Checkbox
-              checked={isDuplicate}
+              checked={configJson?.isDuplicate || false}
               onChange={handleIsDuplicateChange}
             />
           </div>
 
-          {/* Divider */}
           <div className="w-full flex items-center justify-center my-5">
             <div className="w-11/12 h-0.5 bg-gray-400"></div>
           </div>
 
-          {/* Sectors's Input */}
           <div className="mt-3 flex flex-col mr-5 h-[450px] overflow-y-scroll p-2">
-            {configJson?.sectors?.map((sector, index) => (
+            {configJson?.sectors?.map((sector: Segment, index: number) => (
               <div
                 key={index}
-                className="flex flex-col my-3 bg-gray-100 rounded-sm "
+                className="flex flex-col my-3 bg-gray-100 rounded-sm"
               >
                 <div className="bg-gray-800 rounded-t-sm flex items-center pl-3 mb-5">
                   <p className="font-bold text-white">Ô #{index + 1}</p>
@@ -232,24 +231,24 @@ const SpinWheelConfig: React.FC<Props> = ({ configJson, setConfigJson }) => {
             ))}
           </div>
 
-          {/* BUTTON TEST UI */}
           <Button
             variant="contained"
             color="success"
             onClick={() => setShowUI(true)}
-            disabled={!configJson || configJson.sectors.length === 0}
+            disabled={!configJson || configJson?.sectors?.length === 0}
           >
             Test UI
           </Button>
         </div>
 
-        {/* DEMO UI */}
         <div>
           {showUI && configJson?.sectors?.length > 0 && (
             <SpinWheelUI
-              sectors={configJson.sectors.map(({ value, ...rest }) => rest)}
-              isDuplicate={configJson.isDuplicate || false}
-              maxSpin={configJson.maxSpin || 0}
+              sectors={configJson?.sectors.map(
+                ({ value, ...rest }: Segment) => rest
+              )}
+              isDuplicate={configJson?.isDuplicate || false}
+              maxSpin={configJson?.maxSpin || 0}
             />
           )}
         </div>

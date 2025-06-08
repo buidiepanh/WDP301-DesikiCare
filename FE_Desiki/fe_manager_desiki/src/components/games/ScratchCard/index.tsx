@@ -1,28 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { Button, TextField } from "@mui/material";
 import { ScratchCardUI } from "./ScratchCardUI";
+import type { GameConfigJson } from "../../../data/types";
 
-interface CardConfig {
+interface Card {
+  id: number;
   label: string;
-  img: string;
+  imgBase64: string;
   point: number;
   text: string;
 }
 
-type ConfigJson = {
-  cards: CardConfig[];
-  maxScratch: number;
-  backCoverImg: string;
+type GameTypeImageBase64 = {
+  id: number;
+  imageBase64: string;
 };
 
 type Props = {
-  configJson: ConfigJson | null;
-  setConfigJson: React.Dispatch<React.SetStateAction<ConfigJson | null>>;
+  configJson: GameConfigJson | null;
+  setConfigJson: React.Dispatch<React.SetStateAction<GameConfigJson | null>>;
+  gameTypeImageBase64s: GameTypeImageBase64[];
+  handleUploadImages: (images: GameTypeImageBase64[]) => void;
 };
 
-const ScratchCardConfig: React.FC<Props> = ({ configJson, setConfigJson }) => {
+const ScratchCardConfig: React.FC<Props> = ({
+  configJson,
+  setConfigJson,
+  gameTypeImageBase64s,
+  handleUploadImages,
+}) => {
   const [numCards, setNumCards] = useState(0);
-  const [cards, setCards] = useState<CardConfig[]>([]);
+  const [cards, setCards] = useState<Card[]>([]);
   const [maxScratch, setMaxScratch] = useState(0);
   const [backCoverImg, setBackCoverImg] = useState("");
   const [showUI, setShowUI] = useState(false);
@@ -34,37 +42,64 @@ const ScratchCardConfig: React.FC<Props> = ({ configJson, setConfigJson }) => {
       maxScratch,
       backCoverImg,
     });
-  }, [cards, maxScratch, backCoverImg, setConfigJson]);
+  }, [cards, maxScratch, backCoverImg]);
 
-  // Khi số thẻ thay đổi, khởi tạo hoặc cắt bớt cards
+  // Khi số thẻ thay đổi
   const handleNumCardsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     if (val < 0) return;
     setNumCards(val);
 
-    if (val > cards.length) {
-      setCards((old) => [
-        ...old,
-        ...Array(val - old.length).fill({ label: "", img: "", point: 0 }),
-      ]);
-    } else {
-      setCards((old) => old.slice(0, val));
-    }
+    const updated = Array.from({ length: val }, (_, i) => ({
+      id: i + 1,
+      label: cards[i]?.label || "",
+      imgBase64: cards[i]?.imgBase64 || "",
+      point: cards[i]?.point || 0,
+      text: cards[i]?.text || "#000000",
+    }));
+    setCards(updated);
   };
 
   const handleCardChange = (
     index: number,
-    key: keyof CardConfig,
+    key: keyof Card,
     value: string | number
   ) => {
-    setCards((old) => {
-      const newCards = [...old];
-      newCards[index] = {
-        ...newCards[index],
-        [key]: value,
+    const updated = [...cards];
+    updated[index] = {
+      ...updated[index],
+      [key]: value,
+    };
+    setCards(updated);
+  };
+
+  const handleUploadImage = (file: File, index: number) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+
+      const updated = [...cards];
+      updated[index] = {
+        ...updated[index],
+        imgBase64: base64,
       };
-      return newCards;
-    });
+      setCards(updated);
+
+      const newImages: GameTypeImageBase64[] = [
+        ...gameTypeImageBase64s.filter((img) => img.id !== updated[index].id),
+        { id: updated[index].id, imageBase64: base64 },
+      ];
+      handleUploadImages(newImages);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleUploadBackCover = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setBackCoverImg(reader.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -75,49 +110,42 @@ const ScratchCardConfig: React.FC<Props> = ({ configJson, setConfigJson }) => {
 
       <div className="my-5 grid grid-cols-2 gap-8">
         <div className="flex flex-col">
-          <div>
-            <p className="mb-3 font-semibold text-gray-700">Số lượng thẻ</p>
-            <TextField
-              value={numCards}
-              type="number"
-              onChange={handleNumCardsChange}
-              inputProps={{ min: 0 }}
-            />
-          </div>
+          <TextField
+            label="Số lượng thẻ"
+            value={numCards}
+            type="number"
+            onChange={handleNumCardsChange}
+            inputProps={{ min: 0 }}
+            className="mb-4"
+          />
 
-          <div className="mt-4">
-            <p className="mb-3 font-semibold text-gray-700">
-              Ảnh nền chung của các thẻ
-            </p>
-            <TextField
-              value={backCoverImg}
-              onChange={(e) => setBackCoverImg(e.target.value)}
-              placeholder="URL ảnh nền chung"
-            />
-          </div>
+          <p className="mb-2 font-semibold text-gray-700">Ảnh nền chung</p>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) =>
+              e.target.files && handleUploadBackCover(e.target.files[0])
+            }
+            className="mb-4"
+          />
 
-          <div className="mt-4">
-            <p className="mb-3 font-semibold text-gray-700">
-              Số lượt cào tối đa
-            </p>
-            <TextField
-              value={maxScratch}
-              type="number"
-              onChange={(e) => setMaxScratch(Number(e.target.value))}
-              inputProps={{ min: 0 }}
-            />
-          </div>
+          <TextField
+            label="Số lượt cào tối đa"
+            value={maxScratch}
+            type="number"
+            onChange={(e) => setMaxScratch(Number(e.target.value))}
+            inputProps={{ min: 0 }}
+            className="mb-4"
+          />
 
-          {/* Divider */}
           <div className="w-full flex items-center justify-center my-5">
             <div className="w-11/12 h-0.5 bg-gray-400"></div>
           </div>
 
-          {/* Input chi tiết từng thẻ */}
           <div className="max-h-[450px] overflow-y-auto">
             {cards.map((card, index) => (
               <div
-                key={index}
+                key={card.id}
                 className="mb-5 gap-3 p-3 bg-gray-100 rounded-md border border-gray-300"
               >
                 <p className="font-bold mb-2">Thẻ #{index + 1}</p>
@@ -130,15 +158,22 @@ const ScratchCardConfig: React.FC<Props> = ({ configJson, setConfigJson }) => {
                   }
                   className="mb-3"
                 />
-                <TextField
-                  label="URL ảnh nền riêng"
-                  fullWidth
-                  value={card.img}
+                <input
+                  type="file"
+                  accept="image/*"
                   onChange={(e) =>
-                    handleCardChange(index, "img", e.target.value)
+                    e.target.files &&
+                    handleUploadImage(e.target.files[0], index)
                   }
                   className="mb-3"
                 />
+                {card.imgBase64 && (
+                  <img
+                    src={card.imgBase64}
+                    alt={`card-${index}`}
+                    className="w-24 h-24 object-cover mb-3 rounded"
+                  />
+                )}
                 <TextField
                   label="Điểm thưởng"
                   fullWidth
@@ -147,6 +182,7 @@ const ScratchCardConfig: React.FC<Props> = ({ configJson, setConfigJson }) => {
                   onChange={(e) =>
                     handleCardChange(index, "point", Number(e.target.value))
                   }
+                  className="mb-3"
                 />
                 <TextField
                   label="Màu chữ"
@@ -164,16 +200,13 @@ const ScratchCardConfig: React.FC<Props> = ({ configJson, setConfigJson }) => {
           <Button
             variant="contained"
             color="success"
-            disabled={
-              cards.length === 0 || cards.some((c) => !c.img || !c.label)
-            }
+            disabled={cards.length === 0 || cards.some((c) => !c.imgBase64)}
             onClick={() => setShowUI(true)}
           >
             Test UI
           </Button>
         </div>
 
-        {/* UI Demo */}
         <div className="w-full flex justify-center items-center">
           {showUI && configJson && (
             <ScratchCardUI

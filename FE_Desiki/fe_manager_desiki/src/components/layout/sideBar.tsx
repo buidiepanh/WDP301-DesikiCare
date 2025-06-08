@@ -5,6 +5,7 @@ import {
   ListItemIcon,
   ListItemText,
   Drawer,
+  Button,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -14,6 +15,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import StarIcon from "@mui/icons-material/Star";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import ChatIcon from "@mui/icons-material/Chat";
+import InventoryIcon from "@mui/icons-material/Inventory";
 
 type NavItem = {
   label: string;
@@ -29,6 +31,7 @@ const adminNavItems: NavItem[] = [
   },
   { label: "Products", path: "/Products", icon: <ShoppingCartIcon /> },
   { label: "Orders", path: "/Orders", icon: <ShoppingCartIcon /> },
+  { label: "Shipments", path: "/Shipments", icon: <InventoryIcon /> },
   {
     label: "Account Management",
     path: "/AccountManagement/AllRoleManagement",
@@ -51,15 +54,11 @@ const managerNavItems: NavItem[] = [
   },
   { label: "Products", path: "/Products", icon: <ShoppingCartIcon /> },
   { label: "Orders", path: "/Orders", icon: <ShoppingCartIcon /> },
-  {
-    label: "Customer Management",
-    path: "/AccountManagement/CustomerManagement",
-    icon: <PeopleIcon />,
-  },
+  { label: "Shipments", path: "/Shipments", icon: <InventoryIcon /> },
 ];
 
 type Props = {
-  role: "admin" | "manager";
+  role: 1 | 2;
   drawerWidth?: number;
 };
 
@@ -67,7 +66,12 @@ const SideBar: React.FC<Props> = ({ role, drawerWidth = 240 }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const navItems = role === "admin" ? adminNavItems : managerNavItems;
+  const navItems = role === 1 ? managerNavItems : adminNavItems;
+
+  const handleLogOut = () => {
+    localStorage.removeItem("accessToken");
+    navigate("/Auth/login");
+  };
 
   return (
     <Drawer
@@ -77,8 +81,9 @@ const SideBar: React.FC<Props> = ({ role, drawerWidth = 240 }) => {
         flexShrink: 0,
         "& .MuiDrawer-paper": { width: drawerWidth, boxSizing: "border-box" },
       }}
+      className="relative p-5"
     >
-      <List>
+      <List className="h-[850px]">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
 
@@ -99,6 +104,14 @@ const SideBar: React.FC<Props> = ({ role, drawerWidth = 240 }) => {
           );
         })}
       </List>
+
+      <Button
+        variant="contained"
+        className="absolute bottom-0"
+        onClick={() => handleLogOut()}
+      >
+        Logout
+      </Button>
     </Drawer>
   );
 };

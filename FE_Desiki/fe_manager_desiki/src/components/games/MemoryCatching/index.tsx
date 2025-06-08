@@ -1,27 +1,30 @@
 import { useState, useEffect } from "react";
-import { Button, TextField, Checkbox } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { MemoryCatchingUI } from "./MemoryCatchingUI";
+import type { GameConfigJson } from "../../../data/types";
 
 interface Pair {
-  img_url: string;
+  id: number;
+  imageBase64: string;
 }
 
-type ConfigJson = {
-  pairs: Pair[];
-  numOfPairs: number;
-  originalPoint: number;
-  minusPoint: number;
-  backCoverImg: string;
+type GameTypeImageBase64 = {
+  id: number;
+  imageBase64: string;
 };
 
 type Props = {
-  configJson: ConfigJson | null;
-  setConfigJson: React.Dispatch<React.SetStateAction<ConfigJson | null>>;
+  configJson: GameConfigJson | null;
+  setConfigJson: React.Dispatch<React.SetStateAction<GameConfigJson | null>>;
+  gameTypeImageBase64s: GameTypeImageBase64[];
+  handleUploadImages: (images: GameTypeImageBase64[]) => void;
 };
 
 const MemoryCatchingConfig: React.FC<Props> = ({
   configJson,
   setConfigJson,
+  gameTypeImageBase64s,
+  handleUploadImages,
 }) => {
   const [numOfPairs, setNumOfPairs] = useState(0);
   const [pairs, setPairs] = useState<Pair[]>([]);
@@ -30,7 +33,7 @@ const MemoryCatchingConfig: React.FC<Props> = ({
   const [backCoverImg, setBackCoverImg] = useState("");
   const [showUI, setShowUI] = useState(false);
 
-  // Đồng bộ configJson khi state thay đổi
+  // Đồng bộ configJson
   useEffect(() => {
     setConfigJson({
       pairs,
@@ -39,38 +42,44 @@ const MemoryCatchingConfig: React.FC<Props> = ({
       minusPoint,
       backCoverImg,
     });
-  }, [
-    pairs,
-    numOfPairs,
-    originalPoint,
-    minusPoint,
-    backCoverImg,
-    setConfigJson,
-  ]);
+  }, [pairs, numOfPairs, originalPoint, minusPoint, backCoverImg]);
 
-  // Khi số cặp thay đổi
+  // Tạo hoặc cắt pairs theo số lượng
   const handleNumOfPairsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     if (val < 0) return;
     setNumOfPairs(val);
-
-    // Tạo hoặc cắt pairs cho phù hợp
-    if (val > pairs.length) {
-      setPairs((old) => [
-        ...old,
-        ...Array(val - old.length).fill({ img_url: "" }),
-      ]);
-    } else {
-      setPairs((old) => old.slice(0, val));
-    }
+    const updated = Array.from({ length: val }, (_, i) => ({
+      id: i + 1,
+      imageBase64: pairs[i]?.imageBase64 || "",
+    }));
+    setPairs(updated);
   };
 
-  const handlePairImgChange = (index: number, value: string) => {
-    setPairs((old) => {
-      const newPairs = [...old];
-      newPairs[index] = { img_url: value };
-      return newPairs;
-    });
+  // Xử lý khi upload ảnh (chuyển base64)
+  const handleUploadImage = (file: File, index: number) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+
+      // Cập nhật pair (với id)
+      const updatedPairs = [...pairs];
+      updatedPairs[index] = { id: index + 1, imageBase64: base64 };
+      setPairs(updatedPairs);
+
+      // Cập nhật gameTypeImageBase64s dùng callback
+      handleUploadImages(updatedPairs);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleUploadBackCoverImg = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setBackCoverImg(base64);
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -81,96 +90,76 @@ const MemoryCatchingConfig: React.FC<Props> = ({
 
       <div className="my-5 grid grid-cols-2">
         <div className="w-full flex flex-col">
-          {/* Number Of Pairs */}
-          <div className="mt-3 flex flex-col mr-5">
-            <p className="mb-3 font-semibold text-gray-700">
-              Số lượng cặp ô của trò chơi
-            </p>
-            <TextField
-              value={numOfPairs}
-              type="number"
-              onChange={handleNumOfPairsChange}
-              inputProps={{ min: 0 }}
-            />
-          </div>
+          <TextField
+            label="Số lượng cặp ô"
+            value={numOfPairs}
+            type="number"
+            onChange={handleNumOfPairsChange}
+            inputProps={{ min: 0 }}
+            className="mb-4"
+          />
+          <TextField
+            label="Điểm gốc"
+            value={originalPoint}
+            type="number"
+            onChange={(e) => setOriginalPoint(Number(e.target.value))}
+            className="mb-4"
+          />
+          <TextField
+            label="Điểm trừ"
+            value={minusPoint}
+            type="number"
+            onChange={(e) => setMinusPoint(Number(e.target.value))}
+            className="mb-4"
+          />
+          <p className="font-bold mb-2">Ảnh nền</p>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) =>
+              e.target.files && handleUploadBackCoverImg(e.target.files[0])
+            }
+          />
 
-          {/* Original Point */}
-          <div className="mt-3 flex flex-col mr-5">
-            <p className="mb-3 font-semibold text-gray-700">Điểm gốc</p>
-            <TextField
-              value={originalPoint}
-              type="number"
-              onChange={(e) => setOriginalPoint(Number(e.target.value))}
-              inputProps={{ min: 0 }}
-            />
-          </div>
-
-          {/* Minus Point */}
-          <div className="mt-3 flex flex-col mr-5">
-            <p className="mb-3 font-semibold text-gray-700">Điểm trừ</p>
-            <TextField
-              value={minusPoint}
-              type="number"
-              onChange={(e) => setMinusPoint(Number(e.target.value))}
-              inputProps={{ min: 0 }}
-            />
-          </div>
-
-          {/* Back Cover Image */}
-          <div className="mt-3 flex flex-col mr-5">
-            <p className="mb-3 font-semibold text-gray-700">Ảnh nền của ô</p>
-            <TextField
-              value={backCoverImg}
-              onChange={(e) => setBackCoverImg(e.target.value)}
-            />
-          </div>
-
-          {/* Divider */}
-          <div className="w-full flex items-center justify-center my-5">
+          <div className="w-full flex items-center justify-center my-4">
             <div className="w-11/12 h-0.5 bg-gray-400"></div>
           </div>
 
-          {/* Pairs's Input */}
-          <div className="mt-3 flex flex-col mr-5 h-[450px] overflow-y-scroll p-2">
+          <div className="h-[450px] overflow-y-scroll">
             {pairs.map((pair, index) => (
-              <div
-                key={index}
-                className="flex flex-col my-3 bg-gray-100 rounded-sm"
-              >
-                <div className="bg-gray-800 rounded-t-sm flex items-center pl-3 mb-5">
-                  <p className="font-bold text-white">Ô #{index + 1}</p>
-                </div>
-                <div className="grid grid-cols-4 gap-5 mb-2 px-2">
-                  <div className="col-span-1 flex items-center">
-                    <p>Ảnh của cặp ô</p>
-                  </div>
-                  <div className="col-span-3">
-                    <TextField
-                      fullWidth
-                      value={pair.img_url}
-                      onChange={(e) =>
-                        handlePairImgChange(index, e.target.value)
-                      }
-                    />
-                  </div>
-                </div>
+              <div key={pair.id} className="bg-gray-100 p-3 rounded mb-4">
+                <p className="font-bold mb-2">Ô #{index + 1}</p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    e.target.files &&
+                    handleUploadImage(e.target.files[0], index)
+                  }
+                />
+                {pair.imageBase64 && (
+                  <img
+                    src={pair.imageBase64}
+                    alt={`pair-${index}`}
+                    className="mt-2 w-24 h-24 object-cover rounded"
+                  />
+                )}
               </div>
             ))}
           </div>
 
-          {/* Button test UI */}
           <Button
             variant="contained"
             color="success"
+            className="mt-4"
             onClick={() => setShowUI(true)}
-            disabled={pairs.length === 0 || pairs.some((p) => !p.img_url)}
+            disabled={pairs.length === 0 || pairs.some((p) => !p.imageBase64)}
           >
             Test UI
           </Button>
         </div>
 
-        {/* Demo UI */}
-        <div className="w-full flex flex-col items-center">
+        <div className="w-full flex justify-center items-center">
           {showUI && configJson && (
             <MemoryCatchingUI
               numOfPairs={configJson.numOfPairs}

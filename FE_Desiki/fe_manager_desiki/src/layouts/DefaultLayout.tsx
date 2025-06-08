@@ -2,15 +2,11 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import SideBar from "../components/layout/sideBar";
-
-const getUserRole = (): "admin" | "manager" => {
-  // TODO: Lấy role thực tế từ context hoặc auth
-  return "admin"; // giả định admin cho dev
-};
+import { getRole } from "../utils/auth";
 
 const DefaultLayout: React.FC = () => {
-  const role = getUserRole();
-
+  const role = getRole();
+  
   return (
     <div className="w-full flex">
       <SideBar role={role} />

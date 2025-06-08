@@ -3,7 +3,8 @@ import "./styles.css";
 import { Button } from "@mui/material";
 
 interface Pair {
-  img_url: string;
+  id: number;
+  imageBase64: string;
 }
 
 type Props = {
@@ -17,7 +18,7 @@ type Props = {
 type Card = {
   id: number;
   pairId: number;
-  img_url: string;
+  imageBase64: string;
   flipped: boolean;
   matched: boolean;
 };
@@ -60,14 +61,14 @@ export const MemoryCatchingUI: React.FC<Props> = ({
       allCards.push({
         id: index * 2,
         pairId: index,
-        img_url: pair.img_url,
+        imageBase64: pair.imageBase64,
         flipped: false,
         matched: false,
       });
       allCards.push({
         id: index * 2 + 1,
         pairId: index,
-        img_url: pair.img_url,
+        imageBase64: pair.imageBase64,
         flipped: false,
         matched: false,
       });
@@ -150,7 +151,7 @@ export const MemoryCatchingUI: React.FC<Props> = ({
                 card.matched ? "border-yellow-400" : "border-transparent"
               }`}
             >
-              <img className="rounded-sm" src={card.img_url} alt="front" />
+              <img className="rounded-sm" src={card.imageBase64} alt="front" />
             </div>
             <div className="back rounded-md">
               <img className="rounded-sm" src={backCoverImg} alt="back" />

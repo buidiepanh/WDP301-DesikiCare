@@ -4,7 +4,7 @@ import { Button } from "@mui/material";
 import BackCoverImg from "../../../assets/TestScratch/backCoverImg.jpg";
 interface CardConfig {
   label: string;
-  img: string;
+  imgBase64: string;
   point: number;
   text: string;
 }
@@ -71,7 +71,7 @@ export const ScratchCardUI: React.FC<Props> = ({
           >
             <div className="w-full h-full flex flex-col items-center justify-center bg-white relative">
               <img
-                src={card.img}
+                src={card.imgBase64}
                 alt={card.label}
                 className="w-full h-full object-cover"
               />
