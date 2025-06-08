@@ -36,6 +36,19 @@ const router = createBrowserRouter([
         children: [
           { path: "/", element: <Navigate to="/RevenueDashboard" replace /> },
           { path: "/RevenueDashboard", element: <RevenueDashboard /> },
+        ],
+      },
+    ],
+  },
+
+  {
+    element: <ProtectedRoute allowedRoles={[1]} />, // only manager
+    children: [
+      {
+        element: <DefaultLayout />,
+        children: [
+          { path: "/Shipments", element: <Shipment /> },
+          { path: "/Shipments/create", element: <CreateShipment /> },
           { path: "/Products", element: <Products /> },
           { path: "/Products/create", element: <CreateProduct /> },
           { path: "/Orders", element: <Orders /> },
@@ -45,7 +58,7 @@ const router = createBrowserRouter([
   },
 
   {
-    element: <ProtectedRoute allowedRoles={[1]} />, // only admin
+    element: <ProtectedRoute allowedRoles={[2]} />, // only admin
     children: [
       {
         element: <DefaultLayout />,
@@ -54,8 +67,7 @@ const router = createBrowserRouter([
             path: "/AccountManagement/AllRoleManagement",
             element: <AllRoleManagement />,
           },
-          { path: "/Shipments", element: <Shipment /> },
-          { path: "/Shipments/create", element: <CreateShipment /> },
+
           {
             path: "/AccountManagement/CustomerManagement",
             element: <CustomerManagement />,

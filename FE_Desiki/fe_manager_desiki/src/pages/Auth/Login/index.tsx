@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, TextField } from "@mui/material";
 import Swal from "sweetalert2";
 import { jwtDecode } from "jwt-decode";
-import { callAPI } from "../../../api/axiosInstace";
+import { callAPIUnAuth } from "../../../api/axiosInstace";
 
 interface DecodedToken {
   user: {
@@ -27,7 +27,7 @@ const Login = () => {
   // FUNCTIONS
   const login = async () => {
     try {
-      const response = await callAPI({
+      const response = await callAPIUnAuth({
         method: "POST",
         url: "/api/Account/login",
         data: {
@@ -38,26 +38,30 @@ const Login = () => {
         },
       });
 
-      const token = response?.token;
-      if (token) {
-        const decoded: DecodedToken = jwtDecode(token);
+      if (response.status === 201) {
+        const token = response?.data.token;
+        if (token) {
+          const decoded: DecodedToken = jwtDecode(token);
 
-        const roleId = decoded?.role?._id;
-        console.log("Decoded token:", decoded);
-        console.log("ID:", roleId);
-        if (roleId === 1 || roleId === 2) {
-          localStorage.setItem("accessToken", token);
-          Swal.fire("Thành công", "Đăng nhập thành công!", "success");
-          navigate("/");
+          const roleId = decoded?.role?._id;
+          console.log("Decoded token:", decoded);
+          console.log("ID:", roleId);
+          if (roleId === 1 || roleId === 2) {
+            localStorage.setItem("accessToken", token);
+            Swal.fire("Thành công", "Đăng nhập thành công!", "success");
+            navigate("/");
+          } else {
+            Swal.fire(
+              "Không đủ quyền",
+              "Tài khoản của bạn không có quyền truy cập.",
+              "error"
+            );
+          }
         } else {
-          Swal.fire(
-            "Không đủ quyền",
-            "Tài khoản của bạn không có quyền truy cập.",
-            "error"
-          );
+          Swal.fire("Lỗi", "Không nhận được token từ server", "error");
         }
       } else {
-        Swal.fire("Lỗi", "Không nhận được token từ server", "error");
+        Swal.fire("Lỗi", "Không đăng nhập được", "error");
       }
     } catch (error) {
       console.log("Error while login:", error);

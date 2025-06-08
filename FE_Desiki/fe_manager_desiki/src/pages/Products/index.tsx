@@ -17,7 +17,7 @@ import { ProductEditPopup } from "./ProductEditPopup";
 import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
 import type { ProductAPI, SkinStatus, SkinType } from "../../data/types";
-import { callAPI } from "../../api/axiosInstace";
+import { callAPIManager } from "../../api/axiosInstace";
 import { token } from "../../api/token";
 
 const data = [
@@ -357,19 +357,18 @@ const Products = () => {
   const fetchAPI = async () => {
     setIsLoading(true);
     try {
-      const data = await callAPI({
+      const response = await callAPIManager({
         method: "GET",
         url: "/api/Product/products",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "ngrok-skip-browser-warning": "69420",
-        },
       });
-      setProducts(data.products);
+      if (response && response.status === 200) {
+        setProducts(response.data.products);
+        setIsLoading(false);
+      } else {
+        Swal.fire("Lỗi!", "Không thể fetching Products", "error");
+      }
     } catch (error) {
       console.error("Loi fetch:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -514,7 +513,6 @@ const Products = () => {
   };
 
   const handleEdit = (id: string) => {
-    // Call API Right Here To Get Product Details
     const product = products.filter((p) => p.product._id === id);
     setSelectedProduct(product[0]);
     setShowEditPopup(true);
@@ -530,16 +528,20 @@ const Products = () => {
     if (!productId) return;
 
     try {
-      const response = await callAPI({
+      const response = await callAPIManager({
         method: "PUT",
         url: `/api/Product/products/${productId}`,
         data: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "ngrok-skip-browser-warning": "69420",
-        },
       });
-      console.log("✅ Cập nhật thành công:", formData);
+      if (response && response.status === 200) {
+        Swal.fire(
+          "Cập nhật thành công",
+          `Đã cập nhật sản phẩm với id: ${productId}`,
+          "success"
+        );
+      } else {
+        Swal.fire("Lỗi", "Không thể cập nhật sản phẩm", "error");
+      }
       onCloseEditModal();
       fetchAPI(); // Reload danh sách sản phẩm
     } catch (err) {
@@ -568,11 +570,6 @@ const Products = () => {
         } else {
           await confirmToggleActivate(id, true);
         }
-        Swal.fire({
-          title: "Deactivated!",
-          text: "Your product has been deactivated.",
-          icon: "success",
-        });
         fetchAPI();
       }
     });
@@ -581,14 +578,14 @@ const Products = () => {
   const confirmToggleActivate = async (id: string, boolean: boolean) => {
     // Call API to deactivate the Product
     try {
-      const response = await callAPI({
+      const response = await callAPIManager({
         method: "PUT",
         url: `/api/Product/products/${id}/deactivate/${boolean}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "ngrok-skip-browser-warning": "69420",
-        },
       });
+      if (response && response.status === 200) {
+        const check = boolean ? "Vô hiệu hóa" : "Kích hoạt";
+        Swal.fire("Thành công", `Đã ${check} sản phẩm thành công`, "success");
+      }
     } catch (error) {}
   };
 

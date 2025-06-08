@@ -55,7 +55,6 @@ export const productsData = [
     shipmentProducts: [],
     productSkinTypes: [
       { _id: 2, name: "Da Dầu" },
-      { _id: 5, name: "Lỗ Chân Lông To" },
     ],
     productSkinStatuses: [
       { _id: 1, name: "Mụn" },

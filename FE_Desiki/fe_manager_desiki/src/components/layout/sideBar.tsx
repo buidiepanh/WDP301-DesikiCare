@@ -29,9 +29,9 @@ const adminNavItems: NavItem[] = [
     path: "/RevenueDashboard",
     icon: <DashboardIcon />,
   },
-  { label: "Products", path: "/Products", icon: <ShoppingCartIcon /> },
-  { label: "Orders", path: "/Orders", icon: <ShoppingCartIcon /> },
-  { label: "Shipments", path: "/Shipments", icon: <InventoryIcon /> },
+  // { label: "Products", path: "/Products", icon: <ShoppingCartIcon /> },
+  // { label: "Orders", path: "/Orders", icon: <ShoppingCartIcon /> },
+  // { label: "Shipments", path: "/Shipments", icon: <InventoryIcon /> },
   {
     label: "Account Management",
     path: "/AccountManagement/AllRoleManagement",

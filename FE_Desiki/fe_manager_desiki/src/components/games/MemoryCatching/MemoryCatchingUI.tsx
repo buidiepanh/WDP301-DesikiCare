@@ -151,10 +151,18 @@ export const MemoryCatchingUI: React.FC<Props> = ({
                 card.matched ? "border-yellow-400" : "border-transparent"
               }`}
             >
-              <img className="rounded-sm" src={card.imageBase64} alt="front" />
+              <img
+                className="rounded-sm w-[120px] h-[120px]"
+                src={card.imageBase64}
+                alt="front"
+              />
             </div>
             <div className="back rounded-md">
-              <img className="rounded-sm" src={backCoverImg} alt="back" />
+              <img
+                className="rounded-sm w-[120px] h-[120px]"
+                src={backCoverImg}
+                alt="back"
+              />
             </div>
           </div>
         ))}

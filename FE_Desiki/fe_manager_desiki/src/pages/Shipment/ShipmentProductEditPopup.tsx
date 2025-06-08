@@ -29,10 +29,10 @@ export const ShipmentProductEditPopup: React.FC<Props> = ({
     shipmentProduct.shipmentProduct.quantity
   );
   const [newManufactureDate, setNewManufactureDate] = useState(
-    shipmentProduct.shipmentProduct.manufacturingDate
+    shipmentProduct.shipmentProduct.manufacturingDate.split("T")[0]
   );
   const [newExpireDate, setNewExpireDate] = useState(
-    shipmentProduct.shipmentProduct.expiryDate
+    shipmentProduct.shipmentProduct.expiryDate.split("T")[0]
   );
   const [newBuyPrice, setNewBuyPrice] = useState(
     shipmentProduct.shipmentProduct.buyPrice
@@ -43,8 +43,8 @@ export const ShipmentProductEditPopup: React.FC<Props> = ({
     const data = {
       shipmentProduct: {
         quantity: newQuantity,
-        manufacturingDate: newManufactureDate,
-        expiryDate: newExpireDate,
+        manufacturingDate: newManufactureDate + "T00:00:00.000Z",
+        expiryDate: newExpireDate + "T00:00:00.000Z",
         buyPrice: newBuyPrice,
       },
     };

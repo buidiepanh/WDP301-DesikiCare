@@ -26,6 +26,7 @@ import type {
 } from "../../data/types";
 import { ShipmentProductEditPopup } from "./ShipmentProductEditPopup";
 import Swal from "sweetalert2";
+import { callAPIManager } from "../../api/axiosInstace";
 
 const Shipment = () => {
   // STATES
@@ -56,18 +57,18 @@ const Shipment = () => {
   const fetchShipments = async () => {
     setIsLoading(true);
     try {
-      // TODO: Replace with actual API call
-      // const res = await fetch("/api/Product/shipments");
-      // const data = await res.json();
-      // setShipments(data.shipments);
-
-      await new Promise((res) => setTimeout(res, 1000)); // fake loading
-      setShipments(shipmentData); // fake empty state
-      setFilterShipments(shipmentData);
+      const response = await callAPIManager({
+        method: "GET",
+        url: `/api/Product/shipments`,
+      });
+      if (response && response.status === 200) {
+        console.log("Shipments: ", response.data.shipments);
+        setShipments(response.data.shipments);
+        setFilterShipments(response.data.shipments);
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error("Lỗi fetch shipments:", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -126,13 +127,19 @@ const Shipment = () => {
   const handleEditShipmentProduct = async (id: string) => {
     try {
       // Call API to get shipment product details
-      console.log("Edit with id:", id);
-      const shipmentProduct = shipmentProductDetailsData;
-      setSelectedShipmentProduct(shipmentProduct);
+      const response = await callAPIManager({
+        method: "GET",
+        url: `/api/Product/shipmentProducts/${id}`,
+      });
+      if (response && response.status === 200) {
+        console.log("Response: ", response.data);
+        setSelectedShipmentProduct(response.data);
+        setShowShipmentProductEditPopup(true);
+      } else {
+        Swal.fire("Lỗi", "Lỗi khi lấy chi tiết kiện hàng", "error");
+      }
     } catch (error) {
       console.log("Lỗi khi get shipment product details: ", error);
-    } finally {
-      setShowShipmentProductEditPopup(true);
     }
   };
 
@@ -142,41 +149,85 @@ const Shipment = () => {
   };
 
   const onSubmitShipmentProductEdit = async (formData: any) => {
-    console.log("Edit Parameters: ", formData);
-    setSelectedShipmentProduct(null);
-    setShowShipmentProductEditPopup(false);
+    try {
+      const response = await callAPIManager({
+        method: "PUT",
+        url: `/api/Product/shipmentProducts/${selectedShipmentProduct?.shipmentProduct._id}`,
+        data: formData,
+      });
+      if (response && response.status === 200) {
+        Swal.fire("Thành công", "Update Kiện hàng thành công", "success");
+      } else {
+        Swal.fire("Lỗi", "Không thể Update Kiện hàng", "error");
+      }
+    } catch (error) {
+      console.log("Lỗi ở Edit ShipmentProduct: ", error);
+    } finally {
+      setSelectedShipmentProduct(null);
+      setShowShipmentProductEditPopup(false);
+      fetchShipments();
+    }
   };
 
-  const handleDeactivate = async (id: string) => {
+  const handleDeactivateShipmentProduct = async (id: string) => {
     Swal.fire({
-      title: "Are you sure you want to deactivated this Shipment Product?",
+      title: "Xác nhận thao tác này ?",
       text: "Confirm your action",
-      icon: "warning",
+      icon: "info",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, deactivate it!",
+      confirmButtonText: "Yes!",
     }).then(async (result: any) => {
       if (result.isConfirmed) {
-        await confirmDeactivate(id);
-        Swal.fire({
-          title: "Deactivated!",
-          text: "Your shipment product has been deactivated.",
-          icon: "success",
-        });
+        await confirmDeactivateShipmentProduct(id);
       }
     });
   };
 
-  const confirmDeactivate = async (id: string) => {
+  const confirmDeactivateShipmentProduct = async (id: string) => {
     // CALL API TO DEACTIVE
-    console.log("Deactivate Shipment Product with id: ", id);
+    let status = false;
+    let message = "";
+    try {
+      // Call API to get shipment product details
+      const response = await callAPIManager({
+        method: "GET",
+        url: `/api/Product/shipmentProducts/${id}`,
+      });
+      if (response && response.status === 200) {
+        status = response.data.shipmentProduct.isDeactivated;
+        console.log("Status hiện tại: ", status);
+        message = status
+          ? "Kích hoạt kiện hàng thành công"
+          : "Vô hiệu hóa kiện hàng thành công";
+        try {
+          const responseInner = await callAPIManager({
+            method: "PUT",
+            url: `/api/Product/shipmentProducts/${id}/deactivate/${!status}`,
+          });
+          if (responseInner && responseInner.status === 200) {
+            Swal.fire("Thành công", `${message}`, "success");
+          } else {
+            Swal.fire("Lỗi", `${message}`, "error");
+          }
+        } catch (error) {
+          console.log("Lỗi chỗ kích hoạt/vô hiệu shipmentProduct: ", error);
+        } finally {
+          fetchShipments();
+        }
+      } else {
+        Swal.fire("Lỗi", "Lỗi khi lấy chi tiết kiện hàng", "error");
+      }
+    } catch (error) {
+      console.log("Lỗi khi get shipment product details: ", error);
+    }
   };
 
   const handleEditShipment = (id: string) => {
     const shipment = shipments.filter((s) => s.shipment._id === id);
     setSelectedShipment(shipment[0]);
-    setNewShipmentDate(shipment[0].shipment.shipmentDate);
+    setNewShipmentDate(shipment[0].shipment.shipmentDate.split("T")[0]);
     setShowShipmentEditPopup(true);
   };
 
@@ -190,13 +241,23 @@ const Shipment = () => {
       const shipmentId = selectedShipment?.shipment._id;
       const data = {
         shipment: {
-          shipmentDate: newShipmentDate,
+          shipmentDate: newShipmentDate + "T00:00:00.000Z",
         },
       };
-      console.log(
-        `Đã cập nhật shipment với id ${shipmentId} với data gửi đi là: `,
-        data
-      );
+      const response = await callAPIManager({
+        method: "PUT",
+        url: `/api/Product/shipments/${shipmentId}`,
+        data: data,
+      });
+      if (response && response.data === 200) {
+        Swal.fire(
+          "Thành công",
+          "Đã cập nhật ngày thành công cho lô hàng",
+          "success"
+        );
+      } else {
+        Swal.fire("Lỗi", "Lỗi khi cập nhật ngày", "error");
+      }
     } catch (error) {
       console.log("Error while editing shipmentDate: ", error);
     } finally {
@@ -207,32 +268,43 @@ const Shipment = () => {
   };
 
   const handleDeleteShipment = async (id: string) => {
+    const shipment = shipments.filter((s) => s.shipment._id);
+    const deactivateStatus = shipment[0].shipment.isDeleted;
+
     Swal.fire({
-      title: "Are you sure you want to delete this Shipment?",
+      title: deactivateStatus
+        ? "Bạn có muốn kích hoạt lô hàng này?"
+        : "Bạn có muốn vô hiệu hóa lô hàng này?",
       text: "Confirm your action",
-      icon: "warning",
+      icon: deactivateStatus ? "info" : "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Yes!",
     }).then(async (result: any) => {
       if (result.isConfirmed) {
-        await confirmDelelteShipment(id);
-        Swal.fire({
-          title: "Deactivated!",
-          text: "Your shipment has been deactivated.",
-          icon: "success",
-        });
+        await confirmDelelteShipment(id, deactivateStatus);
       }
     });
   };
 
-  const confirmDelelteShipment = async (id: string) => {
+  const confirmDelelteShipment = async (id: string, status: boolean) => {
+    const message = status ? "Kích hoạt" : "Vô hiệu hóa";
+
     try {
-      // CALL API RIGHT HERE TO DELETE SHIPMENT
-      console.log("Delete Shipment with id: ", id);
+      const response = await callAPIManager({
+        method: "PUT",
+        url: `/api/Product/shipmentProducts/${id}/deactivate/${!status}`,
+      });
+      if (response && response.status === 200) {
+        Swal.fire("Thành công", `${message} thành công!`, "success");
+        fetchShipments();
+      } else {
+        Swal.fire("Lỗi", `${message} không thành công!`, "error");
+        fetchShipments();
+      }
     } catch (error) {
-      console.log("Error while delete shipment: ", error);
+      console.log("Lỗi ở chỗ vô hiệu/kích hoạt shipment: ", error);
     }
   };
 
@@ -366,8 +438,8 @@ const Shipment = () => {
                         new Date(p.value).toLocaleDateString("vi-VN"),
                     },
                     {
-                      headerName: "Trạng thái Nè",
-                      field: "isDeactivated",
+                      headerName: "Trạng thái",
+                      field: "shipmentProduct.isDeactivated",
                       cellRenderer: (params: any) => (
                         <div className="h-full w-full flex items-center">
                           <Chip
@@ -398,10 +470,14 @@ const Shipment = () => {
                             variant="outlined"
                             color="warning"
                             onClick={() =>
-                              handleDeactivate(params.data.shipmentProduct._id)
+                              handleDeactivateShipmentProduct(
+                                params.data.shipmentProduct._id
+                              )
                             }
                           >
-                            Deactivate
+                            {params.data.shipmentProduct.isDeactivated
+                              ? "Kích hoạt"
+                              : "Vô hiệu hóa"}
                           </Button>
                         </div>
                       ),
@@ -418,10 +494,10 @@ const Shipment = () => {
               <div className="flex justify-end gap-2 mt-4">
                 <Button
                   variant="outlined"
-                  color="error"
+                  color={item.shipment.isDeleted ? "info" : "warning"}
                   onClick={() => handleDeleteShipment(item.shipment._id)}
                 >
-                  Xóa lô hàng
+                  {item.shipment.isDeleted ? "Kích hoạt" : "Vô hiệu hóa"}
                 </Button>
                 <Button
                   variant="outlined"

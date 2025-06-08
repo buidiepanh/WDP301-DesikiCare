@@ -170,6 +170,17 @@ export type GameConfigJson = {
   [key: string]: any;
 };
 
+export type GameEventRewardResult = {
+  gameEventRewardResult: {
+    _id: string;
+    gameEventId: string;
+    accountId: string;
+    points: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+};
+
 export type GameEvent = {
   gameEvent: {
     _id: string;
@@ -187,6 +198,7 @@ export type GameEvent = {
     imageUrl: string;
   };
   gameTypesImgUrls: GameTypeImgUrl[] | null;
+  gameEventRewardResults: GameEventRewardResult[];
 };
 
 export type CreateGame = {
@@ -205,6 +217,6 @@ export type CreateGame = {
 };
 
 export type GameTypeImageBase64 = {
-  id: number,
-  imageBase64: string
-}
+  id: number;
+  imageBase64: string;
+};

@@ -8,6 +8,7 @@ import { Visibility, Edit, Block } from "@mui/icons-material";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "./style.css";
+import { callAPIAdmin, callAPIManager } from "../../api/axiosInstace";
 
 const MiniGameManagement = () => {
   // STATES
@@ -37,19 +38,29 @@ const MiniGameManagement = () => {
   // FUNCTIONS
   const fetch = async () => {
     try {
-      setTimeout(() => {
-        const response = gameEventsData;
-        const responseGameType = gameTypesData;
-        setGameEvents(response);
-        setGameTypes(responseGameType);
-        const running = response.filter(
-          (game) => !game.gameEvent.isDeactivated
-        );
-        const closing = response.filter((game) => game.gameEvent.isDeactivated);
-        setGameEventRunnings(running);
-        setGameEventClosings(closing);
-        setIsLoading(false);
-      }, 1000);
+      const response = await callAPIAdmin({
+        method: "GET",
+        url: `/api/Game/gameEvents`,
+      });
+      if (response && response.status === 200) {
+        const responseGameType = await callAPIAdmin({
+          method: "GET",
+          url: `/api/Game/gameTypes`,
+        });
+        if (responseGameType && responseGameType.status === 200) {
+          setGameEvents(response.data.gameEvents);
+          setGameTypes(responseGameType.data.gameTypes);
+          const running = response.data.gameEvents.filter(
+            (game) => !game.gameEvent.isDeactivated
+          );
+          const closing = response.data.gameEvents.filter(
+            (game) => game.gameEvent.isDeactivated
+          );
+          setGameEventRunnings(running);
+          setGameEventClosings(closing);
+          setIsLoading(false);
+        }
+      }
     } catch (error) {
       console.log("Error while fetching game events: ", error);
     }
@@ -107,7 +118,9 @@ const MiniGameManagement = () => {
     },
     {
       headerName: "Người tham gia",
-      valueGetter: () => "0 người",
+      valueGetter: (params: any) =>
+        params.data?.gameEventRewardResults?.length || 0,
+      valueFormatter: (params: any) => `${params.value} người`,
     },
     {
       headerName: "Ngày bắt đầu",

@@ -17,6 +17,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 import "./style.css";
 import { OrderDetailsPopup } from "./OrderDetailsPopup";
 import { EditStatusPopup } from "./EditStatusPopup";
+import { callAPIManager } from "../../api/axiosInstace";
+import Swal from "sweetalert2";
 const Orders = () => {
   // STATES
   const [orders, setOrders] = useState<Order[] | null>(null);
@@ -37,12 +39,25 @@ const Orders = () => {
     setIsLoading(true);
     console.log("Fetching ...");
     try {
-      setTimeout(() => {
-        const response = ordersData;
-        setOrders(response);
-        setOrderStatuses(orderStatusesData);
-        setIsLoading(false);
-      }, 1000);
+      const response = await callAPIManager({
+        method: "GET",
+        url: `/api/Order/orders`,
+      });
+      if (response && response.status === 200) {
+        setOrders(response.data);
+        const responseStatuses = await callAPIManager({
+          method: "GET",
+          url: `/api/Order/orderStatuses`,
+        });
+        if (responseStatuses && responseStatuses.status === 200) {
+          setOrderStatuses(orderStatusesData);
+          setIsLoading(false);
+        } else {
+          Swal.fire("Lỗi", "Lỗi khi fetching Order Statuses", "error");
+        }
+      } else {
+        Swal.fire("Lỗi", "Lỗi khi fetching Orders", "error");
+      }
     } catch (error) {
       console.log("Error while fetching Orders: ", error);
       setIsLoading(false); // hoặc cũng đặt fallback ở đây
@@ -193,11 +208,20 @@ const Orders = () => {
     const orderId = selectedOrder?.order._id;
     if (!orderId) return;
 
-    const endpoint = `/api/Order/orders/${orderId}/orderStatuses/${statusId}`;
-    console.log("CALL API:", endpoint);
-
-    // TODO: call API here
-    // await axios.put(endpoint)
+    try {
+      const response = await callAPIManager({
+        method: "PUT",
+        url: `/api/Order/orders/${orderId}/orderStatuses/${statusId}`,
+      });
+      if (response && response.status === 200) {
+        Swal.fire("Thành công", "Đã set trạng thái thành công", "success");
+        fetch();
+      } else {
+        Swal.fire("Lỗi", response?.message, "error");
+      }
+    } catch (error) {
+      console.log("Error while edit status: ", error);
+    }
 
     onCloseEditStatusPopup();
   };

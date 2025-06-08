@@ -12,6 +12,7 @@ import { productsData } from "../../../data/mockData";
 import type { ProductAPI } from "../../../data/types";
 import { ShipmentProductCard } from "./ShipmentProductCard";
 import Swal from "sweetalert2";
+import { callAPIManager } from "../../../api/axiosInstace";
 
 const generateShipmentId = (dateStr: string): string => {
   const formatted = new Date(dateStr)
@@ -50,29 +51,59 @@ const CreateShipment = () => {
   const [mfgDate, setMfgDate] = useState("");
   const [expDate, setExpDate] = useState("");
   const [buyPrice, setBuyPrice] = useState(0);
-
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
   // HOOKS
+  const navigate = useNavigate();
+
   useEffect(() => {
     // TODO: call /api/Product/products
-    setProducts(productsData);
+    fetchProduct();
   }, []);
 
   // FUNCTIONS
-  const handleCreateShipment = () => {
-    const generatedId = generateShipmentId(shipmentDate);
-    setShipmentId(generatedId);
-    setShipmentCreated(true);
+  const fetchProduct = async () => {
+    setIsLoading(true);
+    try {
+      const response = await callAPIManager({
+        method: "GET",
+        url: `/api/Product/products`,
+      });
+      if (response && response.status === 200) {
+        setProducts(response.data.products);
+      } else {
+        Swal.fire("Lỗi", "Lỗi khi lấy danh sách sản phẩm", "error");
+      }
+    } catch (error) {
+      console.log("Lỗi khi lấy danh sách sản phẩm: ", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  const handleCreateShipment = async () => {
+    const generatedId = generateShipmentId(shipmentDate);
     const payload = {
       shipment: {
         _id: generatedId,
-        shipmentDate,
+        shipmentDate: shipmentDate + "T00:00:00.000Z",
       },
     };
-
-    console.log("CALL API /api/Product/shipments với payload:", payload);
+    try {
+      const response = await callAPIManager({
+        method: "POST",
+        url: `/api/Product/shipments`,
+        data: payload,
+      });
+      if (response && response.status === 201) {
+        setShipmentId(generatedId);
+        setShipmentCreated(true);
+      } else {
+        Swal.fire("Lỗi", "Không thể tạo lô hàng", "error");
+      }
+    } catch (error) {
+      console.log("Lỗi ở tạo lô hàng: ", error);
+    }
   };
 
   const handleAddShipmentProduct = () => {
@@ -97,8 +128,8 @@ const CreateShipment = () => {
     const item: ShipmentProductInput = {
       productId: id,
       quantity,
-      manufacturingDate: mfgDate,
-      expiryDate: expDate,
+      manufacturingDate: mfgDate + "T00:00:00.000Z",
+      expiryDate: expDate + "T00:00:00.000Z",
       buyPrice,
     };
 
@@ -114,18 +145,33 @@ const CreateShipment = () => {
     console.log("Preview shipmentProduct:", item);
   };
 
-  const handleSubmitAll = () => {
-    shipmentProducts.forEach((sp) => {
-      const payload = {
-        shipmentProduct: {
-          ...sp,
-          shipmentId,
-        },
-      };
-      console.log("CALL API /api/Product/shipmentProducts với:", payload);
-    });
-
-    navigate("/Shipments");
+  const handleSubmitAll = async () => {
+    try {
+      shipmentProducts.forEach(async (sp) => {
+        const payload = {
+          shipmentProduct: {
+            ...sp,
+            shipmentId,
+          },
+        };
+        try {
+          const response = await callAPIManager({
+            method: "POST",
+            url: `/api/Product/shipmentProducts`,
+            data: payload,
+          });
+          if (!response || response.status !== 201) {
+            Swal.fire("Lỗi", "Lỗi khi tạo kiện hàng của lô hàng", "error");
+          }
+        } catch (error) {
+          console.log("Lỗi chỗ tạo kiện hàng: ", error);
+        }
+      });
+    } catch (error) {
+      console.log("Lỗi chỗ tạo kiện hàng: ", error);
+    } finally {
+      navigate("/Shipments");
+    }
   };
 
   const getProductDetails = (id: string) => {
@@ -168,7 +214,7 @@ const CreateShipment = () => {
       )}
 
       {/* B2: Nhập shipmentProducts */}
-      {shipmentCreated && (
+      {shipmentCreated && !isLoading && (
         <>
           <p className="font-bold text-xl">
             B2: Đăng ký các kiện hàng bên trong lô

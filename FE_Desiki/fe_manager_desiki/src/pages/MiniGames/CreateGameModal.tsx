@@ -16,6 +16,8 @@ import {
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import GameConfigLoader from "./GameConfigLoader";
 import type { CreateGame, GameTypeImgUrl } from "../../data/types";
+import { callAPIAdmin } from "../../api/axiosInstace";
+import Swal from "sweetalert2";
 
 // INTERFACES
 interface CreateGameProps {
@@ -137,17 +139,28 @@ export const CreateGameModal: React.FC<CreateGameProps> = ({
     }, 1000);
   };
 
-  const handleCreateGame = () => {
-    const updatedGame = { ...newGame };
-
+  const handleCreateGame = async () => {
     if (newGame.gameEvent.configJson.backCoverImg) {
-      console.log("Có nhaaaaa");
-      updatedGame.gameEvent.imageBase64 =
-        newGame.gameEvent.configJson.backCoverImg;
+      handleChangeField(
+        "imageBase64",
+        newGame.gameEvent.configJson.backCoverImg
+      );
     }
-
-    console.log(">>> Game Created Successfully!");
-    console.log(">>> Payload gửi đi:", updatedGame);
+    try {
+      const response = await callAPIAdmin({
+        method: "POST",
+        url: `/api/Game/gameEvents`,
+        data: newGame,
+      });
+      if (response && response.status === 201) {
+        Swal.fire("Thành công", "Tạo Game Events Thành công", "success");
+        onClose();
+      } else {
+        Swal.fire("Lỗi", "Lỗi trong quá trình tạo game", "error");
+      }
+    } catch (error) {}
+    // console.log(">>> Game Created Successfully!");
+    // console.log(">>> Payload gửi đi:", updatedGame);
   };
 
   return (

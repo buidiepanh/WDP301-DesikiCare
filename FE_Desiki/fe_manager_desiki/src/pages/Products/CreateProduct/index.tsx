@@ -6,8 +6,9 @@ import {
   categoriesData,
 } from "../../../data/mockData";
 import { useNavigate } from "react-router-dom";
-import { callAPI } from "../../../api/axiosInstace";
+import { callAPIManager } from "../../../api/axiosInstace";
 import { token } from "../../../api/token";
+import Swal from "sweetalert2";
 // import axios from "axios";
 
 type Option = {
@@ -34,6 +35,19 @@ const CreateProduct = () => {
   // FUNCTIONS
   const handleChange = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const reset = () => {
+    setForm({
+      categoryId: "",
+      name: "",
+      description: "",
+      volume: "",
+      salePrice: "",
+      imageBase64: "",
+      skinTypeIds: [] as number[],
+      skinStatusIds: [] as number[],
+    });
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,20 +79,18 @@ const CreateProduct = () => {
     };
 
     try {
-      //   const res = await axios.post("/api/Product/products", payload);
-      //   console.log("✅ Tạo sản phẩm thành công:", res.data);
-      const response = await callAPI({
+      const response = await callAPIManager({
         method: "POST",
         url: "/api/Product/products",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "ngrok-skip-browser-warning": "69420",
-        },
         data: payload,
       });
-      console.log("Tạo sản phẩm thành công: ", response);
-      alert("Tạo thành công!");
-      navigate("/Products");
+      if (response && response.status === 201) {
+        Swal.fire("Thành công", "Đã tạo thành công sản phẩm", "success");
+        navigate("/Products");
+      } else {
+        Swal.fire("Lỗi", "Lỗi khi tạo sản phẩm, vui lòng thử lại", "error");
+        reset();
+      }
     } catch (err) {
       console.error("❌ Lỗi khi tạo sản phẩm:", err);
       alert("Tạo thất bại!");
@@ -93,6 +105,7 @@ const CreateProduct = () => {
       <div className="w-full bg-white shadow-md p-6 rounded-xl space-y-4">
         <TextField
           label="Tên sản phẩm"
+          sx={{ marginBottom: "10px" }}
           fullWidth
           value={form.name}
           onChange={(e) => handleChange("name", e.target.value)}
@@ -100,6 +113,7 @@ const CreateProduct = () => {
 
         <TextField
           label="Mô tả"
+          sx={{ marginBottom: "10px" }}
           fullWidth
           multiline
           value={form.description}
@@ -108,6 +122,7 @@ const CreateProduct = () => {
 
         <TextField
           label="Dung tích (ml)"
+          sx={{ marginBottom: "10px" }}
           fullWidth
           type="number"
           value={form.volume}
@@ -116,6 +131,7 @@ const CreateProduct = () => {
 
         <TextField
           label="Giá bán (VND)"
+          sx={{ marginBottom: "10px" }}
           fullWidth
           type="number"
           value={form.salePrice}
@@ -124,6 +140,7 @@ const CreateProduct = () => {
 
         <TextField
           select
+          sx={{ marginBottom: "10px" }}
           label="Danh mục"
           fullWidth
           value={form.categoryId}
@@ -138,6 +155,7 @@ const CreateProduct = () => {
 
         <Autocomplete
           multiple
+          sx={{ marginBottom: "10px" }}
           options={skinTypesData}
           getOptionLabel={(opt) => opt.name}
           onChange={(_, value) =>
