@@ -9,10 +9,13 @@ import {
   Divider,
   Popconfirm,
   message,
+  Empty,
 } from "antd";
-import { Empty } from "antd";
-import { ShoppingOutlined } from "@ant-design/icons";
-import { DeleteOutlined } from "@ant-design/icons";
+import {
+  ShoppingOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -24,7 +27,7 @@ const initialCartItems = [
     originalPrice: 150000,
     discountedPrice: 120000,
     quantity: 1,
-    image: "https://via.placeholder.com/100",
+    image: "/images/sua-rua-mat.jpg", 
   },
   {
     id: 2,
@@ -33,12 +36,13 @@ const initialCartItems = [
     originalPrice: 300000,
     discountedPrice: 240000,
     quantity: 2,
-    image: "https://via.placeholder.com/100",
+    image: "/images/kem-duong.jpg", 
   },
 ];
 
-function Cart() {
+const Cart = () => {
   const [cartItems, setCartItems] = useState(initialCartItems);
+  const navigate = useNavigate();
 
   const handleQuantityChange = (value, id) => {
     setCartItems((prev) =>
@@ -49,6 +53,10 @@ function Cart() {
   const handleRemove = (id) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
     message.success("Đã xóa sản phẩm khỏi giỏ hàng");
+  };
+
+  const handleCheckout = () => {
+    navigate("/payment");
   };
 
   const total = cartItems.reduce(
@@ -67,9 +75,7 @@ function Cart() {
       {cartItems.length === 0 ? (
         <div style={{ textAlign: "center", padding: "40px 0" }}>
           <Empty
-            image={
-              <ShoppingOutlined style={{ fontSize: 60, color: "#ec407a" }} />
-            }
+            image={<ShoppingOutlined style={{ fontSize: 60, color: "#ec407a" }} />}
             description={
               <Text style={{ fontSize: 16, color: "#888" }}>
                 Giỏ hàng của bạn đang trống
@@ -96,15 +102,17 @@ function Cart() {
               style={{
                 marginBottom: 16,
                 backgroundColor: "#fff0f5",
-                borderColor: "#ec407a",
+                border: "1px solid #ec407a",
+                borderRadius: 8,
               }}
+              bodyStyle={{ padding: "16px" }}
             >
               <Row gutter={16} align="middle">
                 <Col>
                   <img
                     src={item.image}
                     alt={item.name}
-                    style={{ width: 100, borderRadius: 8 }}
+                    style={{ width: 100, height: 100, objectFit: "cover", borderRadius: 8 }}
                   />
                 </Col>
                 <Col flex="auto">
@@ -113,9 +121,7 @@ function Cart() {
                   </Title>
                   <Text type="secondary">Loại: {item.type}</Text>
                   <br />
-                  <Text delete>
-                    {item.originalPrice.toLocaleString()} đ
-                  </Text>{" "}
+                  <Text delete>{item.originalPrice.toLocaleString()} đ</Text>{" "}
                   <Text strong style={{ color: "#ec407a" }}>
                     {item.discountedPrice.toLocaleString()} đ
                   </Text>
@@ -154,6 +160,7 @@ function Cart() {
                 type="primary"
                 size="large"
                 style={{ backgroundColor: "#ec407a", borderColor: "#ec407a" }}
+                onClick={handleCheckout}
               >
                 Tiến hành thanh toán
               </Button>
@@ -163,6 +170,6 @@ function Cart() {
       )}
     </div>
   );
-}
+};
 
 export default Cart;
