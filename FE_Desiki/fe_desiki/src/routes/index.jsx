@@ -11,6 +11,7 @@ import BannerSection from "../pages/user/hot-deal/BannerSection";
 import FlashDealSale from "../pages/user/sale/FlashDealSale";
 import BlogGrid from "../pages/user/blog/BlogGrid";
 import WarrantyPolicy from "../pages/user/policy/WarrantyPolicy";
+import Payment from "../pages/user/payment/payment";
 
 import UserManagement from "../pages/admin/UserManagement";
 import CustomerPoints from "../pages/admin/CustomerPoints";
@@ -36,6 +37,7 @@ function UserRouter() {
           <Route path="/register" element={<Register />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/products/:productId" element={<Details />} />
+          <Route path="/payment" element={<Payment />} />
           <Route path="/hot-deal" element={<BannerSection />} />
           <Route path="/warranty-policy" element={<WarrantyPolicy />} />
           <Route path="/flash-deal-sale" element={<FlashDealSale />} />
