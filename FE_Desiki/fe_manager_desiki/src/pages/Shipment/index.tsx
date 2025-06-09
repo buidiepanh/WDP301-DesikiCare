@@ -249,14 +249,16 @@ const Shipment = () => {
         url: `/api/Product/shipments/${shipmentId}`,
         data: data,
       });
-      if (response && response.data === 200) {
+      if (response && response.status === 200) {
         Swal.fire(
           "Thành công",
           "Đã cập nhật ngày thành công cho lô hàng",
           "success"
         );
+        await fetchShipments();
       } else {
         Swal.fire("Lỗi", "Lỗi khi cập nhật ngày", "error");
+        console.log("Response: ", response);
       }
     } catch (error) {
       console.log("Error while editing shipmentDate: ", error);
@@ -293,8 +295,8 @@ const Shipment = () => {
 
     try {
       const response = await callAPIManager({
-        method: "PUT",
-        url: `/api/Product/shipmentProducts/${id}/deactivate/${!status}`,
+        method: "DELETE",
+        url: `/api/Product/shipments/${id}`,
       });
       if (response && response.status === 200) {
         Swal.fire("Thành công", `${message} thành công!`, "success");

@@ -44,13 +44,13 @@ const Orders = () => {
         url: `/api/Order/orders`,
       });
       if (response && response.status === 200) {
-        setOrders(response.data);
+        setOrders(response.data.orders);
         const responseStatuses = await callAPIManager({
           method: "GET",
           url: `/api/Order/orderStatuses`,
         });
         if (responseStatuses && responseStatuses.status === 200) {
-          setOrderStatuses(orderStatusesData);
+          setOrderStatuses(responseStatuses.data.orderStatuses);
           setIsLoading(false);
         } else {
           Swal.fire("Lỗi", "Lỗi khi fetching Order Statuses", "error");
@@ -218,6 +218,7 @@ const Orders = () => {
         fetch();
       } else {
         Swal.fire("Lỗi", response?.message, "error");
+        fetch();
       }
     } catch (error) {
       console.log("Error while edit status: ", error);

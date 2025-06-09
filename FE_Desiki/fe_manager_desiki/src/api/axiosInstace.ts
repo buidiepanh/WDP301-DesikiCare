@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import { getAccessToken, hasRole } from "../utils/auth";
 
 // ✅ Base URL mặc định
-let baseURL = "https://5993-115-75-223-184.ngrok-free.app";
+let baseURL = "https://8329-118-69-70-166.ngrok-free.app";
 
 // ✅ Cho phép cập nhật baseURL
 export const setBaseURL = (url: string) => {
