@@ -19,7 +19,7 @@ import { auth, provider } from "../../../config/firebase";
 import { signInWithPopup } from "firebase/auth";
 import toast from "react-hot-toast";
 import image2 from "../../../assets/authen/authen_background2.jpg";
-import "./Login.css";
+import "./login.css";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;
