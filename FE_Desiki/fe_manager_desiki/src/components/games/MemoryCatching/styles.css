@@ -1,0 +1,45 @@
+.memory-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.memory-card {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  perspective: 1000px;
+  cursor: pointer;
+  position: relative;
+}
+
+.memory-card > div {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.6s;
+}
+
+.memory-card .front {
+  transform: rotateY(180deg);
+  z-index: 2;
+}
+
+.memory-card .back {
+  background: #eee;
+  border-radius: 8px;
+  z-index: 1;
+}
+
+.memory-card.flipped .front {
+  transform: rotateY(0deg);
+}
+
+.memory-card.flipped .back {
+  transform: rotateY(180deg);
+}
