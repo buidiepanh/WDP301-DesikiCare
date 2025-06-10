@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./Statistics.module.css";
+import styles from "./ManagerPages.module.css";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid,
   PieChart, Pie, Cell, Legend,
