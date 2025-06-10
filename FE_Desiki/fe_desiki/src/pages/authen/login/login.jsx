@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Layout,
-  Form,
-  Input,
-  Button,
-  Typography,
-  Divider,
-  Space,
-} from "antd";
+import { Layout, Form, Input, Button, Typography, Divider, Space } from "antd";
 import {
   UserOutlined,
   LockOutlined,
@@ -15,10 +7,11 @@ import {
   FacebookFilled,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import toast from "react-hot-toast";
 import image2 from "../../../assets/authen/authen_background2.jpg";
 import "./Login.css";
+import { loginFunction } from "../../../services/apiServices";
+import axios from "axios";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;
@@ -28,24 +21,15 @@ const Login = () => {
 
   const onFinish = async (values) => {
     try {
-      const response = await axios.post(
-        "https://8329-118-69-70-166.ngrok-free.app/api/Account/login",
-        {
-          loginInfo: {
-            email: values.email,
-            password: values.password,
-          },
-        }
-      );
-
-      const { token } = response.data;
-      localStorage.setItem("accessToken", token);
+      const response = await loginFunction(values.email, values.password);
+      const { token } = response;
+      sessionStorage.setItem("accessToken", token);
 
       const user = {
         fullName: values.email.split("@")[0],
         email: values.email,
       };
-      localStorage.setItem("user", JSON.stringify(user));
+      sessionStorage.setItem("user", JSON.stringify(user));
       window.dispatchEvent(new Event("userChanged"));
 
       toast.success("Đăng nhập thành công!");

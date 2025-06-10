@@ -25,7 +25,7 @@ const HeaderSkincare = () => {
 
   const loadUser = () => {
     try {
-      const storedUser = localStorage.getItem("user");
+      const storedUser = sessionStorage.getItem("user");
       if (!storedUser || storedUser === "undefined") {
         setUserName(null);
         return;
@@ -46,8 +46,7 @@ const HeaderSkincare = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("accessToken");
+    sessionStorage.clear();
     window.dispatchEvent(new Event("userChanged"));
     toast.success("Đăng xuất thành công!");
     navigate("/login");
@@ -74,7 +73,9 @@ const HeaderSkincare = () => {
             onClick={() => navigate("/")}
           />
           <Box>
-            <Typography fontSize={14}>Chất lượng thật - Giá trị thật</Typography>
+            <Typography fontSize={14}>
+              Chất lượng thật - Giá trị thật
+            </Typography>
           </Box>
         </Box>
 
@@ -123,17 +124,22 @@ const HeaderSkincare = () => {
             </Box>
           ) : (
             <Box className={styles.authButtons}>
-              <Typography onClick={() => navigate("/login")} className={styles.loginText}>
+              <Typography
+                onClick={() => navigate("/login")}
+                className={styles.loginText}
+              >
                 Đăng nhập
               </Typography>
               <span>/</span>
-              <Typography onClick={() => navigate("/register")} className={styles.loginText}>
+              <Typography
+                onClick={() => navigate("/register")}
+                className={styles.loginText}
+              >
                 Đăng ký
               </Typography>
             </Box>
           )}
         </Box>
-
       </Toolbar>
     </AppBar>
   );

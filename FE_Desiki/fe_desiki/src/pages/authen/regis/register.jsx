@@ -17,6 +17,7 @@ import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import image1 from "../../../assets/authen/authen_background1.webp";
 import "./Register.css";
+import { registerFunction } from "../../../services/apiServices";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;
@@ -53,20 +54,19 @@ const Register = () => {
         },
       };
 
-      const response = await axios.post(
-        "https://8329-118-69-70-166.ngrok-free.app/api/Account/register",
-        payload
-      );
+      const response = await registerFunction(payload);
 
-      if (response?.data?.message === "Register successfully") {
+      if (response?.message === "Register successfully") {
         form.resetFields();
         toast.success("Đăng ký thành công!");
         setTimeout(() => navigate("/login"), 1500);
       }
-
     } catch (error) {
       console.error("Registration error:", error);
-      message.error("Đăng ký thất bại: " + (error.response?.data?.message || "Lỗi không xác định"));
+      message.error(
+        "Đăng ký thất bại: " +
+          (error.response?.data?.message || "Lỗi không xác định")
+      );
     }
   };
 
@@ -80,9 +80,9 @@ const Register = () => {
         <div className="register-left-content">
           <Title level={1}>DESIKI CARE</Title>
           <Text className="register-description">
-            Desiki Care là thương hiệu chăm sóc da tiên phong kết hợp giữa vẻ đẹp
-            tự nhiên và khoa học hiện đại. Chúng tôi mang đến giải pháp làm đẹp
-            an toàn và hiệu quả dài lâu.
+            Desiki Care là thương hiệu chăm sóc da tiên phong kết hợp giữa vẻ
+            đẹp tự nhiên và khoa học hiện đại. Chúng tôi mang đến giải pháp làm
+            đẹp an toàn và hiệu quả dài lâu.
           </Text>
         </div>
       </Content>
@@ -132,7 +132,9 @@ const Register = () => {
             <Form.Item
               label="Số điện thoại"
               name="phone"
-              rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
+              rules={[
+                { required: true, message: "Vui lòng nhập số điện thoại!" },
+              ]}
             >
               <Input placeholder="0123456789" />
             </Form.Item>
@@ -158,12 +160,21 @@ const Register = () => {
             </Form.Item>
 
             <Form.Item label="Ảnh đại diện">
-              <input type="file" accept="image/*" onChange={handleImageChange} />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
               {imageBase64 && <Text type="secondary">Đã chọn ảnh ✅</Text>}
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" block className="register-button">
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                className="register-button"
+              >
                 Đăng ký
               </Button>
             </Form.Item>
@@ -181,7 +192,11 @@ const Register = () => {
               <Button block disabled>
                 Đăng ký với Google
               </Button>
-              <Button block style={{ backgroundColor: "#3b5998", color: "#fff" }} disabled>
+              <Button
+                block
+                style={{ backgroundColor: "#3b5998", color: "#fff" }}
+                disabled
+              >
                 Đăng ký với Facebook
               </Button>
             </Space>

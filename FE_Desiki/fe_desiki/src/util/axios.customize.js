@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseUrl = import.meta.env.VITE_BACKEND_URL;
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // Set config defaults when creating the instance
 const instance = axios.create({
@@ -14,6 +14,8 @@ instance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    config.headers["ngrok-skip-browser-warning"] = "69420";
 
     return config;
   },
