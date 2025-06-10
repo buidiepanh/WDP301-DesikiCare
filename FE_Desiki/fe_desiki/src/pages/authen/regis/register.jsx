@@ -24,7 +24,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { auth, provider } from "../../../config/firebase";
 import image1 from "../../../assets/authen/authen_background1.webp";
-import "./Register.css";
+import "./register.css";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;
