@@ -16,7 +16,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import image1 from "../../../assets/authen/authen_background1.webp";
-import "./Register.css";
+import "./register.css";
 import { registerFunction } from "../../../services/apiServices";
 
 const { Title, Text, Link } = Typography;
