@@ -13,6 +13,7 @@ import {
   VerifiedUser,
   Phone,
 } from "@mui/icons-material";
+import { AccountCircle } from "@mui/icons-material";
 import { Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import styles from "./HeaderSkincare.module.css";
@@ -94,6 +95,7 @@ const HeaderSkincare = () => {
               placeholder="Tìm sản phẩm, thương hiệu bạn mong muốn..."
               className={styles.searchInput}
               allowClear
+              size="large"
             />
           </Box>
 
@@ -119,6 +121,11 @@ const HeaderSkincare = () => {
                     <ShoppingCartOutlined className={styles.shoppingCartIcon} />
                   </Badge>
                 </IconButton>
+
+                <IconButton color="inherit" onClick={() => navigate("/profile")} className={styles.userInfoBox}>
+                  <AccountCircle />
+                </IconButton>
+
                 <IconButton color="inherit" onClick={handleLogout}>
                   <Logout />
                 </IconButton>

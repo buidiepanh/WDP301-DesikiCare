@@ -17,6 +17,7 @@ import UserManagement from "../pages/admin/UserManagement";
 import CustomerPoints from "../pages/admin/CustomerPoints";
 import GameManagement from "../pages/admin/GameManagement";
 import ChatbotContent from "../pages/admin/ChatbotContent";
+import Profile from "../pages/user/profile/Profile";
 
 import ProductManagement from "../pages/manager/ProductManagement";
 import InventoryManagement from "../pages/manager/InventoryManagement";
@@ -42,6 +43,7 @@ function UserRouter() {
           <Route path="/warranty-policy" element={<WarrantyPolicy />} />
           <Route path="/flash-deal-sale" element={<FlashDealSale />} />
           <Route path="/blog-grid" element={<BlogGrid />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </div>
       <FooterSkincare />
