@@ -1,28 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./ChatWidget.css";
+import { getChatbotConfig } from "../../services/apiServices";
 
 const ChatWidget = ({ onClose }) => {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState("");
   const messagesEndRef = useRef(null);
 
-  const API_CONFIG = "https://8329-118-69-70-166.ngrok-free.app/api/Chatbot/chatbotConfigs";
-
   useEffect(() => {
-    fetch(API_CONFIG)
-      .then(async (res) => {
-        const contentType = res.headers.get("content-type");
-        console.log("📦 Content-Type:", contentType);
-
-        if (!res.ok) throw new Error("Lỗi phản hồi từ server");
-
-        if (contentType && contentType.includes("text/html")) {
-          throw new Error("Phản hồi không hợp lệ");
-        }
-
-        const data = await res.json();
-        console.log("✅ Dữ liệu chatbot:", data);
-
+    const fetchInitPrompt = async () => {
+      try {
+        const data = await getChatbotConfig();
         const active = data.chatbotConfigs.find(
           (c) => !c.isDeactivated && c.template === "default"
         );
@@ -32,13 +20,15 @@ const ChatWidget = ({ onClose }) => {
         } else {
           setMessages([{ from: "bot", text: "Không tìm thấy chatbot mặc định." }]);
         }
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("❌ Lỗi khi gọi chatbotConfigs:", err.message);
         setMessages([
           { from: "bot", text: "Không thể tải chatbot. Vui lòng thử lại sau." },
         ]);
-      });
+      }
+    };
+
+    fetchInitPrompt();
   }, []);
 
   useEffect(() => {

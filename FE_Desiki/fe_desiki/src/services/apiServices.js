@@ -67,3 +67,8 @@ export const getOrderDetail = async (orderId) => {
   const res = await axios.get(`/Order/orders/${orderId}`);
   return res.data;
 };
+
+export const getChatbotConfig = async () => {
+  const res = await axios.get("/Chatbot/chatbotConfigs");
+  return res.data;
+};

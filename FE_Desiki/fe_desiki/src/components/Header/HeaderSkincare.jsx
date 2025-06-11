@@ -50,6 +50,7 @@ const HeaderSkincare = () => {
   const handleLogout = () => {
     sessionStorage.clear();
     window.dispatchEvent(new Event("userChanged"));
+    setShowChat(false); 
     toast.success("Đăng xuất thành công!");
     navigate("/login");
   };
