@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Button,
@@ -10,59 +10,88 @@ import {
   Popconfirm,
   message,
   Empty,
+  Checkbox,
 } from "antd";
-import {
-  ShoppingOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { ShoppingOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import {
+  changeQuantity,
+  deleteCartItem,
+  getAuthenitcatedUserCart,
+} from "../../../services/apiServices";
+import toast from "react-hot-toast";
 
 const { Title, Text } = Typography;
 
-const initialCartItems = [
-  {
-    id: 1,
-    name: "Sữa rửa mặt dịu nhẹ",
-    type: "Chăm sóc da",
-    originalPrice: 150000,
-    discountedPrice: 120000,
-    quantity: 1,
-    image: "/images/sua-rua-mat.jpg", 
-  },
-  {
-    id: 2,
-    name: "Kem dưỡng ẩm ban đêm",
-    type: "Dưỡng ẩm",
-    originalPrice: 300000,
-    discountedPrice: 240000,
-    quantity: 2,
-    image: "/images/kem-duong.jpg", 
-  },
-];
-
 const Cart = () => {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
+  const [selectedItems, setSelectedItems] = useState([]);
 
-  const handleQuantityChange = (value, id) => {
-    setCartItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, quantity: value } : item))
+  useEffect(() => {
+    fetchAuthenticatedUserCart();
+  }, []);
+
+  const fetchAuthenticatedUserCart = async () => {
+    try {
+      const result = await getAuthenitcatedUserCart();
+      const transformed = result.map((item) => ({
+        id: item.cartItem._id,
+        name: item.product.name,
+        quantity: item.cartItem.quantity,
+        image: item.product.image,
+        price: item.product.salePrice,
+        volume: item.product.volume,
+      }));
+      setCartItems(transformed);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleCheckboxChange = (id, checked) => {
+    setSelectedItems((prev) =>
+      checked ? [...prev, id] : prev.filter((itemId) => itemId !== id)
     );
   };
 
-  const handleRemove = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-    message.success("Đã xóa sản phẩm khỏi giỏ hàng");
+  const handleQuantityChange = async (id, value) => {
+    try {
+      const result = await changeQuantity(id, value);
+
+      if (result) {
+        toast.success("Cập nhật số lượng thành công!");
+        fetchAuthenticatedUserCart();
+      } else {
+        toast.error("Cập nhật số lượng thất bại!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteItem = async (id) => {
+    try {
+      const result = await deleteCartItem(id);
+
+      if (result) {
+        toast.success("Xóa sản phẩm khỏi giỏ hàng thành công!");
+        fetchAuthenticatedUserCart();
+      } else {
+        toast.error("Xóa sản phẩm khỏi giỏ hàng thất bại!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleCheckout = () => {
     navigate("/payment");
   };
 
-  const total = cartItems.reduce(
-    (acc, item) => acc + item.discountedPrice * item.quantity,
-    0
-  );
+  const total = cartItems
+    .filter((item) => selectedItems.includes(item.id))
+    .reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
     <div style={{ padding: "24px" }}>
@@ -72,10 +101,12 @@ const Cart = () => {
 
       <Divider />
 
-      {cartItems.length === 0 ? (
+      {cartItems?.length === 0 ? (
         <div style={{ textAlign: "center", padding: "40px 0" }}>
           <Empty
-            image={<ShoppingOutlined style={{ fontSize: 60, color: "#ec407a" }} />}
+            image={
+              <ShoppingOutlined style={{ fontSize: 60, color: "#ec407a" }} />
+            }
             description={
               <Text style={{ fontSize: 16, color: "#888" }}>
                 Giỏ hàng của bạn đang trống
@@ -96,9 +127,9 @@ const Cart = () => {
         </div>
       ) : (
         <>
-          {cartItems.map((item) => (
+          {cartItems?.map((item) => (
             <Card
-              key={item.id}
+              key={item._id}
               style={{
                 marginBottom: 16,
                 backgroundColor: "#fff0f5",
@@ -109,36 +140,59 @@ const Cart = () => {
             >
               <Row gutter={16} align="middle">
                 <Col>
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    style={{ width: 100, height: 100, objectFit: "cover", borderRadius: 8 }}
-                  />
+                  <div
+                    style={{
+                      width: 100,
+                      height: 100,
+                      borderRadius: 8,
+                      overflow: "hidden",
+                      backgroundColor: "#f5f5f5",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
                 </Col>
+
                 <Col flex="auto">
                   <Title level={4} style={{ margin: 0 }}>
                     {item.name}
                   </Title>
-                  <Text type="secondary">Loại: {item.type}</Text>
+                  <Text type="secondary">Dung tích: {item.volume} ml</Text>
                   <br />
-                  <Text delete>{item.originalPrice.toLocaleString()} đ</Text>{" "}
-                  <Text strong style={{ color: "#ec407a" }}>
-                    {item.discountedPrice.toLocaleString()} đ
-                  </Text>
+                  <Text>{item.price?.toLocaleString()} đ</Text>
                   <br />
                   <Text>Số lượng: </Text>
                   <InputNumber
                     min={1}
                     value={item.quantity}
-                    onChange={(value) => handleQuantityChange(value, item.id)}
+                    onChange={(value) => handleQuantityChange(item.id, value)}
+                  />
+                </Col>
+                <Col>
+                  <Checkbox
+                    checked={selectedItems.includes(item.id)}
+                    onChange={(e) =>
+                      handleCheckboxChange(item.id, e.target.checked)
+                    }
                   />
                 </Col>
                 <Col>
                   <Popconfirm
                     title="Xóa sản phẩm này?"
-                    onConfirm={() => handleRemove(item.id)}
                     okText="Xóa"
                     cancelText="Hủy"
+                    onConfirm={() => handleDeleteItem(item.id)}
                   >
                     <Button type="text" danger icon={<DeleteOutlined />}>
                       Xóa
@@ -159,6 +213,7 @@ const Cart = () => {
               <Button
                 type="primary"
                 size="large"
+                disabled={selectedItems.length === 0}
                 style={{ backgroundColor: "#ec407a", borderColor: "#ec407a" }}
                 onClick={handleCheckout}
               >
