@@ -1,0 +1,6 @@
+[
+  { "_id": 1, "name": "Chờ xử lí" },
+  { "_id": 2, "name": "Đang giao" },
+  { "_id": 3, "name": "Đã giao" },
+  { "_id": 4, "name": "Đã huỷ" }
+]
