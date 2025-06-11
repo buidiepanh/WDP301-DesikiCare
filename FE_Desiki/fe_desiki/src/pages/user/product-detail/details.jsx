@@ -14,8 +14,9 @@ import {
   Spin,
 } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { getAllProducts } from "../../../services/apiServices";
+import { addToCart, getAllProducts } from "../../../services/apiServices";
 import dayjs from "dayjs";
+import toast from "react-hot-toast";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -41,6 +42,22 @@ function Details() {
       console.log(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddToCart = async (productId) => {
+    try {
+      console.log(productId);
+      const result = await addToCart(productId);
+
+      if (result) {
+        toast.success("Đã thêm sản phẩm vào giỏ hàng!");
+        navigate("/");
+      } else {
+        toast.error("Thêm sản phẩm thất bại, thử lại!");
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -153,6 +170,7 @@ function Details() {
           <Button
             type="primary"
             size="large"
+            onClick={() => handleAddToCart(productId)}
             style={{
               marginTop: 24,
               backgroundColor: "#ec407a",
