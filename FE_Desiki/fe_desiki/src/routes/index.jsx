@@ -8,7 +8,7 @@ import FooterSkincare from "../components/Footer/FooterSkincare";
 import Cart from "../pages/user/cart/cart";
 import Details from "../pages/user/product-detail/details";
 import BannerSection from "../pages/user/hot-deal/BannerSection";
-import FlashDealSale from "../pages/user/sale/FlashDealSale";
+import ProductsPage from "../pages/user/sale/ProductsPage";
 import BlogGrid from "../pages/user/blog/BlogGrid";
 import WarrantyPolicy from "../pages/user/policy/WarrantyPolicy";
 import Payment from "../pages/user/payment/payment";
@@ -41,7 +41,7 @@ function UserRouter() {
           <Route path="/payment" element={<Payment />} />
           <Route path="/hot-deal" element={<BannerSection />} />
           <Route path="/warranty-policy" element={<WarrantyPolicy />} />
-          <Route path="/flash-deal-sale" element={<FlashDealSale />} />
+          <Route path="/products-page" element={<ProductsPage />} />
           <Route path="/blog-grid" element={<BlogGrid />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>

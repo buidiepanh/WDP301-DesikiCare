@@ -47,7 +47,6 @@ function Details() {
 
   const handleAddToCart = async (productId) => {
     try {
-      console.log(productId);
       const result = await addToCart(productId);
 
       if (result) {

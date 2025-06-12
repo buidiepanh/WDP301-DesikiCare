@@ -29,7 +29,7 @@ const CategoryBar = () => {
   const [skinStatuses, setSkinStatuses] = useState([]);
 
   const handleBanner = () => navigate("/hot-deal");
-  const handleDeals = () => navigate("/flash-deal-sale");
+  const handleDeals = () => navigate("/products-page");
   const handleBlog = () => navigate("/blog-grid");
 
   const handleDanhMucClick = (event) => {
