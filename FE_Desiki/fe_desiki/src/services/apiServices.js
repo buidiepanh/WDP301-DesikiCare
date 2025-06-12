@@ -71,6 +71,33 @@ export const deleteCartItem = async (id) => {
   }
 };
 
+export const getAllCategories = async () => {
+  try {
+    const result = await axios.get("/Product/categories");
+    return result.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllSkinTypes = async () => {
+  try {
+    const result = await axios.get("/Product/skinTypes");
+    return result.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllSkinStatuses = async () => {
+  try {
+    const result = await axios.get("/Product/skinStatuses");
+    return result.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getMe = async () => {
   const res = await axios.get("/Account/me");
   return res.data;
@@ -82,17 +109,24 @@ export const updateAccount = async (accountId, payload) => {
 };
 
 export const addAddress = async (accountId, payload) => {
-  const res = await axios.post(`/Account/accounts/${accountId}/deliveryAddresses`, payload);
+  const res = await axios.post(
+    `/Account/accounts/${accountId}/deliveryAddresses`,
+    payload
+  );
   return res.data;
 };
 
 export const setDefaultAddress = async (deliveryAddressId) => {
-  const res = await axios.put(`/Account/deliveryAddresses/${deliveryAddressId}/set-default`);
+  const res = await axios.put(
+    `/Account/deliveryAddresses/${deliveryAddressId}/set-default`
+  );
   return res.data;
 };
 
 export const deleteAddress = async (deliveryAddressId) => {
-  const res = await axios.delete(`/Account/deliveryAddresses/${deliveryAddressId}`);
+  const res = await axios.delete(
+    `/Account/deliveryAddresses/${deliveryAddressId}`
+  );
   return res.data;
 };
 

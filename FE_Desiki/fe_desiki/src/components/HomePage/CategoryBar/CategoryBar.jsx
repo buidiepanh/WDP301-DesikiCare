@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -11,6 +11,11 @@ import { Menu } from "@mui/icons-material";
 import styles from "./CategoryBar.module.css";
 import { useNavigate } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import {
+  getAllCategories,
+  getAllSkinStatuses,
+  getAllSkinTypes,
+} from "../../../services/apiServices";
 
 const CategoryBar = () => {
   const navigate = useNavigate();
@@ -19,20 +24,57 @@ const CategoryBar = () => {
 
   const [openSanPham, setOpenSanPham] = useState(false);
   const [anchorSanPham, setAnchorSanPham] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [skinTypes, setSkinTypes] = useState([]);
+  const [skinStatuses, setSkinStatuses] = useState([]);
 
   const handleBanner = () => navigate("/hot-deal");
   const handleDeals = () => navigate("/flash-deal-sale");
   const handleBlog = () => navigate("/blog-grid");
+
   const handleDanhMucClick = (event) => {
     setAnchorDanhMuc(event.currentTarget);
     setOpenDanhMuc((prev) => !prev);
     setOpenSanPham(false); // Đóng popper khác nếu đang mở
   };
 
+  useEffect(() => {
+    fetchAllCategories();
+    fetchAllSkinTypes();
+    fetchAllSkinStatuses();
+  }, []);
+
+  const fetchAllCategories = async () => {
+    try {
+      const result = await getAllCategories();
+      setCategories(result.categories);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllSkinTypes = async () => {
+    try {
+      const result = await getAllSkinTypes();
+      setSkinTypes(result.skinTypes);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllSkinStatuses = async () => {
+    try {
+      const result = await getAllSkinStatuses();
+      setSkinStatuses(result.skinStatuses);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleSanPhamClick = (event) => {
     setAnchorSanPham(event.currentTarget);
     setOpenSanPham((prev) => !prev);
-    setOpenDanhMuc(false); // Đóng popper khác nếu đang mở
+    setOpenDanhMuc(false);
   };
 
   const handleCloseAll = () => {
@@ -56,23 +98,15 @@ const CategoryBar = () => {
   const sanPhamList = [
     {
       name: "Chăm Sóc Da",
-      subItems: [
-        "Kem Dưỡng Da",
-        "Sữa Rửa Mặt",
-        "Mặt Nạ",
-        "Toner",
-        "Serum",
-        "Tẩy Trang",
-        "Kem Chống Nắng",
-      ],
+      subItems: categories.map((item) => item.name),
     },
     {
-      name: "Trang Điểm",
-      subItems: ["Phấn Nước", "Son Môi", "Che Khuyết Điểm", "Kẻ Mắt"],
+      name: "Các loại da",
+      subItems: skinTypes.map((item) => item.name),
     },
     {
-      name: "Dưỡng Tóc",
-      subItems: ["Dầu Gội", "Dầu Xả", "Dưỡng Tóc"],
+      name: "Tình trạng da",
+      subItems: skinStatuses.map((item) => item.name),
     },
   ];
 
@@ -93,7 +127,7 @@ const CategoryBar = () => {
 
         <span className={styles.divider}>|</span>
         <Typography className={styles.categoryItem} onClick={handleDeals}>
-          DeskiCare DEALS
+          Sản phẩm DeskiCare
         </Typography>
         <Typography className={styles.categoryItem} onClick={handleBanner}>
           HOT DEALS
@@ -102,13 +136,12 @@ const CategoryBar = () => {
           className={styles.categoryItem}
           onClick={handleSanPhamClick}
         >
-          Sản Phẩm
+          Lọai Sản Phẩm
         </Typography>
         <Typography className={styles.categoryItem}>Chăm Sóc Da</Typography>
         <Typography className={styles.categoryItem} onClick={handleBlog}>
           Tạp Chí Làm Đẹp
         </Typography>
-        <Typography className={styles.categoryItem}>Sản Phẩm Mới</Typography>
         <Typography className={styles.categoryItem}>Mini Game</Typography>
       </Box>
 
