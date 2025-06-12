@@ -70,3 +70,43 @@ export const deleteCartItem = async (id) => {
     console.log(error);
   }
 };
+
+export const getMe = async () => {
+  const res = await axios.get("/Account/me");
+  return res.data;
+};
+
+export const updateAccount = async (accountId, payload) => {
+  const res = await axios.put(`/Account/accounts/${accountId}`, payload);
+  return res.data;
+};
+
+export const addAddress = async (accountId, payload) => {
+  const res = await axios.post(`/Account/accounts/${accountId}/deliveryAddresses`, payload);
+  return res.data;
+};
+
+export const setDefaultAddress = async (deliveryAddressId) => {
+  const res = await axios.put(`/Account/deliveryAddresses/${deliveryAddressId}/set-default`);
+  return res.data;
+};
+
+export const deleteAddress = async (deliveryAddressId) => {
+  const res = await axios.delete(`/Account/deliveryAddresses/${deliveryAddressId}`);
+  return res.data;
+};
+
+export const getAllOrders = async () => {
+  const res = await axios.get("/Order/orders");
+  return res.data.orders || [];
+};
+
+export const getOrderDetail = async (orderId) => {
+  const res = await axios.get(`/Order/orders/${orderId}`);
+  return res.data;
+};
+
+export const getChatbotConfig = async () => {
+  const res = await axios.get("/Chatbot/chatbotConfigs");
+  return res.data;
+};

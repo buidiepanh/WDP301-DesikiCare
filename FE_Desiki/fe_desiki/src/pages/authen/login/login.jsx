@@ -9,7 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import image2 from "../../../assets/authen/authen_background2.jpg";
-import "./Login.css";
+import "./login.css";
 import { loginFunction } from "../../../services/apiServices";
 import axios from "axios";
 

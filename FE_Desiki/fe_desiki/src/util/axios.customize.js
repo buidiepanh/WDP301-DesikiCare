@@ -11,6 +11,7 @@ instance.interceptors.request.use(
   function (config) {
     // Do something before request is sent
     const token = sessionStorage.getItem("accessToken");
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

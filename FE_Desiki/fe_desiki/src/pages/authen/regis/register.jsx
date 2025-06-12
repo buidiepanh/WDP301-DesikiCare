@@ -16,7 +16,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import image1 from "../../../assets/authen/authen_background1.webp";
-import "./Register.css";
+import "./register.css";
 import { registerFunction } from "../../../services/apiServices";
 
 const { Title, Text, Link } = Typography;
@@ -145,9 +145,9 @@ const Register = () => {
               rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
             >
               <Select placeholder="Chọn giới tính">
-                <Option value="Nam">Nam</Option>
-                <Option value="Nữ">Nữ</Option>
-                <Option value="Khác">Khác</Option>
+                <Option value="Nam">Male</Option>
+                <Option value="Nữ">Female</Option>
+                <Option value="Khác">Other</Option>
               </Select>
             </Form.Item>
 
