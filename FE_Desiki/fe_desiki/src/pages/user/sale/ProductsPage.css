@@ -1,19 +1,18 @@
-/* 1. Dòng chứa các cột cần flex để căn chiều cao */
-.ant-row > .ant-col {
-  display: flex;
+.flash-sale-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #e53e3e;
 }
 
-/* 2. Card chiếm hết chiều cao của cột */
 .product-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* đảm bảo info đẩy xuống cuối nếu cần */
+  justify-content: space-between; 
   height: 100%;
   border-radius: 8px;
   overflow: hidden;
 }
 
-/* 3. Đảm bảo hình ảnh không bị kéo giãn */
 .product-img {
   width: 100%;
   height: 160px;
@@ -21,7 +20,6 @@
   margin-bottom: 8px;
 }
 
-/* 4. Nội dung bên trong chiếm phần còn lại */
 .product-info {
   display: flex;
   flex-direction: column;

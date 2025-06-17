@@ -6,6 +6,8 @@ import {
   Popper,
   Paper,
   ClickAwayListener,
+  Modal,
+  Button,
 } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import styles from "./CategoryBar.module.css";
@@ -27,6 +29,10 @@ const CategoryBar = () => {
   const [categories, setCategories] = useState([]);
   const [skinTypes, setSkinTypes] = useState([]);
   const [skinStatuses, setSkinStatuses] = useState([]);
+  const [openGameModal, setOpenGameModal] = useState(false);
+
+  const handleOpenGameModal = () => setOpenGameModal(true);
+  const handleCloseGameModal = () => setOpenGameModal(false);
 
   const handleBanner = () => navigate("/hot-deal");
   const handleDeals = () => navigate("/products-page");
@@ -136,13 +142,17 @@ const CategoryBar = () => {
           className={styles.categoryItem}
           onClick={handleSanPhamClick}
         >
-          Lọai Sản Phẩm
+          Loại Sản Phẩm
         </Typography>
-        <Typography className={styles.categoryItem}>Chăm Sóc Da</Typography>
         <Typography className={styles.categoryItem} onClick={handleBlog}>
           Tạp Chí Làm Đẹp
         </Typography>
-        <Typography className={styles.categoryItem}>Mini Game</Typography>
+        <Typography
+          className={styles.categoryItem}
+          onClick={handleOpenGameModal}
+        >
+          Mini Game
+        </Typography>
       </Box>
 
       {/* Danh mục popper */}
@@ -239,6 +249,57 @@ const CategoryBar = () => {
           </Paper>
         </ClickAwayListener>
       </Popper>
+      <Modal open={openGameModal} onClose={handleCloseGameModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold" textAlign="center">
+            Mini Game 🎮
+          </Typography>
+
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={() => navigate("/game/hidden-word")}
+          >
+            🔠 Hidden Word
+          </Button>
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={() => navigate("/game/spinning-wheel")}
+          >
+            🎡 Spinning Wheel
+          </Button>
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={() => navigate("/game/scratch-card")}
+          >
+            🎁 Scratching Card
+          </Button>
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={() => navigate("/game/memory-catching")}
+          >
+            🧠 Memory Catching
+          </Button>
+        </Box>
+      </Modal>
     </Box>
   );
 };

@@ -8,7 +8,6 @@ import {
   Typography,
   Divider,
   Popconfirm,
-  message,
   Empty,
   Checkbox,
 } from "antd";
@@ -18,6 +17,8 @@ import {
   changeQuantity,
   deleteCartItem,
   getAuthenitcatedUserCart,
+  getMe,
+  getPaymentUrlForCart,
 } from "../../../services/apiServices";
 import toast from "react-hot-toast";
 
@@ -26,16 +27,26 @@ const { Title, Text } = Typography;
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     fetchAuthenticatedUserCart();
+    fetchAuthenticatedUser();
   }, []);
+
+  const fetchAuthenticatedUser = async () => {
+    try {
+      const result = await getMe();
+      setUser(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const fetchAuthenticatedUserCart = async () => {
     try {
       const result = await getAuthenitcatedUserCart();
-      const transformed = result.map((item) => ({
+      const transformed = result?.cartItems.map((item) => ({
         id: item.cartItem._id,
         name: item.product.name,
         quantity: item.cartItem.quantity,
@@ -47,12 +58,6 @@ const Cart = () => {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const handleCheckboxChange = (id, checked) => {
-    setSelectedItems((prev) =>
-      checked ? [...prev, id] : prev.filter((itemId) => itemId !== id)
-    );
   };
 
   const handleQuantityChange = async (id, value) => {
@@ -85,13 +90,19 @@ const Cart = () => {
     }
   };
 
-  const handleCheckout = () => {
-    navigate("/payment");
+  const handlePayment = async (point, address) => {
+    try {
+      const result = await getPaymentUrlForCart(point, address);
+      window.location.href = result.paymentLink;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const total = cartItems
-    .filter((item) => selectedItems.includes(item.id))
-    .reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const total = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
   return (
     <div style={{ padding: "24px" }}>
@@ -129,7 +140,7 @@ const Cart = () => {
         <>
           {cartItems?.map((item) => (
             <Card
-              key={item._id}
+              key={item.id}
               style={{
                 marginBottom: 16,
                 backgroundColor: "#fff0f5",
@@ -180,14 +191,6 @@ const Cart = () => {
                   />
                 </Col>
                 <Col>
-                  <Checkbox
-                    checked={selectedItems.includes(item.id)}
-                    onChange={(e) =>
-                      handleCheckboxChange(item.id, e.target.checked)
-                    }
-                  />
-                </Col>
-                <Col>
                   <Popconfirm
                     title="Xóa sản phẩm này?"
                     okText="Xóa"
@@ -213,9 +216,14 @@ const Cart = () => {
               <Button
                 type="primary"
                 size="large"
-                disabled={selectedItems.length === 0}
+                disabled={cartItems.length === 0}
                 style={{ backgroundColor: "#ec407a", borderColor: "#ec407a" }}
-                onClick={handleCheckout}
+                onClick={() =>
+                  handlePayment(
+                    user?.account?.points,
+                    user?.deliveryAddresses[0]?._id
+                  )
+                }
               >
                 Tiến hành thanh toán
               </Button>

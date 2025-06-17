@@ -5,8 +5,8 @@ import HeaderSkincare from "../../../components/Header/HeaderSkincare";
 import FooterSkincare from "../../../components/Footer/FooterSkincare";
 import CategoryBar from "../../../components/HomePage/CategoryBar/CategoryBar";
 import PromoCarousel from "../../../components/HomePage/Carousel/PromoCarousel";
-import FlashSale from "../../../components/HomePage/FlashSale/FlashSale";
 import ProductGrid from "../../../components/HomePage/Grid/ProductGrid";
+import Brand from "../../../components/HomePage/Brand/Brand";
 const { Search } = Input;
 const { Meta } = Card;
 
@@ -46,7 +46,7 @@ export default function App() {
           backgroundColor: "#fff",
         }}
       >
-        <FlashSale />
+        <Brand />
       </Box>
       {/* Danh sách sản phẩm */}
       <Container>
