@@ -15,8 +15,10 @@ import { useNavigate } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
   getAllCategories,
+  getAllMiniGames,
   getAllSkinStatuses,
   getAllSkinTypes,
+  getGamesEvent,
 } from "../../../services/apiServices";
 
 const CategoryBar = () => {
@@ -30,6 +32,7 @@ const CategoryBar = () => {
   const [skinTypes, setSkinTypes] = useState([]);
   const [skinStatuses, setSkinStatuses] = useState([]);
   const [openGameModal, setOpenGameModal] = useState(false);
+  const [gameNames, setGameNames] = useState([]);
 
   const handleOpenGameModal = () => setOpenGameModal(true);
   const handleCloseGameModal = () => setOpenGameModal(false);
@@ -48,12 +51,22 @@ const CategoryBar = () => {
     fetchAllCategories();
     fetchAllSkinTypes();
     fetchAllSkinStatuses();
+    fetchAllMiniGames();
   }, []);
 
   const fetchAllCategories = async () => {
     try {
       const result = await getAllCategories();
       setCategories(result.categories);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllMiniGames = async () => {
+    try {
+      const result = await getAllMiniGames();
+      setGameNames(result.gameTypes);
     } catch (error) {
       console.log(error);
     }
@@ -249,6 +262,7 @@ const CategoryBar = () => {
           </Paper>
         </ClickAwayListener>
       </Popper>
+
       <Modal open={openGameModal} onClose={handleCloseGameModal}>
         <Box
           sx={{
@@ -269,35 +283,18 @@ const CategoryBar = () => {
           <Typography variant="h6" fontWeight="bold" textAlign="center">
             Mini Game 🎮
           </Typography>
-
-          <Button
-            variant="outlined"
-            fullWidth
-            onClick={() => navigate("/game/hidden-word")}
-          >
-            🔠 Hidden Word
-          </Button>
-          <Button
-            variant="outlined"
-            fullWidth
-            onClick={() => navigate("/game/spinning-wheel")}
-          >
-            🎡 Spinning Wheel
-          </Button>
-          <Button
-            variant="outlined"
-            fullWidth
-            onClick={() => navigate("/game/scratch-card")}
-          >
-            🎁 Scratching Card
-          </Button>
-          <Button
-            variant="outlined"
-            fullWidth
-            onClick={() => navigate("/game/memory-catching")}
-          >
-            🧠 Memory Catching
-          </Button>
+          {gameNames?.map((game) => (
+            <Button
+              key={game.id}
+              variant="outlined"
+              fullWidth
+              onClick={() =>
+                navigate(`/game-type/${game._id}`, { state: game })
+              }
+            >
+              {game.name}
+            </Button>
+          ))}
         </Box>
       </Modal>
     </Box>

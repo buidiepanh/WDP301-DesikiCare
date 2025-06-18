@@ -12,6 +12,7 @@ import ProductsPage from "../pages/user/sale/ProductsPage";
 import BlogGrid from "../pages/user/blog/BlogGrid";
 import WarrantyPolicy from "../pages/user/policy/WarrantyPolicy";
 import Payment from "../pages/user/payment/payment";
+import GameTypePage from "../pages/user/Game/Type/GameTypePage";
 
 import UserManagement from "../pages/admin/UserManagement";
 import CustomerPoints from "../pages/admin/CustomerPoints";
@@ -26,6 +27,7 @@ import Statistics from "../pages/manager/Statistics";
 import CustomerInfo from "../pages/manager/CustomerInfo";
 import ManagerLayout from "../layouts/manager/ManagerLayout";
 import AdminLayout from "../layouts/admin/AdminLayout";
+import GamePlayPage from "../pages/user/Game/Play/GamePlayPage";
 
 function UserRouter() {
   return (
@@ -44,6 +46,8 @@ function UserRouter() {
           <Route path="/products-page" element={<ProductsPage />} />
           <Route path="/blog-grid" element={<BlogGrid />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/game-type/:id" element={<GameTypePage />} />
+          <Route path="/game-event/:id" element={<GamePlayPage />} />
         </Routes>
       </div>
       <FooterSkincare />

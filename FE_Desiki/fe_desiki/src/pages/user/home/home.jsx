@@ -1,8 +1,6 @@
 import React from "react";
 import { Typography, Box, Container } from "@mui/material";
 import { Input, Card, Row, Col } from "antd";
-import HeaderSkincare from "../../../components/Header/HeaderSkincare";
-import FooterSkincare from "../../../components/Footer/FooterSkincare";
 import CategoryBar from "../../../components/HomePage/CategoryBar/CategoryBar";
 import PromoCarousel from "../../../components/HomePage/Carousel/PromoCarousel";
 import ProductGrid from "../../../components/HomePage/Grid/ProductGrid";

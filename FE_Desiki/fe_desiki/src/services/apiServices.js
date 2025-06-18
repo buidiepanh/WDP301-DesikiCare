@@ -177,10 +177,19 @@ export const getPaymentUrlForCart = async (point, address) => {
   }
 };
 
-export const getMiniGamesUI = async () => {
+export const getAllMiniGames = async () => {
   try {
-    const game = await axios.get("/Game/gameEvents");
+    const game = await axios.get("/Game/gameTypes");
     return game.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getGamesEvent = async () => {
+  try {
+    const result = await axios.get("/Game/gameEvents");
+    return result.data;
   } catch (error) {
     console.log(error);
   }
