@@ -14,6 +14,7 @@ import {
 import { ShoppingOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import {
+  addNewOrder,
   changeQuantity,
   deleteCartItem,
   getAuthenitcatedUserCart,
@@ -94,6 +95,21 @@ const Cart = () => {
     try {
       const result = await getPaymentUrlForCart(point, address);
       window.location.href = result.paymentLink;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAddNEwOrder = async (point, address) => {
+    try {
+      const result = await addNewOrder(point, address);
+
+      if (result) {
+        toast.success("Tạo đơn hàng thành công!");
+        navigate("/");
+      } else {
+        toast.error("Tạo đơn hàng thất bại!");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -226,6 +242,25 @@ const Cart = () => {
                 }
               >
                 Tiến hành thanh toán
+              </Button>
+
+              <Button
+                size="large"
+                type="default"
+                style={{
+                  marginTop: 12,
+                  marginLeft: 12,
+                  borderColor: "#ec407a",
+                  color: "#ec407a",
+                }}
+                onClick={() =>
+                  handleAddNEwOrder(
+                    user?.account?.points,
+                    user?.deliveryAddresses[0]?._id
+                  )
+                }
+              >
+                Tạo Đơn Hàng
               </Button>
             </Col>
           </Row>

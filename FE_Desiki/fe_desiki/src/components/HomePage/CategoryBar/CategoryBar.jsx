@@ -25,6 +25,7 @@ const CategoryBar = () => {
   const navigate = useNavigate();
   const [openDanhMuc, setOpenDanhMuc] = useState(false);
   const [anchorDanhMuc, setAnchorDanhMuc] = useState(null);
+  const token = sessionStorage.getItem("accessToken");
 
   const [openSanPham, setOpenSanPham] = useState(false);
   const [anchorSanPham, setAnchorSanPham] = useState(null);
@@ -289,7 +290,9 @@ const CategoryBar = () => {
               variant="outlined"
               fullWidth
               onClick={() =>
-                navigate(`/game-type/${game._id}`, { state: game })
+                token !== null
+                  ? navigate(`/game-type/${game._id}`, { state: game })
+                  : navigate("/login")
               }
             >
               {game.name}

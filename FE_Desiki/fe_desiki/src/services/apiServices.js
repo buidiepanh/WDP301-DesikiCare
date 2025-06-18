@@ -132,7 +132,7 @@ export const deleteAddress = async (deliveryAddressId) => {
 
 export const getAllOrders = async () => {
   const res = await axios.get("/Order/orders");
-  return res.data.orders || [];
+  return res.data.orders;
 };
 
 export const addNewOrder = async (point, address) => {

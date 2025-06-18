@@ -14,6 +14,7 @@ import {
   Modal,
   DatePicker,
   Select,
+  Tag,
 } from "antd";
 import {
   getMe,
@@ -66,7 +67,7 @@ const Profile = () => {
   const fetchOrders = async () => {
     try {
       const res = await getAllOrders();
-      setOrders(res.orders || []);
+      setOrders(res);
     } catch {
       message.error("Không thể tải danh sách đơn hàng.");
     }
@@ -164,6 +165,27 @@ const Profile = () => {
     }
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Chờ xử lí":
+        return "orange";
+      case "Đang xử lý":
+        return "blue";
+      case "Đang giao":
+        return "cyan";
+      case "Đã giao":
+        return "green";
+      case "Đã hủy":
+        return "red";
+      default:
+        return "default";
+    }
+  };
+
+  const getPaymentStatusColor = (isPaid) => {
+    return isPaid ? "green" : "red";
+  };
+
   useEffect(() => {
     fetchProfile();
     fetchOrders();
@@ -176,7 +198,9 @@ const Profile = () => {
           <div className="profile-left">
             <div className="profile-avatar">
               <Avatar size={96} src={user?.imageUrl} icon={<UserOutlined />} />
-              <Title level={4} style={{ marginTop: 12 }}>Thông tin cá nhân</Title>
+              <Title level={4} style={{ marginTop: 12 }}>
+                Thông tin cá nhân
+              </Title>
             </div>
 
             <Form layout="vertical" form={form} onFinish={handleUpdate}>
@@ -214,25 +238,47 @@ const Profile = () => {
             <Divider />
 
             <Title level={5}>Đổi mật khẩu</Title>
-            <Form layout="vertical" form={passwordForm} onFinish={handleChangePassword}>
-              <Form.Item label="Mật khẩu hiện tại" name="currentPassword" rules={[{ required: true }]}> 
+            <Form
+              layout="vertical"
+              form={passwordForm}
+              onFinish={handleChangePassword}
+            >
+              <Form.Item
+                label="Mật khẩu hiện tại"
+                name="currentPassword"
+                rules={[{ required: true }]}
+              >
                 <Input.Password size="large" />
               </Form.Item>
-              <Form.Item label="Mật khẩu mới" name="newPassword" rules={[{ required: true }]}> 
+              <Form.Item
+                label="Mật khẩu mới"
+                name="newPassword"
+                rules={[{ required: true }]}
+              >
                 <Input.Password size="large" />
               </Form.Item>
-              <Form.Item label="Xác nhận mật khẩu mới" name="confirmPassword" rules={[{ required: true }]}> 
+              <Form.Item
+                label="Xác nhận mật khẩu mới"
+                name="confirmPassword"
+                rules={[{ required: true }]}
+              >
                 <Input.Password size="large" />
               </Form.Item>
               <Form.Item>
-                <Button type="primary" htmlType="submit" block>Đổi mật khẩu</Button>
+                <Button type="primary" htmlType="submit" block>
+                  Đổi mật khẩu
+                </Button>
               </Form.Item>
             </Form>
 
             <Divider />
 
             <Title level={5}>Địa chỉ giao hàng</Title>
-            <Form layout="vertical" form={addressForm} onFinish={handleAddAddress}>
+            <Form
+              layout="vertical"
+              form={addressForm}
+              onFinish={handleAddAddress}
+            >
               <Form.Item label="Địa chỉ mới" name="address">
                 <Input size="large" />
               </Form.Item>
@@ -254,10 +300,20 @@ const Profile = () => {
                     item.isDefault ? (
                       <span style={{ color: "green" }}>Mặc định</span>
                     ) : (
-                      <Button type="link" onClick={() => handleSetDefault(item.id)}>Đặt mặc định</Button>
+                      <Button
+                        type="link"
+                        onClick={() => handleSetDefault(item.id)}
+                      >
+                        Đặt mặc định
+                      </Button>
                     ),
-                    <Popconfirm title="Xoá địa chỉ?" onConfirm={() => handleDelete(item.id)}>
-                      <Button type="link" danger>Xoá</Button>
+                    <Popconfirm
+                      title="Xoá địa chỉ?"
+                      onConfirm={() => handleDelete(item.id)}
+                    >
+                      <Button type="link" danger>
+                        Xoá
+                      </Button>
                     </Popconfirm>,
                   ]}
                 >
@@ -271,64 +327,235 @@ const Profile = () => {
             <Title level={4}>Lịch sử đơn hàng</Title>
             <Table
               dataSource={Array.isArray(orders) ? orders : []}
-              rowKey="_id"
+              rowKey={(record) => record.order._id}
               bordered
               pagination={{ pageSize: 5 }}
               size="middle"
+              scroll={{ x: 800 }}
               columns={[
                 {
-                  title: "Mã đơn",
-                  dataIndex: "_id",
+                  title: "Mã đơn hàng",
+                  dataIndex: ["order", "_id"],
+                  key: "orderId",
+                  width: 200,
+                  render: (id) => (
+                    <span style={{ fontFamily: "monospace", fontSize: "12px" }}>
+                      {id.slice(-8)}
+                    </span>
+                  ),
                 },
                 {
                   title: "Ngày đặt",
-                  dataIndex: "createdAt",
+                  dataIndex: ["order", "createdAt"],
+                  key: "createdAt",
+                  width: 120,
                   render: (date) => new Date(date).toLocaleDateString("vi-VN"),
                 },
                 {
                   title: "Tổng tiền",
-                  dataIndex: "totalAmount",
-                  render: (val) => `${val?.toLocaleString()}₫`,
+                  dataIndex: ["order", "totalPrice"],
+                  key: "totalPrice",
+                  width: 120,
+                  render: (price) => (
+                    <span style={{ fontWeight: "bold", color: "#ec407a" }}>
+                      {price?.toLocaleString("vi-VN")}₫
+                    </span>
+                  ),
                 },
                 {
-                  title: "Trạng thái",
-                  dataIndex: "status",
+                  title: "Trạng thái đơn hàng",
+                  dataIndex: ["orderStatus", "name"],
+                  key: "orderStatus",
+                  width: 140,
+                  render: (status) => (
+                    <Tag color={getStatusColor(status)}>{status}</Tag>
+                  ),
+                },
+                {
+                  title: "Thanh toán",
+                  dataIndex: ["order", "isPaid"],
+                  key: "isPaid",
+                  width: 120,
+                  render: (isPaid) => (
+                    <Tag color={getPaymentStatusColor(isPaid)}>
+                      {isPaid ? "Đã thanh toán" : "Chưa thanh toán"}
+                    </Tag>
+                  ),
+                },
+                {
+                  title: "Số sản phẩm",
+                  dataIndex: "orderItems",
+                  key: "itemCount",
+                  width: 100,
+                  render: (orderItems) => (
+                    <span>{orderItems?.length || 0} sản phẩm</span>
+                  ),
                 },
                 {
                   title: "Hành động",
+                  key: "action",
+                  width: 120,
+                  fixed: "right",
                   render: (_, record) => (
-                    <Button type="link" onClick={() => handleViewDetail(record._id)}>
+                    <Button
+                      type="link"
+                      size="small"
+                      onClick={() => handleViewDetail(record.order._id)}
+                    >
                       Xem chi tiết
                     </Button>
                   ),
                 },
               ]}
             />
-
             <Modal
-              title="Chi tiết đơn hàng"
+              title={`Chi tiết đơn hàng ${
+                orderDetail?.order?.order?._id?.slice(-8) || ""
+              }`}
               open={modalVisible}
               onCancel={() => setModalVisible(false)}
-              footer={null}
-              width={700}
+              footer={[
+                <Button key="close" onClick={() => setModalVisible(false)}>
+                  Đóng
+                </Button>,
+              ]}
+              width={800}
             >
               {orderDetail ? (
-                <Table
-                  dataSource={orderDetail.orderItems}
-                  rowKey="_id"
-                  pagination={false}
-                  columns={[
-                    { title: "Sản phẩm", dataIndex: "productName" },
-                    { title: "Số lượng", dataIndex: "quantity" },
-                    {
-                      title: "Đơn giá",
-                      dataIndex: "price",
-                      render: (val) => `${val?.toLocaleString()}₫`,
-                    },
-                  ]}
-                />
+                <div>
+                  {/* Thông tin đơn hàng */}
+                  <div style={{ marginBottom: 16 }}>
+                    <Title level={5}>Thông tin đơn hàng</Title>
+                    <p>
+                      <strong>Mã đơn hàng:</strong>{" "}
+                      {orderDetail.order.order._id}
+                    </p>
+                    <p>
+                      <strong>Ngày đặt:</strong>{" "}
+                      {new Date(
+                        orderDetail.order.order.createdAt
+                      ).toLocaleString("vi-VN")}
+                    </p>
+                    <p>
+                      <strong>Trạng thái:</strong>{" "}
+                      <Tag
+                        color={getStatusColor(
+                          orderDetail.order.orderStatus?.name
+                        )}
+                      >
+                        {orderDetail.order.orderStatus?.name}
+                      </Tag>
+                    </p>
+                    <p>
+                      <strong>Thanh toán:</strong>{" "}
+                      <Tag
+                        color={getPaymentStatusColor(
+                          orderDetail.order.order.isPaid
+                        )}
+                      >
+                        {orderDetail.order.order.isPaid
+                          ? "Đã thanh toán"
+                          : "Chưa thanh toán"}
+                      </Tag>
+                    </p>
+                    <p>
+                      <strong>Điểm sử dụng:</strong>{" "}
+                      {orderDetail.order.order.pointUsed} điểm
+                    </p>
+                  </div>
+
+                  <Divider />
+
+                  <Title level={5}>Chi tiết sản phẩm</Title>
+                  <Table
+                    dataSource={orderDetail.order.orderItems}
+                    rowKey={(record) => record.orderItem._id}
+                    pagination={false}
+                    size="small"
+                    columns={[
+                      {
+                        title: "Hình ảnh",
+                        dataIndex: ["product", "imageUrl"],
+                        key: "image",
+                        width: 80,
+                        render: (imageUrl, record) => (
+                          <img
+                            src={imageUrl}
+                            alt={record.product.name}
+                            style={{
+                              width: 50,
+                              height: 50,
+                              objectFit: "cover",
+                              borderRadius: 4,
+                            }}
+                            onError={(e) => {
+                              e.target.src =
+                                "https://via.placeholder.com/50x50?text=No+Image";
+                            }}
+                          />
+                        ),
+                      },
+                      {
+                        title: "Tên sản phẩm",
+                        dataIndex: ["product", "name"],
+                        key: "productName",
+                        render: (name, record) => (
+                          <div>
+                            <div style={{ fontWeight: "bold" }}>{name}</div>
+                            <div style={{ fontSize: "12px", color: "#666" }}>
+                              Dung tích: {record.product.volume}ml
+                            </div>
+                          </div>
+                        ),
+                      },
+                      {
+                        title: "Số lượng",
+                        dataIndex: ["orderItem", "quantity"],
+                        key: "quantity",
+                        width: 80,
+                        align: "center",
+                      },
+                      {
+                        title: "Đơn giá",
+                        dataIndex: ["orderItem", "unitPrice"],
+                        key: "unitPrice",
+                        width: 120,
+                        render: (price) => `${price?.toLocaleString("vi-VN")}₫`,
+                      },
+                      {
+                        title: "Thành tiền",
+                        key: "totalPrice",
+                        width: 120,
+                        render: (_, record) => {
+                          const total =
+                            record.orderItem.quantity *
+                            record.orderItem.unitPrice;
+                          return (
+                            <span
+                              style={{ fontWeight: "bold", color: "#ec407a" }}
+                            >
+                              {total.toLocaleString("vi-VN")}₫
+                            </span>
+                          );
+                        },
+                      },
+                    ]}
+                  />
+
+                  <div style={{ marginTop: 16, textAlign: "right" }}>
+                    <Title level={4} style={{ color: "#ec407a" }}>
+                      Tổng cộng:{" "}
+                      {orderDetail.order.order.totalPrice?.toLocaleString(
+                        "vi-VN"
+                      )}
+                      ₫
+                    </Title>
+                  </div>
+                </div>
               ) : (
-                <p>Đang tải...</p>
+                <div style={{ textAlign: "center", padding: 20 }}>
+                  <p>Đang tải chi tiết đơn hàng...</p>
+                </div>
               )}
             </Modal>
           </div>
