@@ -14,9 +14,10 @@ import {
   Modal,
   DatePicker,
   Select,
-  Upload,
-  Image,
   Tag,
+  Upload,
+  Checkbox,
+  InputNumber,
 } from "antd";
 import {
   getMe,
@@ -26,6 +27,7 @@ import {
   deleteAddress,
   getAllOrders,
   getOrderDetail,
+  changePassword,
 } from "../../../services/apiServices";
 import { UserOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -63,8 +65,9 @@ const Profile = () => {
 
       setUser(acc);
       setAddresses(res.deliveryAddresses || []);
-      setAvatarBase64(acc.imageBase64 || "");
-      setPreviewAvatar("");
+
+      setPreviewAvatar(acc.imageUrl || "");
+      setAvatarBase64("");
     } catch (err) {
       message.error("Không thể tải thông tin người dùng.");
     }
@@ -79,26 +82,18 @@ const Profile = () => {
     }
   };
 
-  const handleUploadAvatar = (file) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      setAvatarBase64(reader.result);
-      setPreviewAvatar(reader.result);
-    };
-    return false;
-  };
-
   const handleUpdate = async (values) => {
     try {
       const payload = {
         account: {
-          ...values,
+          fullName: values.fullName,
+          phoneNumber: values.phoneNumber,
+          gender: values.gender,
           dob: values.dob ? values.dob.toISOString() : null,
           email: user.email,
-          password: "",
           roleId: user.roleId,
           imageBase64: avatarBase64 || user.imageBase64 || "",
+          isDeactivated: user.isDeactivated || false
         },
       };
 
@@ -112,37 +107,46 @@ const Profile = () => {
 
   const handleChangePassword = async (values) => {
     const { currentPassword, newPassword, confirmPassword } = values;
+
     if (newPassword !== confirmPassword) {
       toast.error("Mật khẩu xác nhận không khớp.");
       return;
     }
 
     try {
-      const payload = {
-        account: {
-          fullName: user.fullName,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          gender: user.gender,
-          dob: user.dob,
-          roleId: user.roleId,
-          imageBase64: avatarBase64 || "",
-          password: newPassword,
-        },
-      };
-
-      await updateAccount(user._id, payload);
+      await changePassword(user._id, currentPassword, newPassword);
       toast.success("Đổi mật khẩu thành công!");
       passwordForm.resetFields();
-    } catch (err) {
-      console.error("Lỗi đổi mật khẩu:", err);
-      toast.error("Đổi mật khẩu thất bại.");
+    } catch (error) {
+      toast.error(error.message || "Đổi mật khẩu thất bại.");
     }
+  };
+
+  const handleUploadAvatar = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setAvatarBase64(reader.result);
+      setPreviewAvatar(reader.result);
+    };
+    return false;
   };
 
   const handleAddAddress = async (values) => {
     try {
-      await addAddress(user._id, values);
+      const payload = {
+        deliveryAddress: {
+          provinceCode: Number(values.provinceCode),
+          districtCode: Number(values.districtCode),
+          wardCode: Number(values.wardCode),
+          addressDetailDescription: values.addressDetailDescription,
+          receiverName: values.receiverName,
+          receiverPhone: values.receiverPhone,
+          isDefault: values.isDefault || false,
+        },
+      };
+
+      await addAddress(user._id, payload);
       toast.success("Thêm địa chỉ thành công!");
       addressForm.resetFields();
       fetchProfile();
@@ -212,27 +216,29 @@ const Profile = () => {
       <Content className="profile-content">
         <div className="profile-layout">
           <div className="profile-left">
-            <div className="profile-avatar">
+            <div className="profile-avatar" style={{ textAlign: "center", marginBottom: 24 }}>
               <Avatar
-                size={96}
-                src={previewAvatar || avatarBase64 || user?.imageUrl}
+                size={120}
+                src={previewAvatar || user?.imageUrl}
                 icon={<UserOutlined />}
-                style={{ border: "2px solid #e0e0e0", backgroundColor: "#f0f0f0" }}
+                style={{
+                  marginBottom: 12,
+                  border: "3px solid #ec407a",
+                  boxShadow: "0 0 8px rgba(0,0,0,0.1)",
+                }}
               />
-
-              <Upload
-                showUploadList={false}
-                beforeUpload={handleUploadAvatar}
+              <input
+                type="file"
                 accept="image/*"
-              >
-                <Button icon={<UploadOutlined />} style={{ marginTop: 8 }}>
-                  Chọn ảnh đại diện
-                </Button>
-              </Upload>
-              <Avatar size={96} src={user?.imageUrl} icon={<UserOutlined />} />
-              <Title level={4} style={{ marginTop: 12 }}>
-                Thông tin cá nhân
-              </Title>
+                onChange={(e) => handleUploadAvatar(e.target.files[0])}
+                style={{
+                  display: "inline-block",
+                  marginTop: 8,
+                  fontSize: "13px",
+                  border: "none",
+                }}
+              />
+              <Title level={4} style={{ marginTop: 12 }}>Thông tin cá nhân</Title>
             </div>
 
             <Form layout="vertical" form={form} onFinish={handleUpdate}>
@@ -268,10 +274,7 @@ const Profile = () => {
             </Form>
 
             <Divider />
-
             <Title level={5}>Đổi mật khẩu</Title>
-            <Form layout="vertical" form={passwordForm} onFinish={handleChangePassword}>
-              <Form.Item label="Mật khẩu hiện tại" name="currentPassword" rules={[{ required: true }]}>
             <Form
               layout="vertical"
               form={passwordForm}
@@ -284,7 +287,6 @@ const Profile = () => {
               >
                 <Input.Password size="large" />
               </Form.Item>
-              <Form.Item label="Mật khẩu mới" name="newPassword" rules={[{ required: true }]}>
               <Form.Item
                 label="Mật khẩu mới"
                 name="newPassword"
@@ -292,7 +294,6 @@ const Profile = () => {
               >
                 <Input.Password size="large" />
               </Form.Item>
-              <Form.Item label="Xác nhận mật khẩu mới" name="confirmPassword" rules={[{ required: true }]}>
               <Form.Item
                 label="Xác nhận mật khẩu mới"
                 name="confirmPassword"
@@ -304,25 +305,71 @@ const Profile = () => {
                 <Button type="primary" htmlType="submit" block>
                   Đổi mật khẩu
                 </Button>
-                <Button type="primary" htmlType="submit" block>
-                  Đổi mật khẩu
-                </Button>
               </Form.Item>
             </Form>
-
             <Divider />
 
-            <Title level={5}>Địa chỉ giao hàng</Title>
+            <Title level={4} style={{ marginBottom: 20 }}>Địa chỉ giao hàng</Title>
+
             <Form
               layout="vertical"
               form={addressForm}
               onFinish={handleAddAddress}
             >
-              <Form.Item label="Địa chỉ mới" name="address">
-                <Input size="large" />
+              <Form.Item
+                label="Tỉnh/Thành phố (mã số)"
+                name="provinceCode"
+                rules={[{ required: true, message: "Vui lòng nhập mã tỉnh/thành phố (số)" }]}
+              >
+                <InputNumber style={{ width: "100%" }} />
               </Form.Item>
+
+              <Form.Item
+                label="Quận/Huyện (mã số)"
+                name="districtCode"
+                rules={[{ required: true, message: "Vui lòng nhập mã quận/huyện (số)" }]}
+              >
+                <InputNumber style={{ width: "100%" }} />
+              </Form.Item>
+
+              <Form.Item
+                label="Phường/Xã (mã số)"
+                name="wardCode"
+                rules={[{ required: true, message: "Vui lòng nhập mã phường/xã (số)" }]}
+              >
+                <InputNumber style={{ width: "100%" }} />
+              </Form.Item>
+
+              <Form.Item
+                label="Địa chỉ chi tiết"
+                name="addressDetailDescription"
+                rules={[{ required: true, message: "Vui lòng nhập địa chỉ chi tiết" }]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="Người nhận"
+                name="receiverName"
+                rules={[{ required: true, message: "Vui lòng nhập tên người nhận" }]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="SĐT người nhận"
+                name="receiverPhone"
+                rules={[{ required: true, message: "Vui lòng nhập SĐT người nhận" }]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item name="isDefault" valuePropName="checked">
+                <Checkbox>Đặt làm mặc định</Checkbox>
+              </Form.Item>
+
               <Form.Item>
-                <Button type="dashed" htmlType="submit" size="large" block>
+                <Button type="dashed" htmlType="submit" block>
                   Thêm địa chỉ
                 </Button>
               </Form.Item>
@@ -339,9 +386,6 @@ const Profile = () => {
                     item.isDefault ? (
                       <span style={{ color: "green" }}>Mặc định</span>
                     ) : (
-                      <Button type="link" onClick={() => handleSetDefault(item.id)}>
-                        Đặt mặc định
-                      </Button>
                       <Button
                         type="link"
                         onClick={() => handleSetDefault(item.id)}
@@ -349,10 +393,6 @@ const Profile = () => {
                         Đặt mặc định
                       </Button>
                     ),
-                    <Popconfirm title="Xoá địa chỉ?" onConfirm={() => handleDelete(item.id)}>
-                      <Button type="link" danger>
-                        Xoá
-                      </Button>
                     <Popconfirm
                       title="Xoá địa chỉ?"
                       onConfirm={() => handleDelete(item.id)}
@@ -363,7 +403,12 @@ const Profile = () => {
                     </Popconfirm>,
                   ]}
                 >
-                  {item.address}
+                  <div>
+                    <div><strong>{item.receiverName}</strong> ({item.receiverPhone})</div>
+                    <div>
+                      {item.addressDetailDescription}, {item.wardCode}, {item.districtCode}, {item.provinceCode}
+                    </div>
+                  </div>
                 </List.Item>
               )}
             />
@@ -455,9 +500,8 @@ const Profile = () => {
               ]}
             />
             <Modal
-              title={`Chi tiết đơn hàng ${
-                orderDetail?.order?.order?._id?.slice(-8) || ""
-              }`}
+              title={`Chi tiết đơn hàng ${orderDetail?.order?.order?._id?.slice(-8) || ""
+                }`}
               open={modalVisible}
               onCancel={() => setModalVisible(false)}
               footer={[

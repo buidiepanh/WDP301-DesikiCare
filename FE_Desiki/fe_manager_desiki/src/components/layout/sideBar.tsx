@@ -6,6 +6,7 @@ import {
   ListItemText,
   Drawer,
   Button,
+  Box,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -24,34 +25,15 @@ type NavItem = {
 };
 
 const adminNavItems: NavItem[] = [
-  {
-    label: "Revenue Dashboard",
-    path: "/RevenueDashboard",
-    icon: <DashboardIcon />,
-  },
-  // { label: "Products", path: "/Products", icon: <ShoppingCartIcon /> },
-  // { label: "Orders", path: "/Orders", icon: <ShoppingCartIcon /> },
-  // { label: "Shipments", path: "/Shipments", icon: <InventoryIcon /> },
-  {
-    label: "Account Management",
-    path: "/AccountManagement/AllRoleManagement",
-    icon: <AccountCircleIcon />,
-  },
+  { label: "Revenue Dashboard", path: "/RevenueDashboard", icon: <DashboardIcon /> },
+  { label: "Account Management", path: "/AccountManagement/AllRoleManagement", icon: <AccountCircleIcon /> },
   { label: "Point Management", path: "/Points", icon: <StarIcon /> },
-  {
-    label: "Mini Game Management",
-    path: "/MiniGames",
-    icon: <SportsEsportsIcon />,
-  },
+  { label: "Mini Game Management", path: "/MiniGames", icon: <SportsEsportsIcon /> },
   { label: "Chatbot Config", path: "/Chatbot", icon: <ChatIcon /> },
 ];
 
 const managerNavItems: NavItem[] = [
-  {
-    label: "Revenue Dashboard",
-    path: "/RevenueDashboard",
-    icon: <DashboardIcon />,
-  },
+  { label: "Revenue Dashboard", path: "/RevenueDashboard", icon: <DashboardIcon /> },
   { label: "Products", path: "/Products", icon: <ShoppingCartIcon /> },
   { label: "Orders", path: "/Orders", icon: <ShoppingCartIcon /> },
   { label: "Shipments", path: "/Shipments", icon: <InventoryIcon /> },
@@ -65,7 +47,6 @@ type Props = {
 const SideBar: React.FC<Props> = ({ role, drawerWidth = 240 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
   const navItems = role === 1 ? managerNavItems : adminNavItems;
 
   const handleLogOut = () => {
@@ -79,39 +60,81 @@ const SideBar: React.FC<Props> = ({ role, drawerWidth = 240 }) => {
       sx={{
         width: drawerWidth,
         flexShrink: 0,
-        "& .MuiDrawer-paper": { width: drawerWidth, boxSizing: "border-box" },
+        "& .MuiDrawer-paper": {
+          width: drawerWidth,
+          boxSizing: "border-box",
+          background: "linear-gradient(to bottom, #fff0f6, #fce4ec)",
+          borderRight: "1px solid #f8bbd0",
+          boxShadow: "2px 0 10px rgba(0,0,0,0.05)",
+        },
       }}
-      className="relative p-5"
     >
-      <List className="h-[850px]">
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.path;
-
-          return (
-            <ListItemButton
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              selected={isActive} // MUI sẽ tự highlight background cho selected
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText
-                primary={item.label}
-                primaryTypographyProps={{
-                  fontWeight: isActive ? "bold" : "normal",
-                }}
-              />
-            </ListItemButton>
-          );
-        })}
-      </List>
-
-      <Button
-        variant="contained"
-        className="absolute bottom-0"
-        onClick={() => handleLogOut()}
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        height="100%"
       >
-        Logout
-      </Button>
+        <List>
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <ListItemButton
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                selected={isActive}
+                sx={{
+                  my: 0.5,
+                  mx: 1,
+                  borderRadius: 2,
+                  backgroundColor: isActive ? "#ec407a" : "transparent",
+                  color: isActive ? "#ffffff" : "#880e4f",
+                  transition: "all 0.2s",
+                  "&:hover": {
+                    backgroundColor: isActive ? "#d81b60" : "#f8bbd0",
+                  },
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    color: isActive ? "#ffffff" : "#ad1457",
+                    minWidth: 36,
+                  }}
+                >
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{
+                    fontWeight: isActive ? "bold" : "normal",
+                    fontSize: 14,
+                    color: isActive ? "#ec407a" : undefined,
+                  }}
+                />
+              </ListItemButton>
+            );
+          })}
+        </List>
+
+        <Box p={2}>
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={handleLogOut}
+            sx={{
+              backgroundColor: "#ec407a",
+              color: "#fff",
+              borderRadius: "999px",
+              fontWeight: "bold",
+              ":hover": {
+                backgroundColor: "#d81b60",
+              },
+            }}
+          >
+            ĐĂNG XUẤT
+          </Button>
+        </Box>
+      </Box>
     </Drawer>
   );
 };

@@ -108,11 +108,20 @@ export const updateAccount = async (accountId, payload) => {
   return res.data;
 };
 
+export const changePassword = async (accountId, oldPassword, newPassword) => {
+  try {
+    const res = await axios.put(`/Account/accounts/${accountId}/password`, {
+      oldPassword,
+      newPassword,
+    });
+    return res.data;
+  } catch (error) {
+    throw error?.response?.data || { message: "Lỗi không xác định" };
+  }
+};
+
 export const addAddress = async (accountId, payload) => {
-  const res = await axios.post(
-    `/Account/accounts/${accountId}/deliveryAddresses`,
-    payload
-  );
+  const res = await axios.post(`/Account/accounts/${accountId}/deliveryAddresses`, payload);
   return res.data;
 };
 
