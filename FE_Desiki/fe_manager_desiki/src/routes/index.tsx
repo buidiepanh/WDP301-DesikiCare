@@ -6,8 +6,7 @@ import AuthLayout from "../layouts/AuthLayout";
 import RevenueDashboard from "../pages/RevenueDashboard";
 import Products from "../pages/Products";
 import Orders from "../pages/Orders";
-import CustomerManagement from "../pages/AccountManagement/CustomerManagement";
-import AllRoleManagement from "../pages/AccountManagement/AllRoleManagement";
+import RoleAccountManagement from "../pages/AccountManagement/RoleAccountManagement";
 import PointManagement from "../pages/Points";
 import MiniGames from "../pages/MiniGames";
 import Chatbot from "../pages/Chatbot";
@@ -64,13 +63,8 @@ const router = createBrowserRouter([
         element: <DefaultLayout />,
         children: [
           {
-            path: "/AccountManagement/AllRoleManagement",
-            element: <AllRoleManagement />,
-          },
-
-          {
-            path: "/AccountManagement/CustomerManagement",
-            element: <CustomerManagement />,
+            path: "/AccountManagement/RoleAccountManagement",
+            element: <RoleAccountManagement />,
           },
           { path: "/Points", element: <PointManagement /> },
           { path: "/MiniGames", element: <MiniGames /> },

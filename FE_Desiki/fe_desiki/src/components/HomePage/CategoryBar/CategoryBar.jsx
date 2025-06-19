@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -6,33 +6,95 @@ import {
   Popper,
   Paper,
   ClickAwayListener,
+  Modal,
+  Button,
 } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import styles from "./CategoryBar.module.css";
 import { useNavigate } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import {
+  getAllCategories,
+  getAllMiniGames,
+  getAllSkinStatuses,
+  getAllSkinTypes,
+  getGamesEvent,
+} from "../../../services/apiServices";
 
 const CategoryBar = () => {
   const navigate = useNavigate();
   const [openDanhMuc, setOpenDanhMuc] = useState(false);
   const [anchorDanhMuc, setAnchorDanhMuc] = useState(null);
+  const token = sessionStorage.getItem("accessToken");
 
   const [openSanPham, setOpenSanPham] = useState(false);
   const [anchorSanPham, setAnchorSanPham] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [skinTypes, setSkinTypes] = useState([]);
+  const [skinStatuses, setSkinStatuses] = useState([]);
+  const [openGameModal, setOpenGameModal] = useState(false);
+  const [gameNames, setGameNames] = useState([]);
+
+  const handleOpenGameModal = () => setOpenGameModal(true);
+  const handleCloseGameModal = () => setOpenGameModal(false);
 
   const handleBanner = () => navigate("/hot-deal");
-  const handleDeals = () => navigate("/flash-deal-sale");
+  const handleDeals = () => navigate("/products-page");
   const handleBlog = () => navigate("/blog-grid");
+
   const handleDanhMucClick = (event) => {
     setAnchorDanhMuc(event.currentTarget);
     setOpenDanhMuc((prev) => !prev);
     setOpenSanPham(false); // Đóng popper khác nếu đang mở
   };
 
+  useEffect(() => {
+    fetchAllCategories();
+    fetchAllSkinTypes();
+    fetchAllSkinStatuses();
+    fetchAllMiniGames();
+  }, []);
+
+  const fetchAllCategories = async () => {
+    try {
+      const result = await getAllCategories();
+      setCategories(result.categories);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllMiniGames = async () => {
+    try {
+      const result = await getAllMiniGames();
+      setGameNames(result.gameTypes);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllSkinTypes = async () => {
+    try {
+      const result = await getAllSkinTypes();
+      setSkinTypes(result.skinTypes);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllSkinStatuses = async () => {
+    try {
+      const result = await getAllSkinStatuses();
+      setSkinStatuses(result.skinStatuses);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleSanPhamClick = (event) => {
     setAnchorSanPham(event.currentTarget);
     setOpenSanPham((prev) => !prev);
-    setOpenDanhMuc(false); // Đóng popper khác nếu đang mở
+    setOpenDanhMuc(false);
   };
 
   const handleCloseAll = () => {
@@ -56,23 +118,15 @@ const CategoryBar = () => {
   const sanPhamList = [
     {
       name: "Chăm Sóc Da",
-      subItems: [
-        "Kem Dưỡng Da",
-        "Sữa Rửa Mặt",
-        "Mặt Nạ",
-        "Toner",
-        "Serum",
-        "Tẩy Trang",
-        "Kem Chống Nắng",
-      ],
+      subItems: categories.map((item) => item.name),
     },
     {
-      name: "Trang Điểm",
-      subItems: ["Phấn Nước", "Son Môi", "Che Khuyết Điểm", "Kẻ Mắt"],
+      name: "Các loại da",
+      subItems: skinTypes.map((item) => item.name),
     },
     {
-      name: "Dưỡng Tóc",
-      subItems: ["Dầu Gội", "Dầu Xả", "Dưỡng Tóc"],
+      name: "Tình trạng da",
+      subItems: skinStatuses.map((item) => item.name),
     },
   ];
 
@@ -93,7 +147,7 @@ const CategoryBar = () => {
 
         <span className={styles.divider}>|</span>
         <Typography className={styles.categoryItem} onClick={handleDeals}>
-          DeskiCare DEALS
+          Sản phẩm DeskiCare
         </Typography>
         <Typography className={styles.categoryItem} onClick={handleBanner}>
           HOT DEALS
@@ -102,14 +156,17 @@ const CategoryBar = () => {
           className={styles.categoryItem}
           onClick={handleSanPhamClick}
         >
-          Sản Phẩm
+          Loại Sản Phẩm
         </Typography>
-        <Typography className={styles.categoryItem}>Chăm Sóc Da</Typography>
         <Typography className={styles.categoryItem} onClick={handleBlog}>
           Tạp Chí Làm Đẹp
         </Typography>
-        <Typography className={styles.categoryItem}>Sản Phẩm Mới</Typography>
-        <Typography className={styles.categoryItem}>Mini Game</Typography>
+        <Typography
+          className={styles.categoryItem}
+          onClick={handleOpenGameModal}
+        >
+          Mini Game
+        </Typography>
       </Box>
 
       {/* Danh mục popper */}
@@ -206,6 +263,43 @@ const CategoryBar = () => {
           </Paper>
         </ClickAwayListener>
       </Popper>
+
+      <Modal open={openGameModal} onClose={handleCloseGameModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold" textAlign="center">
+            Mini Game 🎮
+          </Typography>
+          {gameNames?.map((game) => (
+            <Button
+              key={game.id}
+              variant="outlined"
+              fullWidth
+              onClick={() =>
+                token !== null
+                  ? navigate(`/game-type/${game._id}`, { state: game })
+                  : navigate("/login")
+              }
+            >
+              {game.name}
+            </Button>
+          ))}
+        </Box>
+      </Modal>
     </Box>
   );
 };

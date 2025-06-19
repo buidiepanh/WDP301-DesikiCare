@@ -3,17 +3,19 @@ import React, { useEffect, useState } from "react";
 import ProductCard from "../ProductCard/ProductCard";
 import { Button, Row, Col } from "antd";
 import { getAllProducts } from "../../../services/apiServices";
+import { useNavigate } from "react-router";
 
 const ProductGrid = () => {
-  const [visibleCount, setVisibleCount] = useState(8);
+  const [visibleCount, setVisibleCount] = useState(4);
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchAllProducts();
   }, []);
 
   const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 8);
+    navigate("/products-page");
   };
 
   const fetchAllProducts = async () => {

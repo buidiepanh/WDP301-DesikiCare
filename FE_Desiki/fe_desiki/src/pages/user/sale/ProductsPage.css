@@ -1,0 +1,29 @@
+.flash-sale-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #e53e3e;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.product-img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
+  gap: 4px;
+}

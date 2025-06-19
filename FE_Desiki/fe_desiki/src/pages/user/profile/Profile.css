@@ -39,8 +39,28 @@
 }
 
 .profile-avatar {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 24px;
+}
+
+.profile-avatar .ant-upload {
+  margin-top: 8px;
+}
+
+.profile-avatar .ant-image {
+  border-radius: 50%;
+  overflow: hidden;
+  width: 96px;
+  height: 96px;
+}
+
+.profile-avatar .ant-image-img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
 }
 
 .address-list {

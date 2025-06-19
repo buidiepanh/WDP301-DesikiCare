@@ -36,7 +36,7 @@ export const getAllProducts = async () => {
 export const getAuthenitcatedUserCart = async () => {
   try {
     const cart = await axios.get("/Order/carts/me");
-    return cart.data.cartItems;
+    return cart.data;
   } catch (error) {
     console.log(error);
   }
@@ -71,6 +71,33 @@ export const deleteCartItem = async (id) => {
   }
 };
 
+export const getAllCategories = async () => {
+  try {
+    const result = await axios.get("/Product/categories");
+    return result.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllSkinTypes = async () => {
+  try {
+    const result = await axios.get("/Product/skinTypes");
+    return result.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllSkinStatuses = async () => {
+  try {
+    const result = await axios.get("/Product/skinStatuses");
+    return result.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getMe = async () => {
   const res = await axios.get("/Account/me");
   return res.data;
@@ -81,24 +108,54 @@ export const updateAccount = async (accountId, payload) => {
   return res.data;
 };
 
+export const changePassword = async (accountId, oldPassword, newPassword) => {
+  try {
+    const res = await axios.put(`/Account/accounts/${accountId}/password`, {
+      oldPassword,
+      newPassword,
+    });
+    return res.data;
+  } catch (error) {
+    throw error?.response?.data || { message: "Lỗi không xác định" };
+  }
+};
+
 export const addAddress = async (accountId, payload) => {
   const res = await axios.post(`/Account/accounts/${accountId}/deliveryAddresses`, payload);
   return res.data;
 };
 
 export const setDefaultAddress = async (deliveryAddressId) => {
-  const res = await axios.put(`/Account/deliveryAddresses/${deliveryAddressId}/set-default`);
+  const res = await axios.put(
+    `/Account/deliveryAddresses/${deliveryAddressId}/set-default`
+  );
   return res.data;
 };
 
 export const deleteAddress = async (deliveryAddressId) => {
-  const res = await axios.delete(`/Account/deliveryAddresses/${deliveryAddressId}`);
+  const res = await axios.delete(
+    `/Account/deliveryAddresses/${deliveryAddressId}`
+  );
   return res.data;
 };
 
 export const getAllOrders = async () => {
   const res = await axios.get("/Order/orders");
-  return res.data.orders || [];
+  return res.data.orders;
+};
+
+export const addNewOrder = async (point, address) => {
+  try {
+    const result = await axios.post("/Order/orders", {
+      order: {
+        pointUsed: point,
+        deliveryAddressId: address,
+      },
+    });
+    return result.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const getOrderDetail = async (orderId) => {
@@ -109,4 +166,40 @@ export const getOrderDetail = async (orderId) => {
 export const getChatbotConfig = async () => {
   const res = await axios.get("/Chatbot/chatbotConfigs");
   return res.data;
+};
+
+export const getPaymentUrlForCart = async (point, address) => {
+  try {
+    const result = await axios.post("/Order/carts/getPaymentLink", {
+      order: {
+        pointUsed: point,
+        deliveryAddressId: address,
+      },
+      metaData: {
+        cancelUrl: `http://localhost:5173/cart`,
+        returnUrl: "http://localhost:5173/cart",
+      },
+    });
+    return result.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllMiniGames = async () => {
+  try {
+    const game = await axios.get("/Game/gameTypes");
+    return game.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getGamesEvent = async () => {
+  try {
+    const result = await axios.get("/Game/gameEvents");
+    return result.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
