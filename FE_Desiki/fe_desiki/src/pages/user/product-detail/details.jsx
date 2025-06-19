@@ -46,6 +46,14 @@ function Details() {
   };
 
   const handleAddToCart = async (productId) => {
+    const token = sessionStorage.getItem("accessToken");
+
+    if (!token) {
+      toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng!");
+      navigate("/login");
+      return;
+    }
+
     try {
       const result = await addToCart(productId);
 
@@ -57,6 +65,7 @@ function Details() {
       }
     } catch (error) {
       console.log(error);
+      toast.error("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
     }
   };
 
