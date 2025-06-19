@@ -1,11 +1,12 @@
-// src/layouts/AuthLayout.tsx
 import React from "react";
 import { Outlet } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 const AuthLayout: React.FC = () => {
   return (
     <div>
       <Outlet />
+      <Toaster position="top-center" />
     </div>
   );
 };

@@ -9,6 +9,7 @@ import {
   Fade,
   Grid,
 } from "@mui/material";
+import toast from "react-hot-toast";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Swal from "sweetalert2";
 import { jwtDecode } from "jwt-decode";
@@ -42,23 +43,19 @@ const Login = () => {
 
           if (roleId === 1 || roleId === 2) {
             localStorage.setItem("accessToken", token);
-            Swal.fire("Thành công", "Đăng nhập thành công!", "success");
-            navigate("/");
+            toast.success("Đăng nhập thành công!");
+            setTimeout(() => navigate("/"), 800);
           } else {
-            Swal.fire(
-              "Không đủ quyền",
-              "Tài khoản của bạn không có quyền truy cập.",
-              "error"
-            );
+            toast.error("Tài khoản của bạn không có quyền truy cập.");
           }
         } else {
-          Swal.fire("Lỗi", "Không nhận được token từ server", "error");
+          toast.error("Không nhận được token từ server");
         }
       } else {
-        Swal.fire("Lỗi", "Không đăng nhập được", "error");
+        toast.error("Không đăng nhập được");
       }
     } catch {
-      Swal.fire("Lỗi", "Email hoặc mật khẩu không đúng.", "error");
+      toast.error("Email hoặc mật khẩu không đúng.");
     }
   };
 

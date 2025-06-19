@@ -26,7 +26,7 @@ type NavItem = {
 
 const adminNavItems: NavItem[] = [
   { label: "Revenue Dashboard", path: "/RevenueDashboard", icon: <DashboardIcon /> },
-  { label: "Account Management", path: "/AccountManagement/AllRoleManagement", icon: <AccountCircleIcon /> },
+  { label: "Account Management", path: "/AccountManagement/RoleAccountManagement", icon: <AccountCircleIcon /> },
   { label: "Point Management", path: "/Points", icon: <StarIcon /> },
   { label: "Mini Game Management", path: "/MiniGames", icon: <SportsEsportsIcon /> },
   { label: "Chatbot Config", path: "/Chatbot", icon: <ChatIcon /> },
