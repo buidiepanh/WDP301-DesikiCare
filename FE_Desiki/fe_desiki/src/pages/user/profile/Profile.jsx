@@ -14,6 +14,8 @@ import {
   Modal,
   DatePicker,
   Select,
+  Upload,
+  Image,
   Tag,
 } from "antd";
 import {
@@ -25,7 +27,7 @@ import {
   getAllOrders,
   getOrderDetail,
 } from "../../../services/apiServices";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import "./Profile.css";
@@ -43,6 +45,8 @@ const Profile = () => {
   const [orders, setOrders] = useState([]);
   const [orderDetail, setOrderDetail] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [avatarBase64, setAvatarBase64] = useState("");
+  const [previewAvatar, setPreviewAvatar] = useState("");
 
   const fetchProfile = async () => {
     try {
@@ -59,6 +63,8 @@ const Profile = () => {
 
       setUser(acc);
       setAddresses(res.deliveryAddresses || []);
+      setAvatarBase64(acc.imageBase64 || "");
+      setPreviewAvatar("");
     } catch (err) {
       message.error("Không thể tải thông tin người dùng.");
     }
@@ -73,6 +79,16 @@ const Profile = () => {
     }
   };
 
+  const handleUploadAvatar = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setAvatarBase64(reader.result);
+      setPreviewAvatar(reader.result);
+    };
+    return false;
+  };
+
   const handleUpdate = async (values) => {
     try {
       const payload = {
@@ -82,7 +98,7 @@ const Profile = () => {
           email: user.email,
           password: "",
           roleId: user.roleId,
-          imageBase64: "",
+          imageBase64: avatarBase64 || user.imageBase64 || "",
         },
       };
 
@@ -110,7 +126,7 @@ const Profile = () => {
           gender: user.gender,
           dob: user.dob,
           roleId: user.roleId,
-          imageBase64: "",
+          imageBase64: avatarBase64 || "",
           password: newPassword,
         },
       };
@@ -197,6 +213,22 @@ const Profile = () => {
         <div className="profile-layout">
           <div className="profile-left">
             <div className="profile-avatar">
+              <Avatar
+                size={96}
+                src={previewAvatar || avatarBase64 || user?.imageUrl}
+                icon={<UserOutlined />}
+                style={{ border: "2px solid #e0e0e0", backgroundColor: "#f0f0f0" }}
+              />
+
+              <Upload
+                showUploadList={false}
+                beforeUpload={handleUploadAvatar}
+                accept="image/*"
+              >
+                <Button icon={<UploadOutlined />} style={{ marginTop: 8 }}>
+                  Chọn ảnh đại diện
+                </Button>
+              </Upload>
               <Avatar size={96} src={user?.imageUrl} icon={<UserOutlined />} />
               <Title level={4} style={{ marginTop: 12 }}>
                 Thông tin cá nhân
@@ -238,6 +270,8 @@ const Profile = () => {
             <Divider />
 
             <Title level={5}>Đổi mật khẩu</Title>
+            <Form layout="vertical" form={passwordForm} onFinish={handleChangePassword}>
+              <Form.Item label="Mật khẩu hiện tại" name="currentPassword" rules={[{ required: true }]}>
             <Form
               layout="vertical"
               form={passwordForm}
@@ -250,6 +284,7 @@ const Profile = () => {
               >
                 <Input.Password size="large" />
               </Form.Item>
+              <Form.Item label="Mật khẩu mới" name="newPassword" rules={[{ required: true }]}>
               <Form.Item
                 label="Mật khẩu mới"
                 name="newPassword"
@@ -257,6 +292,7 @@ const Profile = () => {
               >
                 <Input.Password size="large" />
               </Form.Item>
+              <Form.Item label="Xác nhận mật khẩu mới" name="confirmPassword" rules={[{ required: true }]}>
               <Form.Item
                 label="Xác nhận mật khẩu mới"
                 name="confirmPassword"
@@ -265,6 +301,9 @@ const Profile = () => {
                 <Input.Password size="large" />
               </Form.Item>
               <Form.Item>
+                <Button type="primary" htmlType="submit" block>
+                  Đổi mật khẩu
+                </Button>
                 <Button type="primary" htmlType="submit" block>
                   Đổi mật khẩu
                 </Button>
@@ -300,6 +339,9 @@ const Profile = () => {
                     item.isDefault ? (
                       <span style={{ color: "green" }}>Mặc định</span>
                     ) : (
+                      <Button type="link" onClick={() => handleSetDefault(item.id)}>
+                        Đặt mặc định
+                      </Button>
                       <Button
                         type="link"
                         onClick={() => handleSetDefault(item.id)}
@@ -307,6 +349,10 @@ const Profile = () => {
                         Đặt mặc định
                       </Button>
                     ),
+                    <Popconfirm title="Xoá địa chỉ?" onConfirm={() => handleDelete(item.id)}>
+                      <Button type="link" danger>
+                        Xoá
+                      </Button>
                     <Popconfirm
                       title="Xoá địa chỉ?"
                       onConfirm={() => handleDelete(item.id)}
