@@ -28,6 +28,7 @@ import {
   getAllOrders,
   getOrderDetail,
   changePassword,
+  getPaymentUrlForOrder,
 } from "../../../services/apiServices";
 import { UserOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -182,6 +183,15 @@ const Profile = () => {
       setModalVisible(true);
     } catch {
       message.error("Không thể tải chi tiết đơn hàng.");
+    }
+  };
+
+  const handleOrderPayment = async (orderId) => {
+    try {
+      const result = await getPaymentUrlForOrder(orderId);
+      window.location.href = result.paymentLink;
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -541,6 +551,21 @@ const Profile = () => {
                 <Button key="close" onClick={() => setModalVisible(false)}>
                   Đóng
                 </Button>,
+                !orderDetail?.order?.order?.isPaid && (
+                  <Button
+                    key="pay"
+                    type="primary"
+                    style={{
+                      backgroundColor: "#ec407a",
+                      borderColor: "#ec407a",
+                    }}
+                    onClick={() =>
+                      handleOrderPayment(orderDetail?.order?.order._id)
+                    }
+                  >
+                    Thanh toán
+                  </Button>
+                ),
               ]}
               width={800}
             >
@@ -581,9 +606,32 @@ const Profile = () => {
                           : "Chưa thanh toán"}
                       </Tag>
                     </p>
-                    <p>
+                    <p
+                      style={{ display: "flex", alignItems: "center", gap: 8 }}
+                    >
                       <strong>Điểm sử dụng:</strong>{" "}
                       {orderDetail.order.order.pointUsed} điểm
+                      {orderDetail.order.order.pointUsed === 0 && (
+                        <Popconfirm
+                          title="Bạn có chắc muốn sử dụng điểm cho đơn hàng này?"
+                          okText="Đồng ý"
+                          cancelText="Hủy"
+                        >
+                          <Button
+                            size="small"
+                            type="dashed"
+                            style={{
+                              marginLeft: 8,
+                              padding: "0 6px",
+                              fontSize: 11,
+                              height: 22,
+                              lineHeight: "20px",
+                            }}
+                          >
+                            Sử dụng điểm
+                          </Button>
+                        </Popconfirm>
+                      )}
                     </p>
                   </div>
 

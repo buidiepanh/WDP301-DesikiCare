@@ -193,6 +193,18 @@ export const getPaymentUrlForCart = async (point, address) => {
   }
 };
 
+export const getPaymentUrlForOrder = async (orderId) => {
+  try {
+    const res = await axios.post(`/Order/orders/${orderId}/getPaymentLink`, {
+      cancelUrl: "http://localhost:5173/profile",
+      returnUrl: "http://localhost:5173/profile",
+    });
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getAllMiniGames = async () => {
   try {
     const game = await axios.get("/Game/gameTypes");

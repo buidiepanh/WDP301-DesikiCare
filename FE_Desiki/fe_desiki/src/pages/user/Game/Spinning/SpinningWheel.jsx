@@ -16,7 +16,7 @@ const SpinningWheel = ({ config }) => {
     const randomIndex = Math.floor(Math.random() * sectors.length);
     const degreesPerSector = 360 / sectors.length;
     const extraRotation =
-      360 * 5 + (360 - randomIndex * degreesPerSector - degreesPerSector / 2);
+      360 * 10 + (360 - randomIndex * degreesPerSector - degreesPerSector / 2);
 
     totalRotation.current += extraRotation;
 
@@ -28,7 +28,14 @@ const SpinningWheel = ({ config }) => {
     wheelRef.current.style.transform = `rotate(${totalRotation.current}deg)`;
 
     setTimeout(() => {
-      const selected = sectors[randomIndex].label;
+      const normalizedRotation = totalRotation.current % 360;
+      const degreesPerSector = 360 / sectors.length;
+
+      const index = Math.floor((normalizedRotation % 360) / degreesPerSector);
+      const selectedIndex = (sectors.length - index - 1) % sectors.length;
+
+      const selected = sectors[selectedIndex].label;
+
       setIsSpinning(false);
       setSpinCount((prev) => prev + 1);
       setResult(selected);
