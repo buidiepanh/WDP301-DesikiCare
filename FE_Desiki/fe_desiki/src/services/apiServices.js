@@ -1,11 +1,11 @@
 import axios from "../util/axios.customize";
 
-export const loginFunction = async (email, password) => {
+export const loginFunction = async (mail, pass) => {
   try {
     const login = await axios.post("/Account/login", {
       loginInfo: {
-        email,
-        password,
+        email: mail,
+        password: pass,
       },
     });
     return login.data;
@@ -109,11 +109,16 @@ export const updateAccount = async (accountId, payload) => {
 };
 
 export const addAddress = async (accountId, payload) => {
-  const res = await axios.post(
-    `/Account/accounts/${accountId}/deliveryAddresses`,
-    payload
-  );
-  return res.data;
+  try {
+    console.log(accountId);
+    const res = await axios.post(
+      `/Account/accounts/${accountId}/deliveryAddresses`,
+      payload
+    );
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const setDefaultAddress = async (deliveryAddressId) => {

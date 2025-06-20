@@ -126,10 +126,14 @@ const Profile = () => {
 
   const handleAddAddress = async (values) => {
     try {
-      await addAddress(user._id, values);
-      toast.success("Thêm địa chỉ thành công!");
-      addressForm.resetFields();
-      fetchProfile();
+      const res = await addAddress(user._id, values);
+      if (res) {
+        toast.success("Thêm địa chỉ thành công!");
+        addressForm.resetFields();
+        fetchProfile();
+      } else {
+        toast.error("Thêm địa chỉ thất bại.");
+      }
     } catch {
       toast.error("Thêm địa chỉ thất bại.");
     }
