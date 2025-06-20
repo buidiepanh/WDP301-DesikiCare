@@ -9,7 +9,6 @@ import {
   Divider,
   Popconfirm,
   Empty,
-  Checkbox,
 } from "antd";
 import { ShoppingOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -27,18 +26,20 @@ const { Title, Text } = Typography;
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [deliveryAddresses, setDeliveryAddresses] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchAuthenticatedUserCart();
     fetchAuthenticatedUser();
+    fetchAuthenticatedUserCart();
   }, []);
 
   const fetchAuthenticatedUser = async () => {
     try {
       const result = await getMe();
-      setUser(result);
+      setUser(result.account);
+      setDeliveryAddresses(result.deliveryAddresses || []);
     } catch (error) {
       console.log(error);
     }
@@ -64,7 +65,6 @@ const Cart = () => {
   const handleQuantityChange = async (id, value) => {
     try {
       const result = await changeQuantity(id, value);
-
       if (result) {
         toast.success("Cập nhật số lượng thành công!");
         fetchAuthenticatedUserCart();
@@ -79,31 +79,42 @@ const Cart = () => {
   const handleDeleteItem = async (id) => {
     try {
       const result = await deleteCartItem(id);
-
       if (result) {
         toast.success("Xóa sản phẩm khỏi giỏ hàng thành công!");
         fetchAuthenticatedUserCart();
       } else {
-        toast.error("Xóa sản phẩm khỏi giỏ hàng thất bại!");
+        toast.error("Xóa sản phẩm thất bại!");
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handlePayment = async (point, address) => {
+  const handlePayment = async () => {
+    const defaultAddress = deliveryAddresses.find((addr) => addr.isDefault);
+    if (!defaultAddress) {
+      toast.error("Vui lòng đặt một địa chỉ giao hàng mặc định.");
+      return;
+    }
+
     try {
-      const result = await getPaymentUrlForCart(point, address);
+      const result = await getPaymentUrlForCart(user?.points || 0, defaultAddress._id);
       window.location.href = result.paymentLink;
     } catch (error) {
+      toast.error("Thanh toán thất bại.");
       console.log(error);
     }
   };
 
-  const handleAddNEwOrder = async (point, address) => {
-    try {
-      const result = await addNewOrder(point, address);
+  const handleAddNewOrder = async () => {
+    const defaultAddress = deliveryAddresses.find((addr) => addr.isDefault);
+    if (!defaultAddress) {
+      toast.error("Vui lòng đặt một địa chỉ giao hàng mặc định.");
+      return;
+    }
 
+    try {
+      const result = await addNewOrder(user?.points || 0, defaultAddress._id);
       if (result) {
         toast.success("Tạo đơn hàng thành công!");
         navigate("/");
@@ -111,42 +122,27 @@ const Cart = () => {
         toast.error("Tạo đơn hàng thất bại!");
       }
     } catch (error) {
+      toast.error("Lỗi khi tạo đơn hàng.");
       console.log(error);
     }
   };
 
-  const total = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
+  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
     <div style={{ padding: "24px" }}>
-      <Title level={2} style={{ color: "#ec407a" }}>
-        Giỏ hàng của bạn
-      </Title>
-
+      <Title level={2} style={{ color: "#ec407a" }}>Giỏ hàng của bạn</Title>
       <Divider />
 
       {cartItems?.length === 0 ? (
         <div style={{ textAlign: "center", padding: "40px 0" }}>
           <Empty
-            image={
-              <ShoppingOutlined style={{ fontSize: 60, color: "#ec407a" }} />
-            }
-            description={
-              <Text style={{ fontSize: 16, color: "#888" }}>
-                Giỏ hàng của bạn đang trống
-              </Text>
-            }
+            image={<ShoppingOutlined style={{ fontSize: 60, color: "#ec407a" }} />}
+            description={<Text style={{ fontSize: 16, color: "#888" }}>Giỏ hàng của bạn đang trống</Text>}
           />
           <Button
             type="primary"
-            style={{
-              marginTop: 24,
-              backgroundColor: "#ec407a",
-              borderColor: "#ec407a",
-            }}
+            style={{ marginTop: 24, backgroundColor: "#ec407a", borderColor: "#ec407a" }}
             href="/"
           >
             Quay lại mua sắm
@@ -154,7 +150,7 @@ const Cart = () => {
         </div>
       ) : (
         <>
-          {cartItems?.map((item) => (
+          {cartItems.map((item) => (
             <Card
               key={item.id}
               style={{
@@ -182,19 +178,13 @@ const Cart = () => {
                     <img
                       src={item.image}
                       alt={item.name}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
                     />
                   </div>
                 </Col>
 
                 <Col flex="auto">
-                  <Title level={4} style={{ margin: 0 }}>
-                    {item.name}
-                  </Title>
+                  <Title level={4} style={{ margin: 0 }}>{item.name}</Title>
                   <Text type="secondary">Dung tích: {item.volume} ml</Text>
                   <br />
                   <Text>{item.price?.toLocaleString()} đ</Text>
@@ -206,6 +196,7 @@ const Cart = () => {
                     onChange={(value) => handleQuantityChange(item.id, value)}
                   />
                 </Col>
+
                 <Col>
                   <Popconfirm
                     title="Xóa sản phẩm này?"
@@ -213,9 +204,7 @@ const Cart = () => {
                     cancelText="Hủy"
                     onConfirm={() => handleDeleteItem(item.id)}
                   >
-                    <Button type="text" danger icon={<DeleteOutlined />}>
-                      Xóa
-                    </Button>
+                    <Button type="text" danger icon={<DeleteOutlined />}>Xóa</Button>
                   </Popconfirm>
                 </Col>
               </Row>
@@ -229,17 +218,12 @@ const Cart = () => {
               <Title level={4} style={{ color: "#ec407a" }}>
                 Tổng tiền: {total.toLocaleString()} đ
               </Title>
+
               <Button
                 type="primary"
                 size="large"
-                disabled={cartItems.length === 0}
                 style={{ backgroundColor: "#ec407a", borderColor: "#ec407a" }}
-                onClick={() =>
-                  handlePayment(
-                    user?.account?.points,
-                    user?.deliveryAddresses[0]?._id
-                  )
-                }
+                onClick={handlePayment}
               >
                 Tiến hành thanh toán
               </Button>
@@ -253,12 +237,7 @@ const Cart = () => {
                   borderColor: "#ec407a",
                   color: "#ec407a",
                 }}
-                onClick={() =>
-                  handleAddNEwOrder(
-                    user?.account?.points,
-                    user?.deliveryAddresses[0]?._id
-                  )
-                }
+                onClick={handleAddNewOrder}
               >
                 Tạo Đơn Hàng
               </Button>

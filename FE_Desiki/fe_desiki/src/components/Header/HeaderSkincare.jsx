@@ -50,14 +50,20 @@ const HeaderSkincare = () => {
   const handleLogout = () => {
     sessionStorage.clear();
     window.dispatchEvent(new Event("userChanged"));
-    setShowChat(false); 
+    setShowChat(false);
     toast.success("Đăng xuất thành công!");
     navigate("/login");
   };
 
   const handleWarranty = () => navigate("/warranty-policy");
 
-  const handleSupport = () => setShowChat(true);
+  const handleSupport = () => {
+    if (!userName) {
+      toast.error("Vui lòng đăng nhập để sử dụng chức năng hỗ trợ khách hàng.");
+      return;
+    }
+    setShowChat(true);
+  };
 
   return (
     <>
