@@ -24,6 +24,7 @@ import ChatWidget from "../Chatbot/ChatWidget";
 const HeaderSkincare = () => {
   const [userName, setUserName] = useState(null);
   const [showChat, setShowChat] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
   const loadUser = () => {
@@ -46,6 +47,22 @@ const HeaderSkincare = () => {
     window.addEventListener("userChanged", handleUserChanged);
     return () => window.removeEventListener("userChanged", handleUserChanged);
   }, []);
+
+  const handleLogoClick = () => {
+    navigate("/");
+    setSearchText("");
+    localStorage.clear();
+  };
+
+  const handleSearchFunction = () => {
+    if (searchText.trim() !== "") {
+      localStorage.setItem("searchText", searchText);
+      navigate("/products-page");
+    } else {
+      localStorage.clear();
+      navigate("/products-page");
+    }
+  };
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -82,11 +99,13 @@ const HeaderSkincare = () => {
               src={logo}
               alt="Logo"
               className={styles.logoImg}
-              onClick={() => navigate("/")}
+              onClick={() => handleLogoClick()}
               style={{ cursor: "pointer" }}
             />
             <Box>
-              <Typography fontSize={14}>Chất lượng thật - Giá trị thật</Typography>
+              <Typography fontSize={14}>
+                Chất lượng thật - Giá trị thật
+              </Typography>
             </Box>
           </Box>
 
@@ -99,8 +118,11 @@ const HeaderSkincare = () => {
               <span>Kem chống nắng sunplay</span>
             </Box>
             <Input.Search
+              value={searchText}
               placeholder="Tìm sản phẩm, thương hiệu bạn mong muốn..."
               className={styles.searchInput}
+              onChange={(e) => setSearchText(e.target.value)}
+              onSearch={handleSearchFunction}
               allowClear
               size="large"
             />
@@ -129,7 +151,11 @@ const HeaderSkincare = () => {
                   </Badge>
                 </IconButton>
 
-                <IconButton color="inherit" onClick={() => navigate("/profile")} className={styles.userInfoBox}>
+                <IconButton
+                  color="inherit"
+                  onClick={() => navigate("/profile")}
+                  className={styles.userInfoBox}
+                >
                   <AccountCircle />
                 </IconButton>
 
@@ -139,11 +165,17 @@ const HeaderSkincare = () => {
               </Box>
             ) : (
               <Box className={styles.authButtons}>
-                <Typography onClick={() => navigate("/login")} className={styles.loginText}>
+                <Typography
+                  onClick={() => navigate("/login")}
+                  className={styles.loginText}
+                >
                   Đăng nhập
                 </Typography>
                 <span>/</span>
-                <Typography onClick={() => navigate("/register")} className={styles.loginText}>
+                <Typography
+                  onClick={() => navigate("/register")}
+                  className={styles.loginText}
+                >
                   Đăng ký
                 </Typography>
               </Box>
