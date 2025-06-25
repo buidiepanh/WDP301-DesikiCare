@@ -28,6 +28,7 @@ import {
   getAllOrders,
   getOrderDetail,
   changePassword,
+  getPaymentUrlForOrder,
 } from "../../../services/apiServices";
 import { UserOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -93,7 +94,7 @@ const Profile = () => {
           email: user.email,
           roleId: user.roleId,
           imageBase64: avatarBase64 || user.imageBase64 || "",
-          isDeactivated: user.isDeactivated || false
+          isDeactivated: user.isDeactivated || false,
         },
       };
 
@@ -185,6 +186,15 @@ const Profile = () => {
     }
   };
 
+  const handleOrderPayment = async (orderId) => {
+    try {
+      const result = await getPaymentUrlForOrder(orderId);
+      window.location.href = result.paymentLink;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "Chờ xử lí":
@@ -216,7 +226,10 @@ const Profile = () => {
       <Content className="profile-content">
         <div className="profile-layout">
           <div className="profile-left">
-            <div className="profile-avatar" style={{ textAlign: "center", marginBottom: 24 }}>
+            <div
+              className="profile-avatar"
+              style={{ textAlign: "center", marginBottom: 24 }}
+            >
               <Avatar
                 size={120}
                 src={previewAvatar || user?.imageUrl}
@@ -238,7 +251,9 @@ const Profile = () => {
                   border: "none",
                 }}
               />
-              <Title level={4} style={{ marginTop: 12 }}>Thông tin cá nhân</Title>
+              <Title level={4} style={{ marginTop: 12 }}>
+                Thông tin cá nhân
+              </Title>
             </div>
 
             <Form layout="vertical" form={form} onFinish={handleUpdate}>
@@ -309,7 +324,9 @@ const Profile = () => {
             </Form>
             <Divider />
 
-            <Title level={4} style={{ marginBottom: 20 }}>Địa chỉ giao hàng</Title>
+            <Title level={4} style={{ marginBottom: 20 }}>
+              Địa chỉ giao hàng
+            </Title>
 
             <Form
               layout="vertical"
@@ -319,7 +336,12 @@ const Profile = () => {
               <Form.Item
                 label="Tỉnh/Thành phố (mã số)"
                 name="provinceCode"
-                rules={[{ required: true, message: "Vui lòng nhập mã tỉnh/thành phố (số)" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập mã tỉnh/thành phố (số)",
+                  },
+                ]}
               >
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
@@ -327,7 +349,12 @@ const Profile = () => {
               <Form.Item
                 label="Quận/Huyện (mã số)"
                 name="districtCode"
-                rules={[{ required: true, message: "Vui lòng nhập mã quận/huyện (số)" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập mã quận/huyện (số)",
+                  },
+                ]}
               >
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
@@ -335,7 +362,12 @@ const Profile = () => {
               <Form.Item
                 label="Phường/Xã (mã số)"
                 name="wardCode"
-                rules={[{ required: true, message: "Vui lòng nhập mã phường/xã (số)" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập mã phường/xã (số)",
+                  },
+                ]}
               >
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
@@ -343,7 +375,9 @@ const Profile = () => {
               <Form.Item
                 label="Địa chỉ chi tiết"
                 name="addressDetailDescription"
-                rules={[{ required: true, message: "Vui lòng nhập địa chỉ chi tiết" }]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập địa chỉ chi tiết" },
+                ]}
               >
                 <Input />
               </Form.Item>
@@ -351,7 +385,9 @@ const Profile = () => {
               <Form.Item
                 label="Người nhận"
                 name="receiverName"
-                rules={[{ required: true, message: "Vui lòng nhập tên người nhận" }]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập tên người nhận" },
+                ]}
               >
                 <Input />
               </Form.Item>
@@ -359,7 +395,9 @@ const Profile = () => {
               <Form.Item
                 label="SĐT người nhận"
                 name="receiverPhone"
-                rules={[{ required: true, message: "Vui lòng nhập SĐT người nhận" }]}
+                rules={[
+                  { required: true, message: "Vui lòng nhập SĐT người nhận" },
+                ]}
               >
                 <Input />
               </Form.Item>
@@ -404,9 +442,13 @@ const Profile = () => {
                   ]}
                 >
                   <div>
-                    <div><strong>{item.receiverName}</strong> ({item.receiverPhone})</div>
                     <div>
-                      {item.addressDetailDescription}, {item.wardCode}, {item.districtCode}, {item.provinceCode}
+                      <strong>{item.receiverName}</strong> ({item.receiverPhone}
+                      )
+                    </div>
+                    <div>
+                      {item.addressDetailDescription}, {item.wardCode},{" "}
+                      {item.districtCode}, {item.provinceCode}
                     </div>
                   </div>
                 </List.Item>
@@ -500,14 +542,30 @@ const Profile = () => {
               ]}
             />
             <Modal
-              title={`Chi tiết đơn hàng ${orderDetail?.order?.order?._id?.slice(-8) || ""
-                }`}
+              title={`Chi tiết đơn hàng ${
+                orderDetail?.order?.order?._id?.slice(-8) || ""
+              }`}
               open={modalVisible}
               onCancel={() => setModalVisible(false)}
               footer={[
                 <Button key="close" onClick={() => setModalVisible(false)}>
                   Đóng
                 </Button>,
+                !orderDetail?.order?.order?.isPaid && (
+                  <Button
+                    key="pay"
+                    type="primary"
+                    style={{
+                      backgroundColor: "#ec407a",
+                      borderColor: "#ec407a",
+                    }}
+                    onClick={() =>
+                      handleOrderPayment(orderDetail?.order?.order._id)
+                    }
+                  >
+                    Thanh toán
+                  </Button>
+                ),
               ]}
               width={800}
             >
@@ -548,9 +606,32 @@ const Profile = () => {
                           : "Chưa thanh toán"}
                       </Tag>
                     </p>
-                    <p>
+                    <p
+                      style={{ display: "flex", alignItems: "center", gap: 8 }}
+                    >
                       <strong>Điểm sử dụng:</strong>{" "}
                       {orderDetail.order.order.pointUsed} điểm
+                      {orderDetail.order.order.pointUsed === 0 && (
+                        <Popconfirm
+                          title="Bạn có chắc muốn sử dụng điểm cho đơn hàng này?"
+                          okText="Đồng ý"
+                          cancelText="Hủy"
+                        >
+                          <Button
+                            size="small"
+                            type="dashed"
+                            style={{
+                              marginLeft: 8,
+                              padding: "0 6px",
+                              fontSize: 11,
+                              height: 22,
+                              lineHeight: "20px",
+                            }}
+                          >
+                            Sử dụng điểm
+                          </Button>
+                        </Popconfirm>
+                      )}
                     </p>
                   </div>
 

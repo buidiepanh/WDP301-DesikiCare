@@ -1,11 +1,11 @@
 import axios from "../util/axios.customize";
 
-export const loginFunction = async (email, password) => {
+export const loginFunction = async (mail, pass) => {
   try {
     const login = await axios.post("/Account/login", {
       loginInfo: {
-        email,
-        password,
+        email: mail,
+        password: pass,
       },
     });
     return login.data;
@@ -121,8 +121,15 @@ export const changePassword = async (accountId, oldPassword, newPassword) => {
 };
 
 export const addAddress = async (accountId, payload) => {
-  const res = await axios.post(`/Account/accounts/${accountId}/deliveryAddresses`, payload);
-  return res.data;
+  try {
+    const res = await axios.post(
+      `/Account/accounts/${accountId}/deliveryAddresses`,
+      payload
+    );
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const setDefaultAddress = async (deliveryAddressId) => {
@@ -181,6 +188,18 @@ export const getPaymentUrlForCart = async (point, address) => {
       },
     });
     return result.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getPaymentUrlForOrder = async (orderId) => {
+  try {
+    const res = await axios.post(`/Order/orders/${orderId}/getPaymentLink`, {
+      cancelUrl: "http://localhost:5173/profile",
+      returnUrl: "http://localhost:5173/profile",
+    });
+    return res.data;
   } catch (error) {
     console.log(error);
   }

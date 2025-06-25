@@ -11,25 +11,43 @@ const ProductsPage = () => {
   const navigation = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const searchText = localStorage.getItem("searchText");
 
   useEffect(() => {
     fetchAllProducts();
-  }, []);
+  }, [searchText]);
 
   const fetchAllProducts = async () => {
     try {
       setLoading(true);
       const result = await getAllProducts();
-      const transformed = result.map((item) => ({
-        _id: item.product._id,
-        name: item.product.name,
-        image: item.product.imageurl,
-        price: item.product.salePrice,
-        skinStatuses: item.productSkinStatuses.map((status) => status.name),
-        skinTypes: item.productSkinTypes.map((type) => type.name),
-        volume: item.product.volume,
-      }));
-      setProducts(transformed);
+      let transformed = [];
+      if (!searchText) {
+        transformed = result.map((item) => ({
+          _id: item.product._id,
+          name: item.product.name,
+          image: item.product.imageurl,
+          price: item.product.salePrice,
+          skinStatuses: item.productSkinStatuses.map((status) => status.name),
+          skinTypes: item.productSkinTypes.map((type) => type.name),
+          volume: item.product.volume,
+        }));
+        setProducts(transformed);
+      } else {
+        const filter = result.filter((item) =>
+          item.product.name.toLowerCase().includes(searchText.toLowerCase())
+        );
+        transformed = filter.map((item) => ({
+          _id: item.product._id,
+          name: item.product.name,
+          image: item.product.imageurl,
+          price: item.product.salePrice,
+          skinStatuses: item.productSkinStatuses.map((status) => status.name),
+          skinTypes: item.productSkinTypes.map((type) => type.name),
+          volume: item.product.volume,
+        }));
+        setProducts(transformed);
+      }
     } catch (error) {
       console.log(error);
     } finally {
