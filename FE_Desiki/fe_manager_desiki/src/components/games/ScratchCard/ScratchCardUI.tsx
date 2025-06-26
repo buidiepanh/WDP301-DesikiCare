@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import ScratchCard from "react-scratchcard-v2";
+
 import { Button } from "@mui/material";
 import BackCoverImg from "../../../assets/TestScratch/backCoverImg.jpg";
 interface CardConfig {
@@ -27,9 +27,6 @@ export const ScratchCardUI: React.FC<Props> = ({
   const [totalPoint, setTotalPoint] = useState(0);
   const [doneIndices, setDoneIndices] = useState<number[]>([]);
 
-  // Ref cho từng thẻ
-  const refs = useRef<Array<ScratchCard | null>>(Array(numCards).fill(null));
-
   const onComplete = (index: number, point: number) => {
     if (doneIndices.includes(index)) return; // tránh trùng
     setDoneIndices((old) => [...old, index]);
@@ -45,18 +42,18 @@ export const ScratchCardUI: React.FC<Props> = ({
     return true;
   };
 
-  const handleReset = () => {
-    setScratchCount(0);
-    setTotalPoint(0);
-    setDoneIndices([]);
-    refs.current.forEach((ref) => ref?.reset());
-  };
+  // const handleReset = () => {
+  //   setScratchCount(0);
+  //   setTotalPoint(0);
+  //   setDoneIndices([]);
+  //   refs.current.forEach((ref) => ref?.reset());
+  // };
 
   return (
     <div className="grid grid-cols-2 gap-4 max-w-4xl mx-auto">
       {cards?.map((card, idx) => (
         <div key={idx} className="border rounded overflow-hidden relative">
-          <ScratchCard
+          {/* <ScratchCard
             ref={(el) => {
               refs.current[idx] = el;
             }}
@@ -82,7 +79,7 @@ export const ScratchCardUI: React.FC<Props> = ({
                 {card.label}
               </p>
             </div>
-          </ScratchCard>
+          </ScratchCard> */}
         </div>
       ))}
 
@@ -93,14 +90,14 @@ export const ScratchCardUI: React.FC<Props> = ({
         <p>
           Lượt cào: <strong>{scratchCount}</strong> / {maxScratch}
         </p>
-        <Button
+        {/* <Button
           variant="outlined"
           color="error"
           onClick={handleReset}
           className="mt-3"
         >
           Reset
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
