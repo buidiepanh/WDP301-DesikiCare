@@ -53,9 +53,7 @@ export const productsData = [
       name: "Sữa rửa mặt",
     },
     shipmentProducts: [],
-    productSkinTypes: [
-      { _id: 2, name: "Da Dầu" },
-    ],
+    productSkinTypes: [{ _id: 2, name: "Da Dầu" }],
     productSkinStatuses: [
       { _id: 1, name: "Mụn" },
       { _id: 2, name: "Thâm Nám" },
