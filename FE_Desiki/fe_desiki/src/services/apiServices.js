@@ -197,7 +197,7 @@ export const getPaymentUrlForOrder = async (orderId) => {
   try {
     const res = await axios.post(`/Order/orders/${orderId}/getPaymentLink`, {
       cancelUrl: "http://localhost:5173/profile",
-      returnUrl: "http://localhost:5173/profile",
+      returnUrl: "http://localhost:5173/payment-return",
     });
     return res.data;
   } catch (error) {
