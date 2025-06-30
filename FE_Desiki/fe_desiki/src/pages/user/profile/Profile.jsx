@@ -30,6 +30,7 @@ import {
   changePassword,
   getPaymentUrlForOrder,
 } from "../../../services/apiServices";
+import GameRewardHistory from "./components/GameRewardHistory";
 import { UserOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
@@ -542,9 +543,8 @@ const Profile = () => {
               ]}
             />
             <Modal
-              title={`Chi tiết đơn hàng ${
-                orderDetail?.order?.order?._id?.slice(-8) || ""
-              }`}
+              title={`Chi tiết đơn hàng ${orderDetail?.order?.order?._id?.slice(-8) || ""
+                }`}
               open={modalVisible}
               onCancel={() => setModalVisible(false)}
               footer={[
@@ -661,7 +661,7 @@ const Profile = () => {
                             }}
                             onError={(e) => {
                               e.target.src =
-                                "https://via.placeholder.com/50x50?text=No+Image";
+                                "https://beco.vn/wp-content/uploads/2021/08/Bo-My-Pham-Duong-Da-6-Mon-Hiisees-5.jpg";
                             }}
                           />
                         ),
@@ -729,6 +729,9 @@ const Profile = () => {
                 </div>
               )}
             </Modal>
+            <div style={{ marginTop: 24 }}>
+              <GameRewardHistory />
+            </div>
           </div>
         </div>
       </Content>

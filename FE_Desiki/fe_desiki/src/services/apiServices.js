@@ -222,3 +222,8 @@ export const getGamesEvent = async () => {
     console.log(error);
   }
 };
+
+export const getMyGameEventRewards = async () => {
+  const res = await axios.get("/Game/gameEventsRewards/me");
+  return res.data.gameEventRewardResults; 
+};
