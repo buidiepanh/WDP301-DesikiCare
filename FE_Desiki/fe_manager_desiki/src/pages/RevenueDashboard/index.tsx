@@ -455,12 +455,14 @@ const RevenueDashboard = () => {
               </div>
               <div className="flex items-center gap-3">
                 <img
-                  src={preparedData?.bestProduct.imageUrl || "/placeholder.svg"}
+                  src={
+                    preparedData?.bestProduct?.imageUrl || "/placeholder.svg"
+                  }
                   alt="best_product"
                   className="w-[50px] h-[50px] rounded-lg border border-white/20"
                 />
                 <p className="text-white/70 text-md">
-                  {preparedData?.bestProduct.name}
+                  {preparedData?.bestProduct?.name || "CU"}
                 </p>
               </div>
             </GlassCard>
