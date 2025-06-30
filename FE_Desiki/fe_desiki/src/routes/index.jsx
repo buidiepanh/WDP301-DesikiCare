@@ -28,6 +28,7 @@ import CustomerInfo from "../pages/manager/CustomerInfo";
 import ManagerLayout from "../layouts/manager/ManagerLayout";
 import AdminLayout from "../layouts/admin/AdminLayout";
 import GamePlayPage from "../pages/user/Game/Play/GamePlayPage";
+import PaymentReturn from "../pages/user/payment-return/paymentReturn";
 
 function UserRouter() {
   return (
@@ -46,6 +47,7 @@ function UserRouter() {
           <Route path="/products-page" element={<ProductsPage />} />
           <Route path="/blog-grid" element={<BlogGrid />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/payment-return" element={<PaymentReturn />} />
           <Route path="/game-type/:id" element={<GameTypePage />} />
           <Route path="/game-event/:id" element={<GamePlayPage />} />
         </Routes>
