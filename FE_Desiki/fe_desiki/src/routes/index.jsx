@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router";
+import { Route, Routes, useLocation } from "react-router";
 
 import Home from "../pages/user/home/home";
 import Login from "../pages/authen/login/login";
@@ -29,10 +29,77 @@ import ManagerLayout from "../layouts/manager/ManagerLayout";
 import AdminLayout from "../layouts/admin/AdminLayout";
 import GamePlayPage from "../pages/user/Game/Play/GamePlayPage";
 import PaymentReturn from "../pages/user/payment-return/paymentReturn";
+import { useEffect, useState } from "react";
+import { getGamesEvent, updateGamePoints } from "../services/apiServices";
+import { IconButton, Badge } from "@mui/material";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import { GamesModal } from "./components/gamesModal";
 
 function UserRouter() {
+  const [isGameAvailable, setIsGameAvailable] = useState(false);
+  const [isShowGamesModal, setIsShowGamesModal] = useState(false);
+  const [games, setGames] = useState([]);
+
+  const [isLogin, setIsLogin] = useState(false);
+
+  // HOOKS
+  const location = useLocation();
+
+  useEffect(() => {
+    const userFromSessionStorage = sessionStorage.getItem("user");
+    if (userFromSessionStorage) {
+      fetchGames();
+    } else {
+      console.log("Chưa đăng nhập");
+    }
+  }, []);
+
+  useEffect(() => {
+    const userFromSessionStorage = sessionStorage.getItem("user");
+    if (!userFromSessionStorage) {
+      setIsLogin(false);
+    } else {
+      setIsLogin(true);
+    }
+  }, [location]);
+
+  const fetchGames = async () => {
+    try {
+      const response = await getGamesEvent();
+      console.log("Games: ", response);
+      console.log("Length: ", response.gameEvents.length);
+      if (response && response.gameEvents.length !== 0) {
+        setIsGameAvailable(true);
+        setGames(response);
+      } else {
+        setIsGameAvailable(false);
+        setGames([]);
+      }
+    } catch (error) {
+      console.log("Error while fetching games: ", error);
+    }
+  };
+
+  const onCloseModal = () => {
+    setIsShowGamesModal(false);
+  };
+
+  const handleUpdateReward = async (id, points) => {
+    try {
+      const response = updateGamePoints(id, points);
+      if (response) {
+        alert(`Cập nhật điểm thưởng thành công cho bạn với số điểm: ${points}`);
+
+        setIsShowGamesModal(false);
+        await fetchGames();
+      }
+    } catch (error) {
+      console.log("Lỗi khi cập nhật điểm thưởng cho User: ", error);
+    }
+  };
+
   return (
-    <>
+    <div style={{ position: "relative" }}>
       <HeaderSkincare />
       <div style={{ marginTop: "80px", marginBottom: "-75px" }}>
         <Routes>
@@ -52,8 +119,43 @@ function UserRouter() {
           <Route path="/game-event/:id" element={<GamePlayPage />} />
         </Routes>
       </div>
+
+      {isGameAvailable && isLogin && (
+        <div
+          style={{
+            position: "fixed",
+            top: "175px", // đưa lên góc trên cùng
+            right: "20px",
+            zIndex: "999",
+          }}
+        >
+          <Badge
+            color="error" // màu đỏ
+            variant="dot" // hiển thị chấm đỏ
+            overlap="circular"
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+          >
+            <IconButton
+              onClick={() => setIsShowGamesModal(true)}
+              sx={{ bgcolor: "#1976d2", "&:hover": { bgcolor: "#1565c0" } }}
+            >
+              <SportsEsportsIcon sx={{ color: "white" }} />
+            </IconButton>
+          </Badge>
+        </div>
+      )}
+
+      <GamesModal
+        onClose={onCloseModal}
+        isOpen={isShowGamesModal}
+        games={games}
+        onUpdatePoints={handleUpdateReward}
+      />
       <FooterSkincare />
-    </>
+    </div>
   );
 }
 

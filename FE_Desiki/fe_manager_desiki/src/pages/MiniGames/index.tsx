@@ -9,6 +9,8 @@ import { Plus, Eye, Edit, Ban, Gamepad2, Play, Square } from "lucide-react";
 import type { GameEvent, GameType } from "../../data/types";
 import { CreateGameModal } from "./CreateGameModal";
 import { callAPIAdmin } from "../../api/axiosInstace";
+import { ca } from "zod/v4/locales";
+import toast from "react-hot-toast";
 
 // Custom Glassmorphism Components
 const GlassButton = ({
@@ -148,7 +150,25 @@ const MiniGameManagement = () => {
 
   const handleViewDetails = (id: string) => console.log("View details:", id);
   const handleEdit = (id: string) => console.log("Edit:", id);
-  const handleDeactivate = (id: string) => console.log("Deactivate:", id);
+  const handleDeactivate = async (id: string) => {
+    const game = gameEvents?.filter((g) => g.gameEvent._id === id)[0];
+    const mode = game?.gameEvent.isDeactivated;
+
+    try {
+      const response = await callAPIAdmin({
+        method: "PUT",
+        url: `/api/Game/gameEvents/${id}/deactivate/${!mode}`,
+      });
+      if (response && response.status === 200) {
+        toast.success("Vô hiệu hóa game thành công!");
+        await fetch();
+      } else {
+        toast.error("Lỗi, vui lòng thử lại sau!");
+      }
+    } catch (error) {
+      console.log("Lỗi khi deactivate game: ", error);
+    }
+  };
 
   const defaultColDef = {
     sortable: true,
