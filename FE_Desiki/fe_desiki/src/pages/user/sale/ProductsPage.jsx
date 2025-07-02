@@ -288,7 +288,7 @@ const ProductsPage = () => {
                     <CardMedia
                       component="img"
                       height="220"
-                      image={product.image || "/default-image.jpg"}
+                      image={product.imageUrl || "/default-image.jpg"}
                       alt={product.name}
                       className="product-image"
                     />

@@ -27,6 +27,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <Card
+      className="product-card"
       hoverable
       onClick={handleClick}
       cover={
@@ -65,15 +66,6 @@ const ProductCard = ({ product }) => {
             {status.name}
           </Tag>
         ))}
-      </div>
-
-      <div style={{ marginTop: 8 }}>
-        <Tooltip title={`Còn lại ${totalQuantity} sản phẩm`}>
-          <Progress
-            percent={Math.min((totalQuantity / 100) * 100, 100)}
-            size="small"
-          />
-        </Tooltip>
       </div>
     </Card>
   );

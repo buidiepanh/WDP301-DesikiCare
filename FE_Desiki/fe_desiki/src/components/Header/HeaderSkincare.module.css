@@ -41,11 +41,7 @@
   flex-wrap: wrap;
   font-size: 14px;
   font-weight: 500;
-}
-
-.searchInput {
-  width: 100% !important;
-  margin-left: 0; 
+  cursor: pointer;
 }
 
 .iconsMenu {
