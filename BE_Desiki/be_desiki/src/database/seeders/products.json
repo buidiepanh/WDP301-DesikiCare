@@ -1,0 +1,29 @@
+[
+  {
+    "_id": { "$oid": "665f1a1e72d193188e810001" },
+    "categoryId": 1,
+    "name": "Sữa rửa mặt dịu nhẹ",
+    "description": "Làm sạch sâu, dịu nhẹ cho da nhạy cảm.",
+    "salePrice": 150000,
+    "volume": 150,
+    "isDeactivated": false
+  },
+  {
+    "_id": { "$oid": "665f1a1e72d193188e810002" },
+    "categoryId": 2,
+    "name": "Kem dưỡng ẩm ban đêm",
+    "description": "Dưỡng ẩm sâu, phục hồi da khi ngủ.",
+    "salePrice": 250000,
+    "volume": 50,
+    "isDeactivated": false
+  },
+  {
+    "_id": { "$oid": "665f1a1e72d193188e810003" },
+    "categoryId": 3,
+    "name": "Toner hoa cúc",
+    "description": "Cân bằng da, dịu nhẹ và cấp ẩm.",
+    "salePrice": 170000,
+    "volume": 200,
+    "isDeactivated": true
+  }
+]

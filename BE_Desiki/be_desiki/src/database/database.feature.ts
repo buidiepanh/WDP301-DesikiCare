@@ -9,7 +9,6 @@ import { Category, CategorySchema } from "./schemas/category/category.schema";
 import { SkinType, SkinTypeSchema } from "./schemas/skinType/skinType.schema";
 import { SkinStatus, SkinStatusSchema } from "./schemas/skinStatus/skinStatus.schema";
 import { Order, OrderSchema } from "./schemas/order/order.schema";
-import { OrderStatusRecord, OrderStatusRecordSchema } from "./schemas/orderStatusRecord/orderStatusRecord.schema";
 import { OrderStatus, OrderStatusSchema } from "./schemas/orderStatus/orderStatus.schema";
 import { OrderItem, OrderItemSchema } from "./schemas/orderItem/orderItem.schema";
 import { DeliveryAddress, DeliveryAddressSchema } from "./schemas/deliveryAddress/deliveryAddress.schema";
@@ -18,6 +17,9 @@ import { GameType, GameTypeSchema } from "./schemas/gameType/gameType.schema";
 import { GameEventRewardResult, GameEventRewardResultSchema } from "./schemas/gameEventRewardResult/gameEventRewardResult.schema";
 import { PaymentStatus, PaymentStatusSchema } from "./schemas/paymentStatus/paymentStatus.schema";
 import { Payment, PaymentSchema } from "./schemas/payment/payment.schema";
+import { Shipment, ShipmentSchema } from "./schemas/shipment/shipment.schema";
+import { ShipmentProduct, ShipmentProductSchema } from "./schemas/shipmentProduct/shipmentProduct.schema";
+import { ChatbotConfig, ChatbotConfigSchema } from "./schemas/chatbotConfig/chatbotConfig.schema";
 
 export const databaseFeatures = [
   //** name ở đây để sử dụng trong @InjectModel inject trong service/controller, @InjectModel(User.name) 
@@ -25,6 +27,8 @@ export const databaseFeatures = [
   { name: Role.name, schema: RoleSchema },
   { name: Cart.name, schema: CartSchema },
   { name: CartItem.name, schema: CartItemSchema },
+  { name: Shipment.name, schema: ShipmentSchema },
+  { name: ShipmentProduct.name, schema: ShipmentProductSchema },
   { name: Product.name, schema: ProductSchema },
   { name: ProductSkinType.name, schema: ProductSkinTypeSchema },
   { name: ProductSkinStatus.name, schema: ProductSkinStatusSchema },
@@ -32,7 +36,6 @@ export const databaseFeatures = [
   { name: SkinType.name, schema: SkinTypeSchema },
   { name: SkinStatus.name, schema: SkinStatusSchema },
   { name: Order.name, schema: OrderSchema },
-  { name: OrderStatusRecord.name, schema: OrderStatusRecordSchema },
   { name: OrderStatus.name, schema: OrderStatusSchema },
   { name: OrderItem.name, schema: OrderItemSchema },
   { name: DeliveryAddress.name, schema: DeliveryAddressSchema },
@@ -41,4 +44,5 @@ export const databaseFeatures = [
   { name: GameEventRewardResult.name, schema: GameEventRewardResultSchema },
   { name: PaymentStatus.name, schema: PaymentStatusSchema },
   { name: Payment.name, schema: PaymentSchema },
+  { name: ChatbotConfig.name, schema: ChatbotConfigSchema },
 ]

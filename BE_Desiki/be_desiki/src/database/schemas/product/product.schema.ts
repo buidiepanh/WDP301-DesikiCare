@@ -1,17 +1,27 @@
 import { Schema, Prop, SchemaFactory, Virtual } from '@nestjs/mongoose';
-import { Document, Model, Types } from 'mongoose';
+import { Document, Double, Model, Types } from 'mongoose';
 ;
 import { apply_Indexes } from './product.indexes';
 import { apply_PostHooks, apply_PreHooks } from './product.hooks';
 import { apply_Methods } from './product.methods';
 import { apply_Statics } from './product.statics';
 import { apply_Virtuals } from './product.virtuals';
+import { Category } from '../category/category.schema';
+import { ProductSkinType } from '../productSkinType/productSkinType.schema';
+import { ProductSkinStatus } from '../productSkinStatus/productSkinStatus.schema';
+import { ShipmentProduct } from '../shipmentProduct/shipmentProduct.schema';
+import { Shipment } from '../shipment/shipment.schema';
 
-interface IProduct_Statics {}
+interface IProduct_Statics { }
 
-interface IProduct_Methods {}
+interface IProduct_Methods { }
 
-interface IProduct_Virtuals {}
+interface IProduct_Virtuals {
+  productSkinTypes: ProductSkinType[];
+  productSkinStatuses: ProductSkinStatus[];
+  shipmentProducts: (ShipmentProduct)[];
+  category: Category;
+}
 
 export type ProductDocument = Product & Document & IProduct_Methods & IProduct_Virtuals;
 
@@ -19,7 +29,7 @@ export type ProductDocument = Product & Document & IProduct_Methods & IProduct_V
 export class Product {
   _id?: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ ref: Category.name })
   categoryId: number;
 
   @Prop({ required: true })
@@ -28,17 +38,15 @@ export class Product {
   @Prop()
   description: string;
 
-  @Prop({ required: true })
-  buyPrice: number;
 
   @Prop({ required: true })
   salePrice: number;
 
-  @Prop({ required: true })
-  stockQuantity: number;
+  @Prop()
+  volume: number;
 
-  @Prop({ required: true, default: false })
-  isDeactivated: boolean;
+  @Prop({ required: true, default: true })
+  isDeactivated?: boolean;
 }
 
 type ProductModel = Model<ProductDocument> & IProduct_Statics;

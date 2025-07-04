@@ -1,0 +1,112 @@
+[
+  {
+    "email": "manager1@example.com",
+    "password": "$2a$10$gXw69WT9ARJHK3UcZsTQueOM9vL8/fPGVFj1/j7T1GrhliMRAgH9a",
+    "fullName": "Nguyen Van Quan",
+    "dob": "1990-01-01T00:00:00.000Z",
+    "phoneNumber": "0901234567",
+    "gender": "male",
+    "points": 100,
+    "roleId": 1,
+    "isDeactivated": false
+  },
+  {
+    "email": "admin1@example.com",
+    "password": "$2a$10$gXw69WT9ARJHK3UcZsTQueOM9vL8/fPGVFj1/j7T1GrhliMRAgH9a",
+    "fullName": "Tran Thi Binh",
+    "dob": "1992-02-02T00:00:00.000Z",
+    "phoneNumber": "0912345678",
+    "gender": "female",
+    "points": 200,
+    "roleId": 2,
+    "isDeactivated": false
+  },
+  {
+    "email": "customer1@example.com",
+    "password": "$2a$10$gXw69WT9ARJHK3UcZsTQueOM9vL8/fPGVFj1/j7T1GrhliMRAgH9a",
+    "fullName": "Le Van A",
+    "dob": "1995-03-03T00:00:00.000Z",
+    "phoneNumber": "0923456789",
+    "gender": "male",
+    "points": 50,
+    "roleId": 3,
+    "isDeactivated": false
+  },
+  {
+    "email": "manager2@example.com",
+    "password": "$2a$10$gXw69WT9ARJHK3UcZsTQueOM9vL8/fPGVFj1/j7T1GrhliMRAgH9a",
+    "fullName": "Pham Thi C",
+    "dob": "1988-04-04T00:00:00.000Z",
+    "phoneNumber": "0934567890",
+    "gender": "female",
+    "points": 120,
+    "roleId": 1,
+    "isDeactivated": false
+  },
+  {
+    "email": "admin2@example.com",
+    "password": "$2a$10$gXw69WT9ARJHK3UcZsTQueOM9vL8/fPGVFj1/j7T1GrhliMRAgH9a",
+    "fullName": "Hoang Van D",
+    "dob": "1991-05-05T00:00:00.000Z",
+    "phoneNumber": "0945678901",
+    "gender": "male",
+    "points": 210,
+    "roleId": 2,
+    "isDeactivated": false
+  },
+  {
+    "email": "customer2@example.com",
+    "password": "$2a$10$gXw69WT9ARJHK3UcZsTQueOM9vL8/fPGVFj1/j7T1GrhliMRAgH9a",
+    "fullName": "Nguyen Thi E",
+    "dob": "1993-06-06T00:00:00.000Z",
+    "phoneNumber": "0956789012",
+    "gender": "female",
+    "points": 60,
+    "roleId": 3,
+    "isDeactivated": false
+  },
+  {
+    "email": "manager3@example.com",
+    "password": "$2a$10$gXw69WT9ARJHK3UcZsTQueOM9vL8/fPGVFj1/j7T1GrhliMRAgH9a",
+    "fullName": "Bui Van F",
+    "dob": "1989-07-07T00:00:00.000Z",
+    "phoneNumber": "0967890123",
+    "gender": "male",
+    "points": 130,
+    "roleId": 1,
+    "isDeactivated": false
+  },
+  {
+    "email": "admin3@example.com",
+    "password": "$2a$10$gXw69WT9ARJHK3UcZsTQueOM9vL8/fPGVFj1/j7T1GrhliMRAgH9a",
+    "fullName": "Do Thi G",
+    "dob": "1994-08-08T00:00:00.000Z",
+    "phoneNumber": "0978901234",
+    "gender": "female",
+    "points": 220,
+    "roleId": 2,
+    "isDeactivated": false
+  },
+  {
+    "email": "customer3@example.com",
+    "password": "$2a$10$gXw69WT9ARJHK3UcZsTQueOM9vL8/fPGVFj1/j7T1GrhliMRAgH9a",
+    "fullName": "Pham Van H",
+    "dob": "1996-09-09T00:00:00.000Z",
+    "phoneNumber": "0989012345",
+    "gender": "male",
+    "points": 70,
+    "roleId": 3,
+    "isDeactivated": false
+  },
+  {
+    "email": "manager4@example.com",
+    "password": "$2a$10$gXw69WT9ARJHK3UcZsTQueOM9vL8/fPGVFj1/j7T1GrhliMRAgH9a",
+    "fullName": "Le Thi I",
+    "dob": "1990-10-10T00:00:00.000Z",
+    "phoneNumber": "0990123456",
+    "gender": "female",
+    "points": 140,
+    "roleId": 1,
+    "isDeactivated": false
+  }
+]

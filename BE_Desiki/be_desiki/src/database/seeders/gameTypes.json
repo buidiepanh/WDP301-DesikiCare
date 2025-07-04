@@ -1,4 +1,6 @@
 [
   { "_id": 1, "name": "Quay trúng thưởng" },
-  { "_id": 2, "name": "Chọn 2 ô trùng nhau" }
+  { "_id": 2, "name": "Chọn 2 ô trùng nhau" },
+  { "_id": 3, "name": "Cào thẻ" },
+  { "_id": 4, "name": "Điền từ còn trống" }
 ]

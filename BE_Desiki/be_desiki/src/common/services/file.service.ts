@@ -14,9 +14,12 @@ export class FileService {
     ////////////////////////////////////////////// FILE //////////////////////////////////////////////
     async getImageUrl(rootFolderPath: string, folderName: string | Types.ObjectId, fileName: string): Promise<string> {
         const baseUrl = this.configService.get<string>('appConfig.BASE_URL');
-        try{
-            fileName = await this.getFullFileName(rootFolderPath +"/"+ folderName, fileName);
-        }catch(error){
+        try {
+            fileName = await this.getFullFileName(rootFolderPath + "/" + folderName, fileName);
+            if (!fileName) {
+                throw new Error(`Không tìm thấy file có base name: ${fileName}`);
+            }
+        } catch (error) {
             return `${baseUrl}/${rootFolderPath}/unknown.jpg`;
         }
         return `${baseUrl}/${rootFolderPath}/${folderName}/${fileName}`;
@@ -53,7 +56,7 @@ export class FileService {
             return filePath;
         } catch (error) {
             console.error(`Lỗi khi lưu file có base name ${fileName}:`, error);
-            throw new Error(`Lỗi khi lưu file có base name ${fileName}: ${error}`);
+            //throw new Error(`Lỗi khi lưu file có base name ${fileName}: ${error}`);
         }
 
     }
@@ -72,7 +75,7 @@ export class FileService {
             return filePath;
         } catch (error) {
             console.error(`Lỗi khi lưu file có base name ${fileName}:`, error);
-            throw new Error(`Lỗi khi lưu file có base name ${fileName}: ${error}`);
+            //throw new Error(`Lỗi khi lưu file có base name ${fileName}: ${error}`);
         }
     }
 
@@ -90,7 +93,7 @@ export class FileService {
             await fs.unlink(filePath);
         } catch (error) {
             console.error(`Lỗi khi xoá file có base name ${fileName}:`, error);
-            throw new Error(`Lỗi khi xoá file có base name ${fileName}: ${error}`);
+            //throw new Error(`Lỗi khi xoá file có base name ${fileName}: ${error}`);
         }
     }
 
@@ -127,7 +130,7 @@ export class FileService {
             await fs.copyFile(sourcePath, destinationPath);
         } catch (error) {
             console.error(`Lỗi khi sao chép file:`, error);
-            throw new Error(`Lỗi khi sao chép file: ${error}`);
+            //throw new Error(`Lỗi khi sao chép file: ${error}`);
         }
     }
 
@@ -137,7 +140,7 @@ export class FileService {
             await fs.mkdir(process.cwd() + "/" + folderPath, { recursive: true });
         } catch (error) {
             console.error(`Lỗi khi tạo folder có path ${folderPath}:`, error);
-            throw new Error(`Lỗi khi tạo folder có path ${folderPath}: ${error}`);
+           // throw new Error(`Lỗi khi tạo folder có path ${folderPath}: ${error}`);
         }
     }
 
@@ -148,7 +151,7 @@ export class FileService {
             await fs.rm(process.cwd() + "/" + folderPath, { recursive: true, force: true });
         } catch (error) {
             console.error(`Lỗi khi xoá folder có path ${folderPath}:`, error);
-            throw new Error(`Lỗi khi xoá folder có path ${folderPath}: ${error}`);
+            //throw new Error(`Lỗi khi xoá folder có path ${folderPath}: ${error}`);
         }
     }
 

@@ -13,7 +13,6 @@ import { Category, CategoryModel, CategorySchema } from './database/schemas/cate
 import { SkinType, SkinTypeModel, SkinTypeSchema } from './database/schemas/skinType/skinType.schema';
 import { SkinStatus, SkinStatusModel, SkinStatusSchema } from './database/schemas/skinStatus/skinStatus.schema';
 import { Order, OrderModel, OrderSchema } from './database/schemas/order/order.schema';
-import { OrderStatusRecord, OrderStatusRecordModel, OrderStatusRecordSchema } from './database/schemas/orderStatusRecord/orderStatusRecord.schema';
 import { OrderStatus, OrderStatusModel, OrderStatusSchema } from './database/schemas/orderStatus/orderStatus.schema';
 import { OrderItem, OrderItemModel, OrderItemSchema } from './database/schemas/orderItem/orderItem.schema';
 import { DeliveryAddress, DeliveryAddressModel, DeliveryAddressSchema } from './database/schemas/deliveryAddress/deliveryAddress.schema';
@@ -22,6 +21,9 @@ import { GameType, GameTypeModel, GameTypeSchema } from './database/schemas/game
 import { GameEventRewardResult, GameEventRewardResultModel, GameEventRewardResultSchema } from './database/schemas/gameEventRewardResult/gameEventRewardResult.schema';
 import { PaymentStatus, PaymentStatusModel, PaymentStatusSchema } from './database/schemas/paymentStatus/paymentStatus.schema';
 import { Payment, PaymentModel, PaymentSchema } from './database/schemas/payment/payment.schema';
+import { Shipment, ShipmentModel, ShipmentSchema } from './database/schemas/shipment/shipment.schema';
+import { ShipmentProduct, ShipmentProductModel, ShipmentProductSchema } from './database/schemas/shipmentProduct/shipmentProduct.schema';
+import { ChatbotConfig, ChatbotConfigModel, ChatbotConfigSchema } from './database/schemas/chatbotConfig/chatbotConfig.schema';
 
 type migrateSchemaType = [
   Model<any>,
@@ -44,7 +46,6 @@ export class AppMigration implements OnApplicationBootstrap {
     @InjectModel(SkinType.name) private readonly skinTypeModel: SkinTypeModel,
     @InjectModel(SkinStatus.name) private readonly skinStatusModel: SkinStatusModel,
     @InjectModel(Order.name) private readonly orderModel: OrderModel,
-    @InjectModel(OrderStatusRecord.name) private readonly orderStatusRecordModel: OrderStatusRecordModel,
     @InjectModel(OrderStatus.name) private readonly orderStatusModel: OrderStatusModel,
     @InjectModel(OrderItem.name) private readonly orderItemModel: OrderItemModel,
     @InjectModel(DeliveryAddress.name) private readonly deliveryAddressModel: DeliveryAddressModel,
@@ -53,6 +54,9 @@ export class AppMigration implements OnApplicationBootstrap {
     @InjectModel(GameEventRewardResult.name) private readonly gameEventRewardResultModel: GameEventRewardResultModel,
     @InjectModel(PaymentStatus.name) private readonly paymentStatusModel: PaymentStatusModel,
     @InjectModel(Payment.name) private readonly paymentModel: PaymentModel,
+    @InjectModel(Shipment.name) private readonly shipmentModel: ShipmentModel,
+    @InjectModel(ShipmentProduct.name) private readonly shipmentProductModel: ShipmentProductModel,
+    @InjectModel(ChatbotConfig.name) private readonly chatbotConfigModel: ChatbotConfigModel,
   ) { }
 
   async onApplicationBootstrap() {
@@ -63,6 +67,8 @@ export class AppMigration implements OnApplicationBootstrap {
       [this.roleModel, RoleSchema.obj],
       [this.cartModel, CartSchema.obj],
       [this.cartItemModel, CartItemSchema.obj],
+      [this.shipmentModel, ShipmentSchema.obj],
+      [this.shipmentProductModel, ShipmentProductSchema.obj],
       [this.productModel, ProductSchema.obj],
       [this.productSkinTypeModel, ProductSkinTypeSchema.obj],
       [this.productSkinStatusModel, ProductSkinStatusSchema.obj],
@@ -70,7 +76,6 @@ export class AppMigration implements OnApplicationBootstrap {
       [this.skinTypeModel, SkinTypeSchema.obj],
       [this.skinStatusModel, SkinStatusSchema.obj],
       [this.orderModel, OrderSchema.obj],
-      [this.orderStatusRecordModel, OrderStatusRecordSchema.obj],
       [this.orderStatusModel, OrderStatusSchema.obj],
       [this.orderItemModel, OrderItemSchema.obj],
       [this.deliveryAddressModel, DeliveryAddressSchema.obj],
@@ -79,6 +84,7 @@ export class AppMigration implements OnApplicationBootstrap {
       [this.gameEventRewardResultModel, GameEventRewardResultSchema.obj],
       [this.paymentStatusModel, PaymentStatusSchema.obj],
       [this.paymentModel, PaymentSchema.obj],
+      [this.chatbotConfigModel, ChatbotConfigSchema.obj],
     ]
     await this.execute_migration(migrateSchemas);
 

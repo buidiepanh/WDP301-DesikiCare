@@ -5,6 +5,8 @@ import { apply_Statics } from './cartItem.statics';
 import { apply_Indexes } from './cartItem.indexes';
 import { apply_Virtuals } from './cartItem.virtuals';
 import { apply_PostHooks, apply_PreHooks } from './cartItem.hooks';
+import { Cart } from '../cart/cart.schema';
+import { Product } from '../product/product.schema';
 
 interface ICartItem_Statics {}
 
@@ -18,10 +20,10 @@ export type CartItemDocument = CartItem & Document & ICartItem_Methods & ICartIt
 export class CartItem {
   _id?: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Cart', required: true })
+  @Prop({ type: Types.ObjectId, ref: Cart.name, required: true })
   cartId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
+  @Prop({ type: Types.ObjectId, ref: Product.name, required: true })
   productId: Types.ObjectId;
 
   @Prop({ required: true })

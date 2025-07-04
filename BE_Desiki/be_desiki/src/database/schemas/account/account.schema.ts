@@ -6,6 +6,7 @@ import { apply_Methods } from './account.methods';
 import { apply_Statics } from './account.statics';
 import { apply_Virtuals } from './account.virtuals';
 import { apply_Indexes } from './account.indexes';
+import { Role } from '../role/role.schema';
 
 
 interface IAccount_Statics {
@@ -35,6 +36,7 @@ export class Account {
   email: string;
 
   @Prop({ required: true })
+  @IsOptional()
   @IsString()
   password: string;
 
@@ -46,10 +48,10 @@ export class Account {
   @IsOptional()
   dob: Date;
 
-  @Prop()
+  @Prop({ required: true , unique: true })
   @IsOptional()
-  @IsInt({ message: 'Phone number must be an integer' })
-  phoneNumber: number;
+  @IsString({ message: 'Phone number must be an string' })
+  phoneNumber: string;
 
   @Prop({ required: true })
   @IsString()
@@ -59,7 +61,7 @@ export class Account {
   @IsOptional()
   points: number;
 
-  @Prop({ required: true, ref: 'Role' })
+  @Prop({ required: true, ref: Role.name })
   @IsNumber({}, { message: 'Role ID must be a number' })
   roleId: number;
 

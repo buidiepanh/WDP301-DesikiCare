@@ -6,12 +6,16 @@ import { apply_Methods } from './cart.methods';
 import { apply_Statics } from './cart.statics';
 import { apply_Virtuals } from './cart.virtuals';
 import { apply_Indexes } from './cart.indexes';
+import { Account } from '../account/account.schema';
+import { CartItem } from '../cartItem/cartItem.schema';
 
-interface ICart_Statics {}
+interface ICart_Statics { }
 
-interface ICart_Methods {}
+interface ICart_Methods { }
 
-interface ICart_Virtuals {}
+interface ICart_Virtuals {
+  cartItems: CartItem[];
+}
 
 export type CartDocument = Cart & Document & ICart_Methods & ICart_Virtuals;
 
@@ -19,10 +23,10 @@ export type CartDocument = Cart & Document & ICart_Methods & ICart_Virtuals;
 export class Cart {
   _id?: Types.ObjectId;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account', required: true })
+  @Prop({ type: Types.ObjectId, ref: Account.name, required: true })
   accountId: Types.ObjectId;
 
-  @Prop({ required: true, default: true })
+  @Prop({ default: true })
   @IsBoolean()
   isActive: boolean;
 }

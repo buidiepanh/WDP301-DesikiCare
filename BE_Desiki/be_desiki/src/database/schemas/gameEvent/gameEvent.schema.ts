@@ -5,10 +5,14 @@ import { apply_Methods } from './gameEvent.methods';
 import { apply_Statics } from './gameEvent.statics';
 import { apply_Virtuals } from './gameEvent.virtuals';
 import { apply_Indexes } from './gameEvent.indexes';
+import { GameType } from '../gameType/gameType.schema';
+import { GameEventRewardResult } from '../gameEventRewardResult/gameEventRewardResult.schema';
 
-interface IGameEvent_Statics {}
-interface IGameEvent_Methods {}
-interface IGameEvent_Virtuals {}
+interface IGameEvent_Statics { }
+interface IGameEvent_Methods { }
+interface IGameEvent_Virtuals {
+  gameEventRewardResults: GameEventRewardResult[];
+ }
 
 export type GameEventDocument = GameEvent & Document & IGameEvent_Methods & IGameEvent_Virtuals;
 
@@ -19,26 +23,29 @@ export class GameEvent {
   @Prop({ required: true })
   eventName: string;
 
-  @Prop({ required: true })
+  @Prop()
   description: string;
 
   @Prop({ required: true })
   gameName: string;
 
-  @Prop({ required: true })
+  @Prop({ ref: GameType.name, required: true })
   gameTypeId: number;
 
-  @Prop({ required: true })
-  configJson: string;
+  @Prop({ type: Object, required: true })
+  configJson: any;
 
-  @Prop({ required: true })
+  @Prop()
   startDate: Date;
 
-  @Prop({ required: true })
+  @Prop()
   endDate: Date;
 
-  @Prop({ required: true, default: false })
-  isDeactivated: boolean;
+  @Prop()
+  balancePoints: number;
+
+  @Prop({ required: true, default: true })
+  isDeactivated?: boolean;
 }
 
 type GameEventModel = Model<GameEventDocument> & IGameEvent_Statics;

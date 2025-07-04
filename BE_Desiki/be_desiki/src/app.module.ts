@@ -9,9 +9,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppMigration } from './app.migration';
 import { databaseFeatures } from './database/database.feature';
 import { AccountModule } from './modules/account/Account.module';
-import { GameEventModule } from './modules/gameEvent/GameEvent.module';
 import { ProductModule } from './modules/product/Product.module';
 import { OrderModule } from './modules/order/Order.module';
+import { ChatbotModule } from './modules/chatbot/Chatbot.module';
+import { GameModule } from './modules/game/Game.module';
 
 //*** thứ tự thực thi */
 //1. Load các module trong imports
@@ -24,9 +25,10 @@ import { OrderModule } from './modules/order/Order.module';
 @Module({
   imports: [
     AccountModule,
-    GameEventModule,
+    GameModule,
     ProductModule,
     OrderModule,
+    ChatbotModule,
     DatabaseModule,
 
 

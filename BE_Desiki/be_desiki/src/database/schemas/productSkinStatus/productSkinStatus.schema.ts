@@ -5,12 +5,14 @@ import { apply_Methods } from './productSkinStatus.methods';
 import { apply_Statics } from './productSkinStatus.statics';
 import { apply_Virtuals } from './productSkinStatus.virtuals';
 import { apply_Indexes } from './productSkinStatus.indexes';
+import { Product } from '../product/product.schema';
+import { SkinStatus } from '../skinStatus/skinStatus.schema';
 
-interface IProductSkinStatus_Statics {}
+interface IProductSkinStatus_Statics { }
 
-interface IProductSkinStatus_Methods {}
+interface IProductSkinStatus_Methods { }
 
-interface IProductSkinStatus_Virtuals {}
+interface IProductSkinStatus_Virtuals { }
 
 export type ProductSkinStatusDocument = ProductSkinStatus & Document & IProductSkinStatus_Methods & IProductSkinStatus_Virtuals;
 
@@ -18,10 +20,10 @@ export type ProductSkinStatusDocument = ProductSkinStatus & Document & IProductS
 export class ProductSkinStatus {
   _id?: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
+  @Prop({ type: Types.ObjectId, ref: Product.name, required: true })
   productId: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ ref: SkinStatus.name, required: true })
   skinStatusId: number;
 }
 

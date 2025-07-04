@@ -1,0 +1,26 @@
+[
+    {
+        "accountId": {
+            "$oid": "68407a209a4c0e1171c04748"
+        },
+        "provinceCode": "01",
+        "districtCode": "001",
+        "wardCode": "00001",
+        "addressDetailDescription": "Số 1, Đường ABC, Phường XYZ",
+        "receiverName": "Nguyen Van A",
+        "receiverPhone": "0901234567",
+        "isDefault": true
+    },
+    {
+        "accountId": {
+            "$oid": "68407a209a4c0e1171c04748"
+        },
+        "provinceCode": "01",
+        "districtCode": "002",
+        "wardCode": "00002",
+        "addressDetailDescription": "Số 2, Đường DEF, Phường UVW",
+        "receiverName": "Nguyen Van B",
+        "receiverPhone": "0912345678",
+        "isDefault": false
+    }
+]

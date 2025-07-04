@@ -5,6 +5,8 @@ import { apply_Methods } from './orderItem.methods';
 import { apply_Statics } from './orderItem.statics';
 import { apply_Virtuals } from './orderItem.virtuals';
 import { apply_Indexes } from './orderItem.indexes';
+import { Order } from '../order/order.schema';
+import { ShipmentProduct } from '../shipmentProduct/shipmentProduct.schema';
 
 interface IOrderItem_Statics {}
 interface IOrderItem_Methods {}
@@ -16,11 +18,11 @@ export type OrderItemDocument = OrderItem & Document & IOrderItem_Methods & IOrd
 export class OrderItem {
   _id?: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Order', required: true })
+  @Prop({ type: Types.ObjectId, ref: Order.name, required: true })
   orderId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
-  productId: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: ShipmentProduct.name, required: true })
+  shipmentProductId: Types.ObjectId;
 
   @Prop({ required: true })
   quantity: number;

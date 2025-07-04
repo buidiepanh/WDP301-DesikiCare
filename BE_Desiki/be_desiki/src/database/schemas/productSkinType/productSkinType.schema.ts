@@ -5,13 +5,15 @@ import { apply_Methods } from './productSkinType.methods';
 import { apply_Statics } from './productSkinType.statics';
 import { apply_Virtuals } from './productSkinType.virtuals';
 import { apply_Indexes } from './productSkinType.indexes';
+import { Product } from '../product/product.schema';
+import { SkinType } from '../skinType/skinType.schema';
 
 
-interface IProductSkinType_Statics {}
+interface IProductSkinType_Statics { }
 
-interface IProductSkinType_Methods {}
+interface IProductSkinType_Methods { }
 
-interface IProductSkinType_Virtuals {}
+interface IProductSkinType_Virtuals { }
 
 export type ProductSkinTypeDocument = ProductSkinType & Document & IProductSkinType_Methods & IProductSkinType_Virtuals;
 
@@ -19,10 +21,10 @@ export type ProductSkinTypeDocument = ProductSkinType & Document & IProductSkinT
 export class ProductSkinType {
   _id?: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
+  @Prop({ type: Types.ObjectId, ref: Product.name, required: true })
   productId: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ ref: SkinType.name, required: true })
   skinTypeId: number;
 }
 
