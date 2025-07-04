@@ -1,35 +1,297 @@
-import React from "react";
-import { Box, Typography } from "@mui/material";
-import { Menu, Room } from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Typography,
+  MenuItem,
+  Popper,
+  Paper,
+  ClickAwayListener,
+  Modal,
+  Button,
+} from "@mui/material";
+import { Menu } from "@mui/icons-material";
 import styles from "./CategoryBar.module.css";
+import { useNavigate } from "react-router-dom";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import {
+  getAllCategories,
+  getAllMiniGames,
+  getAllSkinStatuses,
+  getAllSkinTypes,
+} from "../../../services/apiServices";
 
 const CategoryBar = () => {
+  const navigate = useNavigate();
+  const [openDanhMuc, setOpenDanhMuc] = useState(false);
+  const [anchorDanhMuc, setAnchorDanhMuc] = useState(null);
+  const token = sessionStorage.getItem("accessToken");
+
+  const [openSanPham, setOpenSanPham] = useState(false);
+  const [anchorSanPham, setAnchorSanPham] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [skinTypes, setSkinTypes] = useState([]);
+  const [skinStatuses, setSkinStatuses] = useState([]);
+  const [openGameModal, setOpenGameModal] = useState(false);
+  const [gameNames, setGameNames] = useState([]);
+
+  const handleOpenGameModal = () => setOpenGameModal(true);
+  const handleCloseGameModal = () => setOpenGameModal(false);
+
+  const handleBanner = () => navigate("/hot-deal");
+  const handleDeals = () => navigate("/products-page");
+  const handleBlog = () => navigate("/blog-grid");
+
+  const handleDanhMucClick = (event) => {
+    setAnchorDanhMuc(event.currentTarget);
+    setOpenDanhMuc((prev) => !prev);
+    setOpenSanPham(false);
+  };
+
+  useEffect(() => {
+    fetchAllCategories();
+    fetchAllSkinTypes();
+    fetchAllSkinStatuses();
+    fetchAllMiniGames();
+  }, []);
+
+  const fetchAllCategories = async () => {
+    try {
+      const result = await getAllCategories();
+      setCategories(result.categories);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllMiniGames = async () => {
+    try {
+      const result = await getAllMiniGames();
+      setGameNames(result.gameTypes);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllSkinTypes = async () => {
+    try {
+      const result = await getAllSkinTypes();
+      setSkinTypes(result.skinTypes);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllSkinStatuses = async () => {
+    try {
+      const result = await getAllSkinStatuses();
+      setSkinStatuses(result.skinStatuses);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSanPhamClick = (event) => {
+    setAnchorSanPham(event.currentTarget);
+    setOpenSanPham((prev) => !prev);
+    setOpenDanhMuc(false);
+  };
+
+  const handleCloseAll = () => {
+    setOpenDanhMuc(false);
+    setOpenSanPham(false);
+  };
+
+  const danhMucList = categories.map((item) => item.name);
+
+  const sanPhamList = [
+    {
+      name: "Các loại da",
+      subItems: skinTypes.map((item) => item.name),
+    },
+    {
+      name: "Tình trạng da",
+      subItems: skinStatuses.map((item) => item.name),
+    },
+  ];
+
   return (
     <Box className={styles.categoryContainer}>
       <Box className={styles.leftMenu}>
-        <Menu fontSize="small" />
-        <Typography  fontWeight="bold">
-          DANH MỤC
-        </Typography>
+        <Box
+          display="flex"
+          alignItems="center"
+          onClick={handleDanhMucClick}
+          style={{ cursor: "pointer" }}
+        >
+          <Menu fontSize="small" />
+          <Typography fontWeight="bold" style={{ marginLeft: 4 }}>
+            DANH MỤC
+          </Typography>
+        </Box>
+
         <span className={styles.divider}>|</span>
-        <Typography className={styles.categoryItem}>DeskiCare DEALS</Typography>
-        <Typography className={styles.categoryItem}>HOT DEALS</Typography>
-        <Typography className={styles.categoryItem}>THƯƠNG HIỆU</Typography>
-        <Typography className={styles.categoryItem}>HÀNG MỚI VỀ</Typography>
-        <Typography className={styles.categoryItem}>BÁN CHẠY</Typography>
-        <Typography className={styles.categoryItem}>CLINIC & SPA</Typography>
-        <Typography className={styles.categoryItem}>DERMAHAIR</Typography>
+        <Typography className={styles.categoryItem} onClick={handleDeals}>
+          Sản phẩm DeskiCare
+        </Typography>
+        <Typography className={styles.categoryItem} onClick={handleBanner}>
+          HOT DEALS
+        </Typography>
+        <Typography
+          className={styles.categoryItem}
+          onClick={handleSanPhamClick}
+        >
+          Loại Sản Phẩm
+        </Typography>
+        <Typography className={styles.categoryItem} onClick={handleBlog}>
+          Tạp Chí Làm Đẹp
+        </Typography>
+        <Typography
+          className={styles.categoryItem}
+          onClick={handleOpenGameModal}
+        >
+          Mini Game
+        </Typography>
       </Box>
 
-      <Box className={styles.rightMenu}>
-        <Typography className={styles.linkItem}>Tra cứu đơn hàng</Typography>
-        <span className={styles.divider}>|</span>
-        <Typography className={styles.linkItem}>Tải ứng dụng</Typography>
-        <Room fontSize="small" />
-        <Typography className={styles.linkItem} fontWeight="bold">
-          Chọn khu vực của bạn
-        </Typography>
-      </Box>
+      {/* Danh mục popper */}
+      <Popper
+        open={openDanhMuc}
+        anchorEl={anchorDanhMuc}
+        placement="bottom-start"
+      >
+        <ClickAwayListener onClickAway={handleCloseAll}>
+          <Paper elevation={3} sx={{ width: 240, padding: 1 }}>
+            {danhMucList.map((cat, index) => (
+              <MenuItem
+                key={index}
+                onClick={() => {
+                  handleCloseAll();
+                  localStorage.setItem("category", cat);
+                  navigate("/products-page");
+                }}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography>{cat}</Typography>
+                <ChevronRightIcon fontSize="small" />
+              </MenuItem>
+            ))}
+          </Paper>
+        </ClickAwayListener>
+      </Popper>
+
+      <Popper
+        open={openSanPham}
+        anchorEl={anchorSanPham}
+        placement="bottom-start"
+      >
+        <ClickAwayListener onClickAway={handleCloseAll}>
+          <Paper
+            elevation={3}
+            sx={{
+              width: 900,
+              height: 300, // tăng chiều cao
+              padding: 1,
+              bgcolor: "background.paper",
+              borderRadius: 1,
+              boxShadow: 3,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "stretch", // cho các phần con cao bằng nhau
+              overflowY: "auto",
+              zIndex: "10",
+            }}
+          >
+            {sanPhamList.map((item, index) => (
+              <Box
+                key={index}
+                sx={{
+                  flex: 1,
+                  borderRight:
+                    index !== sanPhamList.length - 1
+                      ? "1px solid #e0e0e0"
+                      : "none",
+                  px: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  minWidth: 0, // chống tràn
+                }}
+              >
+                <Typography
+                  fontWeight="bold"
+                  sx={{ py: 0.75, fontSize: "1rem", color: "text.primary" }}
+                >
+                  {item.name}
+                </Typography>
+                <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
+                  {item.subItems.map((sub, i) => (
+                    <MenuItem
+                      key={i}
+                      onClick={() => {
+                        handleCloseAll();
+                        localStorage.setItem("skin", sub);
+                        navigate("/products-page");
+                      }}
+                      sx={{
+                        pl: 3,
+                        py: 0.5,
+                        fontSize: "0.9rem",
+                        color: "text.secondary",
+                        "&:hover": {
+                          bgcolor: "action.hover",
+                        },
+                      }}
+                    >
+                      {sub}
+                    </MenuItem>
+                  ))}
+                </Box>
+              </Box>
+            ))}
+          </Paper>
+        </ClickAwayListener>
+      </Popper>
+
+      <Modal open={openGameModal} onClose={handleCloseGameModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold" textAlign="center">
+            Mini Game 🎮
+          </Typography>
+          {gameNames?.map((game) => (
+            <Button
+              key={game.id}
+              variant="outlined"
+              fullWidth
+              onClick={() =>
+                token !== null
+                  ? navigate(`/game-type/${game._id}`, { state: game })
+                  : navigate("/login")
+              }
+            >
+              {game.name}
+            </Button>
+          ))}
+        </Box>
+      </Modal>
     </Box>
   );
 };

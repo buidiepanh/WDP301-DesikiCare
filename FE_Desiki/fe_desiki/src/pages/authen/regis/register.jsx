@@ -1,65 +1,72 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Layout,
   Form,
   Input,
   Button,
   Typography,
+  DatePicker,
+  Select,
+  message,
   Divider,
   Space,
-  message,
 } from "antd";
-import {
-  UserOutlined,
-  LockOutlined,
-  GoogleOutlined,
-  FacebookFilled,
-} from "@ant-design/icons";
-import { EmailOutlined } from "@mui/icons-material";
-import {
-  createUserWithEmailAndPassword,
-  updateProfile,
-  signInWithPopup,
-} from "firebase/auth";
+import toast from "react-hot-toast";
+import axios from "axios";
+import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
-import { auth, provider } from "../../../config/firebase";
 import image1 from "../../../assets/authen/authen_background1.webp";
-import "./Register.css";
+import "./register.css";
+import { registerFunction } from "../../../services/apiServices";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;
+const { Option } = Select;
 
 const Register = () => {
+  const [form] = Form.useForm();
+  const [imageBase64, setImageBase64] = useState("");
   const navigate = useNavigate();
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageBase64(reader.result.split(",")[1]);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const onFinish = async (values) => {
     try {
-      const { username, phone, password } = values;
-      const email = `${phone}@desiki.com`;
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      await updateProfile(userCredential.user, {
-        displayName: username,
-      });
-      message.success("Account created successfully!");
-      navigate("/home");
+      const payload = {
+        account: {
+          email: values.email,
+          password: values.password,
+          fullName: values.fullName,
+          phoneNumber: values.phone,
+          gender: values.gender,
+          dob: values.dob.format("YYYY-MM-DD"),
+          roleId: 3,
+          imageBase64: imageBase64,
+        },
+      };
+
+      const response = await registerFunction(payload);
+
+      if (response?.message === "Register successfully") {
+        form.resetFields();
+        toast.success("Đăng ký thành công!");
+        setTimeout(() => navigate("/login"), 1500);
+      }
     } catch (error) {
       console.error("Registration error:", error);
-      message.error(error.message);
-    }
-  };
-
-  const handleGoogleSignup = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      message.success(`Welcome ${result.user.displayName}`);
-      navigate("/home");
-    } catch (error) {
-      console.error("Google signup error:", error);
-      message.error(error.message);
+      message.error(
+        "Đăng ký thất bại: " +
+          (error.response?.data?.message || "Lỗi không xác định")
+      );
     }
   };
 
@@ -71,12 +78,11 @@ const Register = () => {
       >
         <div className="register-overlay" />
         <div className="register-left-content">
-          <Title level={1}>Desiki Care</Title>
+          <Title level={1}>DESIKI CARE</Title>
           <Text className="register-description">
-            Desiki Care là thương hiệu chăm sóc da tiên phong kết hợp hài hòa giữa
-            vẻ đẹp tự nhiên và khoa học hiện đại. Chúng tôi cam kết mang đến các
-            sản phẩm an toàn và hiệu quả, giúp nuôi dưỡng làn da từ sâu bên trong
-            và thúc đẩy sức khỏe lâu dài.
+            Desiki Care là thương hiệu chăm sóc da tiên phong kết hợp giữa vẻ
+            đẹp tự nhiên và khoa học hiện đại. Chúng tôi mang đến giải pháp làm
+            đẹp an toàn và hiệu quả dài lâu.
           </Text>
         </div>
       </Content>
@@ -94,37 +100,25 @@ const Register = () => {
           <Title level={2} className="register-title">
             Đăng ký tài khoản
           </Title>
-          <Text type="secondary" className="register-subtext">
-            Tham gia Desiki Care để mở ra hành trình làm đẹp của riêng bạn.
-          </Text>
 
-          <Form layout="vertical" name="registerForm" onFinish={onFinish}>
+          <Form layout="vertical" form={form} onFinish={onFinish}>
             <Form.Item
-              label="Tên người dùng"
-              name="username"
-              rules={[
-                { required: true, message: "Vui lòng nhập tên của bạn!" },
-              ]}
+              label="Họ và tên"
+              name="fullName"
+              rules={[{ required: true, message: "Vui lòng nhập họ tên!" }]}
             >
-              <Input
-                prefix={<UserOutlined />}
-                placeholder="Vui lòng nhập tên của bạn"
-                size="large"
-              />
+              <Input placeholder="Họ tên đầy đủ" />
             </Form.Item>
 
             <Form.Item
               label="Email"
-              name="phone"
+              name="email"
               rules={[
-                { required: true, message: "Vui lòng nhập số điện thoại!" },
+                { required: true, message: "Vui lòng nhập email!" },
+                { type: "email", message: "Email không hợp lệ!" },
               ]}
             >
-              <Input
-                prefix={<EmailOutlined />}
-                placeholder="Nhập số điện thoại của bạn"
-                size="large"
-              />
+              <Input placeholder="example@gmail.com" />
             </Form.Item>
 
             <Form.Item
@@ -132,46 +126,52 @@ const Register = () => {
               name="password"
               rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
             >
-              <Input.Password
-                prefix={<LockOutlined />}
-                placeholder="Vui lòng nhập mật khẩu"
-                size="large"
-              />
+              <Input.Password placeholder="******" />
             </Form.Item>
 
             <Form.Item
-              label="Xác nhận lại mật khẩu"
-              name="confirm"
-              dependencies={["password"]}
+              label="Số điện thoại"
+              name="phone"
               rules={[
-                {
-                  required: true,
-                  message: "Vui lòng xác nhận lại mật khẩu của bạn!",
-                },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error("Mật khẩu không trùng khớp!")
-                    );
-                  },
-                }),
+                { required: true, message: "Vui lòng nhập số điện thoại!" },
               ]}
             >
-              <Input.Password
-                prefix={<LockOutlined />}
-                placeholder="Xác nhận lại mật khẩu"
-                size="large"
+              <Input placeholder="0123456789" />
+            </Form.Item>
+
+            <Form.Item
+              label="Giới tính"
+              name="gender"
+              rules={[{ required: true, message: "Vui lòng chọn giới tính!" }]}
+            >
+              <Select placeholder="Chọn giới tính">
+                <Option value="Nam">Male</Option>
+                <Option value="Nữ">Female</Option>
+                <Option value="Khác">Other</Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              label="Ngày sinh"
+              name="dob"
+              rules={[{ required: true, message: "Vui lòng chọn ngày sinh!" }]}
+            >
+              <DatePicker style={{ width: "100%" }} />
+            </Form.Item>
+
+            <Form.Item label="Ảnh đại diện">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
               />
+              {imageBase64 && <Text type="secondary">Đã chọn ảnh ✅</Text>}
             </Form.Item>
 
             <Form.Item>
               <Button
                 type="primary"
                 htmlType="submit"
-                size="large"
                 block
                 className="register-button"
               >
@@ -186,22 +186,18 @@ const Register = () => {
               </Link>
             </Text>
 
-            <Divider style={{ borderColor: "#f0f0f0" }}>or</Divider>
+            <Divider style={{ borderColor: "#f0f0f0" }}>hoặc</Divider>
 
             <Space direction="vertical" style={{ width: "100%" }}>
-              <Button
-                icon={<GoogleOutlined />}
-                block
-                onClick={handleGoogleSignup}
-              >
-                Đăng ký tài khoản với Google
+              <Button block disabled>
+                Đăng ký với Google
               </Button>
               <Button
-                icon={<FacebookFilled />}
                 block
                 style={{ backgroundColor: "#3b5998", color: "#fff" }}
+                disabled
               >
-                Đăng ký tài khoản với Facebook
+                Đăng ký với Facebook
               </Button>
             </Space>
           </Form>

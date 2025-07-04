@@ -1,58 +1,71 @@
-import React from 'react';
-import { Card, Rate, Progress } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { Card, Rate, Progress, Tag, Tooltip } from "antd";
+import { useNavigate } from "react-router-dom";
+import "./ProductCard.css";
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
   const {
-    id,
-    img,
-    name,
-    price,
-    oldPrice,
-    discount,
-    sold,
-    total = 100,
-    rating = 4.5,
-    ratingCount = 128,
+    product: productInfo,
+    productSkinTypes,
+    productSkinStatuses,
+    shipmentProducts,
   } = product;
 
-  const soldPercent = Math.min(Math.round((sold / total) * 100), 100);
-  const navigate = useNavigate();
-
   const handleClick = () => {
-    navigate(`/product/${id}`);
+    navigate(`/products/${productInfo._id}`);
   };
+
+  const name = productInfo.name;
+  const imageUrl = productInfo.imageUrl;
+  const salePrice = productInfo.salePrice;
+
+  const totalQuantity = shipmentProducts?.reduce(
+    (sum, item) => sum + (item.shipmentProduct?.quantity || 0),
+    0
+  );
 
   return (
     <Card
+      className="product-card"
       hoverable
       onClick={handleClick}
       cover={
         <img
           alt={name}
-          src={img}
-          style={{ height: 240, objectFit: 'cover', cursor: 'pointer' }}
+          src={imageUrl}
+          style={{
+            height: 240,
+            objectFit: "cover",
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+          }}
         />
       }
-      style={{ borderRadius: '12px' }}
+      style={{ borderRadius: 12 }}
+      bodyStyle={{ padding: 16 }}
     >
-      <h4 style={{ fontSize: 16 }}>{name}</h4>
+      <h4 style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>{name}</h4>
+
+      {/* Giá và giảm giá */}
       <div style={{ marginBottom: 8 }}>
-        <span style={{ color: 'red', fontWeight: 600 }}>{price.toLocaleString()}₫</span>{' '}
-        <span style={{ textDecoration: 'line-through', color: '#999', marginLeft: 8 }}>
-          {oldPrice.toLocaleString()}₫
+        <span style={{ color: "red", fontWeight: 700, fontSize: 16 }}>
+          {salePrice?.toLocaleString()}₫
         </span>
-        <span style={{ marginLeft: 8, color: '#52c41a' }}>-{discount}%</span>
       </div>
 
+      {/* Tình trạng da */}
       <div style={{ marginBottom: 8 }}>
-        <Rate allowHalf disabled defaultValue={rating} style={{ fontSize: 14 }} />
-        <span style={{ marginLeft: 8, fontSize: 12, color: '#888' }}>({ratingCount} đánh giá)</span>
-      </div>
-
-      <div>
-        <Progress percent={soldPercent} size="small" strokeColor="#1890ff" />
-        <span style={{ fontSize: 13, color: '#555' }}>Đã bán {sold} sản phẩm</span>
+        {productSkinTypes.map((type) => (
+          <Tag key={type._id} color="blue">
+            {type.name}
+          </Tag>
+        ))}
+        {productSkinStatuses.map((status) => (
+          <Tag key={status._id} color="red">
+            {status.name}
+          </Tag>
+        ))}
       </div>
     </Card>
   );
