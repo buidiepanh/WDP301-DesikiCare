@@ -23,9 +23,11 @@ import styles from "./HeaderSkincare.module.css";
 import logo from "../../assets/logo.jpg";
 import toast from "react-hot-toast";
 import ChatWidget from "../Chatbot/ChatWidget";
+import { getMe } from "../../services/apiServices";
 
 const HeaderSkincare = () => {
   const [userName, setUserName] = useState(null);
+  const [user, setUser] = useState(null);
   const [showChat, setShowChat] = useState(false);
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
@@ -44,8 +46,18 @@ const HeaderSkincare = () => {
     }
   };
 
+  const getAuthenticatedUser = async () => {
+    try {
+      const res = await getMe();
+      setUser(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     loadUser();
+    getAuthenticatedUser();
     const handleUserChanged = () => loadUser();
     window.addEventListener("userChanged", handleUserChanged);
     return () => window.removeEventListener("userChanged", handleUserChanged);
