@@ -223,7 +223,22 @@ export const getGamesEvent = async () => {
   }
 };
 
-export const getMyGameEventRewards = async () => {
-  const res = await axios.get("/Game/gameEventsRewards/me");
-  return res.data.gameEventRewardResults; 
+export const updateGamePoints = async (gameEventId, points) => {
+  try {
+    // Thay thế bằng API endpoint thực tế của bạn
+    const result = axios.post("/Game/gameEventsRewards", {
+      gameEventReward: {
+        gameEventId: gameEventId,
+        points: points,
+      },
+    });
+    if (result && result.status === 200) {
+      return true;
+    } else {
+      throw new Error("Failed to update points");
+    }
+  } catch (error) {
+    console.error("Error updating game points:", error);
+    throw error;
+  }
 };

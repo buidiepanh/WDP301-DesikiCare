@@ -6,6 +6,8 @@ import {
   Typography,
   IconButton,
   Badge,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import {
   ShoppingCartOutlined,
@@ -13,6 +15,7 @@ import {
   VerifiedUser,
   Phone,
 } from "@mui/icons-material";
+import SearchIcon from "@mui/icons-material/Search";
 import { AccountCircle } from "@mui/icons-material";
 import { Input } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -66,6 +69,7 @@ const HeaderSkincare = () => {
 
   const handleLogout = () => {
     sessionStorage.clear();
+    localStorage.clear();
     window.dispatchEvent(new Event("userChanged"));
     setShowChat(false);
     toast.success("Đăng xuất thành công!");
@@ -110,21 +114,32 @@ const HeaderSkincare = () => {
           </Box>
 
           <Box className={styles.menuSearchBox}>
-            <Box className={styles.menuItems}>
-              <span>Kem Chống Nắng</span>
-              <span>Tẩy Trang</span>
-              <span>Sữa Rửa Mặt</span>
-              <span>Tẩy tế bào chết</span>
-              <span>Kem chống nắng sunplay</span>
-            </Box>
-            <Input.Search
+            <TextField
               value={searchText}
-              placeholder="Tìm sản phẩm, thương hiệu bạn mong muốn..."
-              className={styles.searchInput}
               onChange={(e) => setSearchText(e.target.value)}
-              onSearch={handleSearchFunction}
-              allowClear
-              size="large"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearchFunction();
+              }}
+              placeholder="Tìm sản phẩm, thương hiệu bạn mong muốn..."
+              variant="outlined"
+              size="small"
+              fullWidth
+              sx={{
+                backgroundColor: "white",
+                borderRadius: "4px",
+                input: {
+                  padding: "10px 14px",
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleSearchFunction} edge="end">
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Box>
 

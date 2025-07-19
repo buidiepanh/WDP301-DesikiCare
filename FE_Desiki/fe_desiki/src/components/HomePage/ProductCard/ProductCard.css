@@ -1,7 +1,14 @@
 .product-card {
-  width: 210px;
-  position: relative;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .card-header {
@@ -25,13 +32,6 @@
   height: 180px;
   object-fit: contain;
   margin-bottom: 8px;
-}
-
-.product-info {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1; /* Giúp phần nội dung luôn đầy chiều cao */
-  gap: 4px;
 }
 
 .product-name {

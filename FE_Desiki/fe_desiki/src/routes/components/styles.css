@@ -1,0 +1,202 @@
+.game-card {
+  cursor: pointer;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.game-card:hover {
+  box-shadow: 0 8px 25px rgba(236, 64, 122, 0.15) !important;
+}
+
+/* Game List Styles */
+.game-list-item {
+  transition: all 0.2s ease;
+}
+
+.game-list-item:hover {
+  background-color: #f8f9fa;
+  transform: translateX(4px);
+}
+
+.play-button {
+  transition: all 0.2s ease !important;
+}
+
+.play-button:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(236, 64, 122, 0.4) !important;
+}
+
+/* Spinning Wheel Styles */
+.spinning-wheel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  min-height: 500px;
+}
+
+.wheel-canvas {
+  border: 4px solid #ec407a;
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(236, 64, 122, 0.3);
+}
+
+.spin-button {
+  margin-top: 20px !important;
+  padding: 12px 30px !important;
+  font-size: 1.2rem !important;
+  font-weight: bold !important;
+  background: linear-gradient(45deg, #ec407a, #f06292) !important;
+  border-radius: 25px !important;
+  transition: all 0.3s ease !important;
+}
+
+.spin-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(236, 64, 122, 0.4) !important;
+}
+
+.spin-button:disabled {
+  background: #ccc !important;
+  transform: none !important;
+}
+
+/* Memory Game Styles */
+.memory-grid {
+  display: grid;
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.memory-card {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid #ec407a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+}
+
+.memory-card:hover {
+  transform: scale(1.05);
+}
+
+.memory-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.memory-card.matched {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Scratch Card Styles */
+.scratch-cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+}
+
+.scratch-card {
+  width: 150px;
+  height: 200px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 3px solid #ec407a;
+  position: relative;
+  overflow: hidden;
+}
+
+.scratch-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(236, 64, 122, 0.3);
+}
+
+.scratch-card.scratched {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.scratch-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Game Stats */
+.game-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ec407a;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+.game-header {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #ec407a, #f06292);
+  color: white;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  margin: 10px !important;
+  color: #ec407a !important;
+  border-color: #ec407a !important;
+}
+
+.back-button:hover {
+  background-color: #ec407a !important;
+  color: white !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .game-list-item {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .game-list-item .play-button {
+    margin-top: 10px !important;
+    align-self: flex-end !important;
+  }
+}
