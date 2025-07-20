@@ -178,13 +178,20 @@ const HeaderSkincare = () => {
                   </Badge>
                 </IconButton>
 
-                <IconButton
-                  color="inherit"
-                  onClick={() => navigate("/profile")}
+                <Box
                   className={styles.userInfoBox}
+                  onClick={() => navigate("/profile")}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
                 >
                   <AccountCircle />
-                </IconButton>
+                  <Typography variant="body2" sx={{ ml: 0.5, color: "white" }}>
+                    {user?.account?.points ?? 0} điểm
+                  </Typography>
+                </Box>
 
                 <IconButton color="inherit" onClick={handleLogout}>
                   <Logout />
