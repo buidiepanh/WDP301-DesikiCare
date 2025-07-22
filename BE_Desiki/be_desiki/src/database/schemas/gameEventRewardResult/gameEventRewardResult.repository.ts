@@ -28,10 +28,13 @@ export class GameEventRewardResultRepository {
   }
 
   async findAll(): Promise<GameEventRewardResult[]> {
-    return this.gameEventRewardResultModel.find().exec();
+    return this.gameEventRewardResultModel.find()
+      .populate("gameEventId")
+      .lean()
+      .exec();
   }
 
-  async create(gameEventRewardResult: GameEventRewardResult, session : ClientSession): Promise<GameEventRewardResult> {
+  async create(gameEventRewardResult: GameEventRewardResult, session: ClientSession): Promise<GameEventRewardResult> {
     const created = new this.gameEventRewardResultModel(gameEventRewardResult);
     await created.save({ session });
     return created;

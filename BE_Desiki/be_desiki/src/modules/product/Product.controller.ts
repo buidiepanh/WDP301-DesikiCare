@@ -35,7 +35,38 @@ export class ProductController {
     var products = await this.productsService.getProducts();
 
     if (!req.user || (req.user && req.user.role._id === 3)) {
-      products = products.filter(product => product.product.isDeactivated === false);
+
+      // const shipmentProducts = (await this.shipmentProductRepository.findByProductId(productId)).filter(sp => sp.isDeactivated === false && sp.shipmentId && (sp.shipmentId as any).isDeleted === false);
+
+      // if (product.isDeactivated === true || shipmentProducts.length === 0 || shipmentProducts.reduce((acc, sp) => acc + sp.quantity, 0) < 1) {
+      //   throw new HttpException('Product is not available', HttpStatus.BAD_REQUEST);
+      // }
+
+      // products = products.filter(product => product.product.isDeactivated === false)
+
+
+      //6863789b72c34c2da91e44b1
+      // products.forEach(product => {
+      //   console.log("product: ", product.product._id);
+      //   console.log("product isDeactivated: ", product.product.isDeactivated);
+      //   console.log("shipmentProducts length: ", product.shipmentProducts.length);
+      //   console.log("quantity: ", product.shipmentProducts.reduce((acc, sp) => acc + sp.shipmentProduct.quantity, 0));
+      //   product.shipmentProducts.forEach(sp => {
+      //     console.log("shipment: ",sp.shipment);
+      //     console.log("shipmentProduct: ", sp.shipmentProduct);
+      //     // console log từng điều kiện
+      //     console.log("shipmentProduct isDeactivated: ", sp.shipmentProduct.isDeactivated);
+      //     console.log("shipment isDeleted: ", (sp.shipment as any).isDeleted);
+
+      //   });
+      // });
+
+      products = products.filter(product => product.product.isDeactivated === false &&
+        product.shipmentProducts.length > 0 &&
+        // product.shipmentProducts.reduce((acc, sp) => acc + sp.shipmentProduct.quantity, 0) > 0 &&
+        product.shipmentProducts.some(sp => sp.shipmentProduct.isDeactivated === false && sp.shipment && (sp.shipment as any).isDeleted === false));
+
+
     }
     return {
       products: products,

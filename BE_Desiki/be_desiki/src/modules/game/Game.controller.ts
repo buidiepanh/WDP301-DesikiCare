@@ -120,6 +120,19 @@ export class GameController {
       gameEventRewardResults: gameEventRewardResults,
     };
   }
+  
+  // Lấy lịch sử nhận thưởng từ sự kiện game của hệ thống
+  @Get('gameEventsRewards')
+  @Roles("admin", "manager")
+  @UseGuards(RolesGuard)
+  async getGameEventsRewards(
+    
+  ) {
+    const gameEventRewardResults = await this.gameEventsService.getGameEventsRewards();
+    return {
+      gameEventRewardResults: gameEventRewardResults,
+    };
+  }
 
   // Thêm phần thưởng sự kiện game cho tài khoản
   @Post('gameEventsRewards')

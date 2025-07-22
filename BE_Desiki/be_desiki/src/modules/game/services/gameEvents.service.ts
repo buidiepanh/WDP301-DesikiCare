@@ -11,6 +11,7 @@ import { Connection, Types } from 'mongoose';
 import e from 'express';
 import { AccountsService } from 'src/modules/account/services/accounts.service';
 import { exit } from 'process';
+import { AccountRepository } from 'src/database/schemas/account/account.repository';
 
 @Injectable()
 export class GameEventsService {
@@ -18,6 +19,7 @@ export class GameEventsService {
         private readonly gameEventRepository: GameEventRepository,
         private readonly gameTypeRepository: GameTypeRepository,
         private readonly gameEventRewardResultRepository: GameEventRewardResultRepository,
+        private readonly accountRepository: AccountRepository,
 
         private readonly accountsService: AccountsService,
 
@@ -232,6 +234,26 @@ export class GameEventsService {
         }
     }
 
+    async getGameEventsRewards(): Promise<any> {
+        try {
+            const gameEventRewardResults = await this.gameEventRewardResultRepository.findAll();
+            const result = [];
+            for (const rewardResult of gameEventRewardResults) {
+                const { gameEventId: gameEvent, ...rewardResultBase } = rewardResult;
+                result.push({
+                    gameEventRewardResult: rewardResultBase,
+                    gameEvent: {
+                        ...gameEvent,
+                        imageUrl: await this.fileService.getImageUrl(this.configService.get<string>('imagePathConfig.GAMEEVENT_IMAGE_PATH'), gameEvent._id, "main"),
+                    },
+                });
+            }
+            return result;
+        } catch (error) {
+            throw new HttpException('Get event rewards failed: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     async addGameEventReward(accountId: Types.ObjectId, gameEventReward: {
         gameEventId: Types.ObjectId;
         points: number;
@@ -239,7 +261,7 @@ export class GameEventsService {
         const session = await this.connection.startSession();
         session.startTransaction();
         try {
-            const account = await this.accountsService.getExistAccountById(accountId);
+            var account = await this.accountsService.getExistAccountById(accountId);
             if (account.isDeactivated == true) {
                 throw new HttpException('account is deactivated', HttpStatus.BAD_REQUEST);
             }
@@ -265,6 +287,10 @@ export class GameEventsService {
             if (existPointSum + gameEventReward.points >=  gameEvent.balancePoints) {
                 await this.gameEventRepository.deactivate(gameEventReward.gameEventId, true, session);
             }
+
+            // Update account points
+            account.points += gameEventReward.points;
+            await this.accountRepository.update(accountId, account, session);
 
             await session.commitTransaction();
         } catch (error) {

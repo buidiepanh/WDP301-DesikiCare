@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"9e3939ed91914474876282785c9a7ba1","collectionName":"skinTypes","type":"collection"}
