@@ -236,6 +236,9 @@ export class OrderController {
       PayosConfig.CHEKSUM_KEY
     );
 
+    if (body.data.description == "VQRIO123") {
+      return;
+    }
     const webhookData = payOS.verifyPaymentWebhookData(body);
     await this.paymentsService.confirmPayment(body);
 
