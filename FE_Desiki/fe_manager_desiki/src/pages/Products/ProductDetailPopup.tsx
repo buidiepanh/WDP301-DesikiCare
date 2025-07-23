@@ -1,4 +1,4 @@
-import { Box, Chip, IconButton, Modal, Typography } from "@mui/material";
+import { Box, IconButton, Modal, Typography } from "@mui/material";
 import type React from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { categoriesData } from "../../data/mockData";
@@ -159,7 +159,7 @@ export const ProductDetailPopup: React.FC<Props> = ({ product, onClose }) => {
             <p className="text-lg font-semibold text-cyan-700">
               Loại da phù hợp
             </p>
-            {product.productSkinTypes.map((item, index) => (
+            {product.productSkinTypes.map((item, index: number) => (
               <div className="w-[130px] h-[25px] rounded-xl flex items-center justify-center bg-cyan-500 text-white text-sm">
                 <p>{item.name}</p>
               </div>
@@ -169,7 +169,7 @@ export const ProductDetailPopup: React.FC<Props> = ({ product, onClose }) => {
             <p className="text-lg font-semibold text-orange-700">
               Tình trạng da phù hợp
             </p>
-            {product.productSkinStatuses.map((item, index) => (
+            {product.productSkinStatuses.map((item, index: number) => (
               <div className="w-[130px] h-[25px] rounded-xl flex items-center justify-center bg-orange-500 text-white text-sm">
                 <p>{item.name}</p>
               </div>

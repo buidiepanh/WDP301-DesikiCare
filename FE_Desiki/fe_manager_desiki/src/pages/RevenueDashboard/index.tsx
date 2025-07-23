@@ -462,7 +462,7 @@ const RevenueDashboard = () => {
                   className="w-[50px] h-[50px] rounded-lg border border-white/20"
                 />
                 <p className="text-white/70 text-md">
-                  {preparedData?.bestProduct?.name || "CU"}
+                  {preparedData?.bestProduct?.name || "Chưa có"}
                 </p>
               </div>
             </GlassCard>
@@ -541,13 +541,6 @@ const RevenueDashboard = () => {
                             }`,
                             name === "revenue" ? "Lợi nhuận" : "Số lượng",
                           ]}
-                          style={{
-                            backdropFilter: "blur(16px)",
-                            backgroundColor: "rgba(255, 255, 255, 0.1)",
-                            border: "1px solid rgba(255, 255, 255, 0.3)",
-                            borderRadius: "12px",
-                            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
-                          }}
                         />
                       }
                     />
