@@ -1,0 +1,348 @@
+.scratchGameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: sans-serif;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  margin: 20px auto;
+  position: relative;
+}
+
+.gameInfo {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.1em;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(200px, 1fr)
+  ); /* Responsive 3-column like grid */
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+  justify-content: center;
+}
+
+.scratchCardContainer {
+  position: relative;
+  width: 100%;
+  padding-top: 75%; /* 4:3 aspect ratio (height is 75% of width) */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #fff; /* Fallback background */
+}
+
+.revealedContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  box-sizing: border-box;
+  z-index: 1;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.6s ease-out;
+}
+
+.revealedContent.revealed {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Card reveal animation */
+@keyframes cardPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) rotateY(-15deg);
+  }
+  60% {
+    transform: scale(1.05) rotateY(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotateY(0deg);
+  }
+}
+
+.revealedContent.popping {
+  animation: cardPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.revealedContent img {
+  max-width: 80%;
+  max-height: 60%;
+  object-fit: contain;
+  margin-bottom: 5px;
+  border-radius: 4px;
+  background-color: #f9f9f9; /* Fallback background for transparent images */
+  border: 1px solid #e0e0e0; /* Subtle border to make images more visible */
+  transition: transform 0.3s ease;
+}
+
+.revealedContent img:hover {
+  transform: scale(1.05);
+}
+
+/* Floating animation for points */
+@keyframes floatingPoints {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.cardPoints.floating {
+  animation: floatingPoints 2s ease-in-out infinite;
+}
+
+.cardText {
+  font-size: 0.9em;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.cardPoints {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #d9534f;
+}
+
+.scratchCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  z-index: 2;
+  touch-action: none; /* Prevent scrolling on touch devices when scratching */
+  transition: opacity 0.3s ease-in-out;
+}
+
+.scratchCanvas:active {
+  cursor: grabbing;
+}
+
+/* Scratching animation effects */
+@keyframes scratchReveal {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+.scratchCanvas.revealing {
+  animation: scratchReveal 0.5s ease-out forwards;
+}
+
+.scratchCardContainer.scratched .scratchCanvas {
+  display: none; /* Hide canvas once scratched */
+}
+
+.scratchCardContainer.disabled {
+  pointer-events: none; /* Disable interaction when game is over */
+  opacity: 0.7;
+}
+
+.disabledOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5em;
+}
+
+.gameOverOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 2em;
+  border-radius: 8px;
+  z-index: 20;
+}
+
+.gameOverText {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.finalScore {
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.restartButton {
+  padding: 10px 20px;
+  font-size: 1em;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.restartButton:hover {
+  background-color: #0056b3;
+}
+
+/* Scratch progress indicator */
+.scratchProgress {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+  z-index: 4;
+}
+
+.scratchProgressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb);
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+/* Particle effects */
+.scratchParticles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background-color: #ddd;
+  border-radius: 50%;
+  animation: particleFall 1s ease-out forwards;
+}
+
+@keyframes particleFall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px) rotate(360deg);
+  }
+}
+
+/* Shimmer effect for unrevealed cards */
+.scratchCardContainer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 3s infinite;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.scratchCardContainer.scratched::before {
+  display: none;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Success celebration animation */
+@keyframes celebrate {
+  0%,
+  50%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+.scratchCardContainer.celebrating {
+  animation: celebrate 0.6s ease-in-out;
+}
+
+/* Glow effect for completed cards */
+.scratchCardContainer.scratched {
+  box-shadow: 0 0 20px rgba(72, 219, 251, 0.5);
+}
+
+/* Hover effects */
+.scratchCardContainer:not(.scratched):not(.disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.scratchCardContainer:not(.scratched):not(.disabled):hover::before {
+  animation-duration: 1.5s;
+}

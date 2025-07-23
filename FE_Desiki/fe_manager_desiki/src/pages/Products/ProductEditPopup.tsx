@@ -6,7 +6,6 @@ import {
   TextField,
   Button,
   MenuItem,
-  Box,
   Autocomplete,
 } from "@mui/material";
 import { useState } from "react";
