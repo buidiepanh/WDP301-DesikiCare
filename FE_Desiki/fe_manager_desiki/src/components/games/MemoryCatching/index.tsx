@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button, TextField } from "@mui/material";
-import { MemoryCatchingUI } from "./MemoryCatchingUI";
+
 import type { GameConfigJson } from "../../../data/types";
+import MemoryCatchingUI from "./MemoryCatchingUI";
 
 interface Pair {
   id: number;
@@ -23,7 +24,7 @@ type Props = {
 const MemoryCatchingConfig: React.FC<Props> = ({
   configJson,
   setConfigJson,
-  gameTypeImageBase64s,
+  // gameTypeImageBase64s,
   handleUploadImages,
 }) => {
   const [numOfPairs, setNumOfPairs] = useState(0);
@@ -83,12 +84,12 @@ const MemoryCatchingConfig: React.FC<Props> = ({
   };
 
   return (
-    <div className="bg-white p-4 flex flex-col">
+    <div className="bg-white w-full p-4 flex flex-col">
       <p className="text-xl font-bold text-cyan-600">
         Config Memory Catching Game
       </p>
 
-      <div className="my-5 grid grid-cols-2">
+      <div className="my-5 flex flex-col items-start gap-8">
         <div className="w-full flex flex-col">
           <TextField
             label="Số lượng cặp ô"
@@ -96,47 +97,98 @@ const MemoryCatchingConfig: React.FC<Props> = ({
             type="number"
             onChange={handleNumOfPairsChange}
             inputProps={{ min: 0 }}
-            className="mb-4"
+            sx={{ marginBottom: "20px" }}
           />
           <TextField
             label="Điểm gốc"
             value={originalPoint}
             type="number"
             onChange={(e) => setOriginalPoint(Number(e.target.value))}
-            className="mb-4"
+            sx={{ marginBottom: "20px" }}
           />
           <TextField
             label="Điểm trừ"
             value={minusPoint}
             type="number"
             onChange={(e) => setMinusPoint(Number(e.target.value))}
-            className="mb-4"
+            sx={{ marginBottom: "20px" }}
           />
-          <p className="font-bold mb-2">Ảnh nền</p>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) =>
-              e.target.files && handleUploadBackCoverImg(e.target.files[0])
-            }
-          />
+          <p className="font-bold mb-2">Ảnh nền của thẻ</p>
+          <div className="mb-4">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                e.target.files && handleUploadBackCoverImg(e.target.files[0])
+              }
+              className="hidden"
+              id="memory-back-cover-upload"
+            />
+            <label htmlFor="memory-back-cover-upload">
+              <Button
+                variant="outlined"
+                component="span"
+                className="w-full"
+                sx={{
+                  textTransform: "none",
+                  borderColor: "#e5e7eb",
+                  color: "#374151",
+                  "&:hover": {
+                    borderColor: "#d1d5db",
+                    backgroundColor: "#f9fafb",
+                  },
+                }}
+              >
+                📁 Chọn ảnh nền của thẻ
+              </Button>
+            </label>
+            {backCoverImg && (
+              <img
+                src={backCoverImg}
+                alt="back-cover"
+                className="w-32 h-32 object-cover mt-3 rounded border"
+              />
+            )}
+          </div>
 
           <div className="w-full flex items-center justify-center my-4">
             <div className="w-11/12 h-0.5 bg-gray-400"></div>
           </div>
 
-          <div className="h-[450px] overflow-y-scroll">
+          <div className="max-h-[450px] w-full overflow-y-scroll">
             {pairs.map((pair, index) => (
               <div key={pair.id} className="bg-gray-100 p-3 rounded mb-4">
                 <p className="font-bold mb-2">Ô #{index + 1}</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    e.target.files &&
-                    handleUploadImage(e.target.files[0], index)
-                  }
-                />
+                <div className="mb-3">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      e.target.files &&
+                      handleUploadImage(e.target.files[0], index)
+                    }
+                    className="hidden"
+                    id={`memory-pair-upload-${index}`}
+                  />
+                  <label htmlFor={`memory-pair-upload-${index}`}>
+                    <Button
+                      variant="outlined"
+                      component="span"
+                      size="small"
+                      sx={{
+                        textTransform: "none",
+                        borderColor: "#e5e7eb",
+                        color: "#374151",
+                        "&:hover": {
+                          borderColor: "#d1d5db",
+                          backgroundColor: "#f9fafb",
+                        },
+                      }}
+                    >
+                      🖼️ Chọn ảnh cặp
+                    </Button>
+                  </label>
+                </div>
                 {pair.imageBase64 && (
                   <img
                     src={pair.imageBase64}

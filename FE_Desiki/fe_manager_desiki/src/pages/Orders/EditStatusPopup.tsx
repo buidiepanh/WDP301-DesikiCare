@@ -1,4 +1,4 @@
-import React from "react";
+
 import {
   Dialog,
   DialogTitle,
@@ -10,6 +10,7 @@ import {
   InputLabel,
   FormControl,
 } from "@mui/material";
+import { useState } from "react";
 
 interface Props {
   open: boolean;
@@ -27,7 +28,7 @@ export const EditStatusPopup: React.FC<Props> = ({
   onSubmit,
 }) => {
   const [selectedStatus, setSelectedStatus] =
-    React.useState<number>(currentStatusId);
+    useState<number>(currentStatusId);
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>

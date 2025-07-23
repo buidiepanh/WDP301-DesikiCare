@@ -1,7 +1,8 @@
 import { Checkbox, TextField, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { SpinWheelUI } from "./SpinWheelUI";
+
 import type { GameConfigJson } from "../../../data/types";
+import SpinWheelUI from "./SpinWheelUI";
 
 interface Segment {
   value: number;
@@ -25,8 +26,8 @@ type Props = {
 const SpinWheelConfig: React.FC<Props> = ({
   configJson,
   setConfigJson,
-  gameTypeImageBase64s,
-  handleUploadImages,
+  // gameTypeImageBase64s,
+  // handleUploadImages,
 }) => {
   const [showUI, setShowUI] = useState(false);
 
@@ -113,7 +114,7 @@ const SpinWheelConfig: React.FC<Props> = ({
     <div className="bg-white p-4 flex flex-col">
       <p className="text-xl font-bold text-cyan-600">Config Spin Wheel Game</p>
 
-      <div className="my-5 grid grid-cols-2">
+      <div className="my-5 flex flex-col items-center gap-10">
         <div className="w-full flex flex-col">
           <div className="mt-3 flex flex-col mr-5">
             <p className="mb-3 font-semibold text-gray-700">
@@ -151,7 +152,7 @@ const SpinWheelConfig: React.FC<Props> = ({
             <div className="w-11/12 h-0.5 bg-gray-400"></div>
           </div>
 
-          <div className="mt-3 flex flex-col mr-5 h-[450px] overflow-y-scroll p-2">
+          <div className="my-3 flex flex-col mr-5 max-h-[450px] overflow-y-scroll p-2">
             {configJson?.sectors?.map((sector: Segment, index: number) => (
               <div
                 key={index}
@@ -241,12 +242,10 @@ const SpinWheelConfig: React.FC<Props> = ({
           </Button>
         </div>
 
-        <div>
+        <div className="w-full">
           {showUI && configJson?.sectors?.length > 0 && (
             <SpinWheelUI
-              sectors={configJson?.sectors.map(
-                ({ value, ...rest }: Segment) => rest
-              )}
+              sectors={configJson?.sectors || []}
               isDuplicate={configJson?.isDuplicate || false}
               maxSpin={configJson?.maxSpin || 0}
             />

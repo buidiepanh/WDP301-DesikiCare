@@ -8,7 +8,6 @@ import {
   Calendar,
   SortAsc,
   SortDesc,
-  Plus,
 } from "lucide-react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -599,7 +598,7 @@ const Shipment = () => {
             >
               <AgGridReact
                 rowData={item.shipmentProducts}
-                columnDefs={getShipmentProductColumnDefs()}
+                columnDefs={getShipmentProductColumnDefs() as any}
                 pagination={true}
                 rowHeight={40}
                 paginationPageSize={5}

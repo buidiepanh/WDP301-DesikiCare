@@ -1,4 +1,4 @@
-import React from "react";
+
 import SpinWheelConfig from "../../components/games/SpinWheel";
 import MemoryCatchingConfig from "../../components/games/MemoryCatching";
 import ScratchCardConfig from "../../components/games/ScratchCard";

@@ -3,8 +3,12 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "@/styles/ag-grid-glassmophorism.css";
 import { Users, Shield, ToggleLeft, ToggleRight } from "lucide-react";
-import { callAPIAdmin } from "../../api/axiosInstace";
 import Swal from "sweetalert2";
+import { GetAllRoles } from "@/services/Account/get-roles";
+import { GetAllAccounts } from "@/services/Account/get-accounts";
+import { ToggleActivateAccount } from "@/services/Account/put-toggle-activate-account";
+import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 // Custom Glassmorphism Components
 const GlassChip = ({
@@ -80,11 +84,12 @@ const RoleAccountManagement = () => {
   const fetchRoles = async () => {
     setIsLoadingRoles(true);
     try {
-      const res = await callAPIAdmin({
-        method: "GET",
-        url: "/api/Account/roles",
-      });
-      setRoles(res?.data?.roles || []);
+      const res = await GetAllRoles();
+      if (res && res.data && res.isSuccess) {
+        setRoles(res.data.roles);
+      } else {
+        Swal.fire("Lỗi", `${res.message}`, "error");
+      }
     } catch {
       Swal.fire("Lỗi", "Không thể tải danh sách vai trò.", "error");
     } finally {
@@ -95,11 +100,12 @@ const RoleAccountManagement = () => {
   const fetchAccounts = async () => {
     setIsLoadingAccounts(true);
     try {
-      const res = await callAPIAdmin({
-        method: "GET",
-        url: "/api/Account/accounts",
-      });
-      setAccounts(res?.data?.accounts || []);
+      const res = await GetAllAccounts();
+      if (res && res.isSuccess && res.data) {
+        setAccounts(res.data.accounts);
+      } else {
+        Swal.fire("Lỗi", `${res.message}`, "error");
+      }
     } catch {
       Swal.fire("Lỗi", "Không thể tải danh sách tài khoản.", "error");
     } finally {
@@ -109,21 +115,21 @@ const RoleAccountManagement = () => {
 
   const handleToggle = async (accountId: string, isActive: boolean) => {
     try {
-      await callAPIAdmin({
-        method: "PUT",
-        url: `/api/Account/accounts/${accountId}/deactivate/${
-          isActive ? 0 : 1
-        }`,
-      });
-      Swal.fire(
-        "Thành công",
-        `Đã ${isActive ? "vô hiệu hóa" : "kích hoạt"} tài khoản.`,
-        "success"
-      );
-      fetchAccounts();
+      const res = await ToggleActivateAccount(accountId, isActive);
+      if (res && res.isSuccess) {
+        toast.success(res.message);
+        fetchAccounts();
+      } else {
+        Swal.fire("Lỗi", `${res.message}`, "error");
+      }
     } catch {
       Swal.fire("Lỗi", "Thao tác thất bại.", "error");
     }
+  };
+
+  const getAccountStatus = (id: string) => {
+    const account = accounts.filter((acc) => acc._id === id)[0];
+    return account.isDeactivated;
   };
 
   const roleColumns = [
@@ -134,7 +140,7 @@ const RoleAccountManagement = () => {
         color: "rgba(255, 255, 255, 0.9)",
         background: "transparent !important",
         fontFamily: "monospace",
-      },
+      } as any,
       width: 100,
     },
     {
@@ -149,7 +155,7 @@ const RoleAccountManagement = () => {
         background: "transparent !important",
         display: "flex",
         alignItems: "center",
-      },
+      } as any,
       flex: 1,
     },
   ];
@@ -162,7 +168,7 @@ const RoleAccountManagement = () => {
         color: "rgba(255, 255, 255, 0.95)",
         background: "transparent !important",
         fontWeight: "500",
-      },
+      } as any,
       flex: 1,
     },
     {
@@ -172,7 +178,7 @@ const RoleAccountManagement = () => {
         color: "rgba(255, 255, 255, 0.9)",
         background: "transparent !important",
         fontFamily: "monospace",
-      },
+      } as any,
       flex: 1,
     },
     {
@@ -197,7 +203,7 @@ const RoleAccountManagement = () => {
         background: "transparent !important",
         display: "flex",
         alignItems: "center",
-      },
+      } as any,
       width: 150,
     },
     {
@@ -217,7 +223,29 @@ const RoleAccountManagement = () => {
         background: "transparent !important",
         display: "flex",
         alignItems: "center",
-      },
+      } as any,
+      width: 150,
+    },
+    {
+      headerName: "Thao tác",
+      field: "_id",
+      cellRenderer: (params: any) => (
+        <div className="flex items-center h-full">
+          <Button
+            onClick={() =>
+              handleToggle(params.value, getAccountStatus(params.value))
+            }
+            className="!bg-white/30 rounded-md !hover:bg-white/50 cursor-pointer"
+          >
+            {getAccountStatus(params.value) ? "Kích Hoạt" : "Vô Hiệu Hóa"}
+          </Button>
+        </div>
+      ),
+      cellStyle: {
+        background: "transparent !important",
+        display: "flex",
+        alignItems: "center",
+      } as any,
       width: 150,
     },
   ];
