@@ -7,8 +7,7 @@ export function apply_PreHooks(schema: any) {
     // UTC+7 offset in milliseconds
     // const tzOffset = 7 * 60 * 60 * 1000;
     const tzOffset = moment().tz(timezone).utcOffset() * 60 * 1000;
-    console.log(`timezone: ${timezone}`);
-    console.log(`Timezone offset in milliseconds: ${tzOffset}`);
+
 
     // Handle save (single document)
     schema.pre('save', function (next) {

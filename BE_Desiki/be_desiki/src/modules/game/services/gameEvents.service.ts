@@ -216,7 +216,7 @@ export class GameEventsService {
             if (account.isDeactivated == true) {
                 throw new HttpException('account is deactivated', HttpStatus.BAD_REQUEST);
             }
-            const gameEventRewardResults = await this.gameEventRewardResultRepository.findByAccountId(accountId);
+            const gameEventRewardResults = await this.gameEventRewardResultRepository.findByAccountId(new Types.ObjectId(accountId));
             const result = [];
             for (const rewardResult of gameEventRewardResults) {
                 const { gameEventId: gameEvent, ...rewardResultBase } = rewardResult;
