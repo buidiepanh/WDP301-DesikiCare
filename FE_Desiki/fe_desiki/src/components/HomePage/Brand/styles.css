@@ -1,0 +1,276 @@
+.brand-section {
+  padding: 60px 24px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff0f5 50%, #e8f5e9 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.brand-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="%23ec407a" opacity="0.02"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+.brand-title {
+  text-align: center;
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 1;
+}
+
+.brand-title h2 {
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  background: linear-gradient(135deg, #ec407a, #d81b60, #c2185b) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  margin-bottom: 12px !important;
+  letter-spacing: -0.5px;
+}
+
+.brand-subtitle {
+  color: #666 !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.brand-carousel {
+  position: relative;
+  z-index: 1;
+}
+
+.brand-carousel .ant-carousel .ant-carousel-dots {
+  bottom: -50px;
+}
+
+.brand-carousel .ant-carousel .ant-carousel-dots li button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(236, 64, 122, 0.3);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.brand-carousel
+  .ant-carousel
+  .ant-carousel-dots
+  li.ant-carousel-dot-active
+  button {
+  background: #ec407a;
+  transform: scale(1.2);
+}
+
+.brand-slide {
+  padding: 0 12px;
+}
+
+.brand-card {
+  height: 220px !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  box-shadow: 0 8px 32px rgba(236, 64, 122, 0.1) !important;
+  border: none !important;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  position: relative;
+  background: white !important;
+  cursor: pointer;
+}
+
+.brand-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(236, 64, 122, 0.05) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.brand-card:hover {
+  transform: translateY(-12px) scale(1.02) !important;
+  box-shadow: 0 20px 40px rgba(236, 64, 122, 0.2) !important;
+}
+
+.brand-card:hover::before {
+  opacity: 1;
+}
+
+.brand-image-container {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8f9fa, #fff);
+}
+
+.brand-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  padding: 20px;
+  transition: transform 0.4s ease !important;
+  position: relative;
+  z-index: 2;
+}
+
+.brand-card:hover .brand-image {
+  transform: scale(1.05) !important;
+}
+
+.brand-info {
+  padding: 16px 20px;
+  text-align: center;
+  background: white;
+  position: relative;
+  z-index: 2;
+}
+
+.brand-name {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+  margin: 0 !important;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease !important;
+}
+
+.brand-card:hover .brand-name {
+  color: #ec407a !important;
+}
+
+.brand-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #ec407a, #d81b60);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 3;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.brand-card:hover .brand-badge {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Custom Carousel Navigation */
+.brand-carousel .ant-carousel .ant-carousel-prev,
+.brand-carousel .ant-carousel .ant-carousel-next {
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: none;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.brand-carousel .ant-carousel .ant-carousel-prev:hover,
+.brand-carousel .ant-carousel .ant-carousel-next:hover {
+  background: #ec407a;
+  transform: scale(1.1);
+}
+
+.brand-carousel .ant-carousel .ant-carousel-prev:hover::before,
+.brand-carousel .ant-carousel .ant-carousel-next:hover::before {
+  color: white;
+}
+
+.brand-carousel .ant-carousel .ant-carousel-prev {
+  left: -25px;
+}
+
+.brand-carousel .ant-carousel .ant-carousel-next {
+  right: -25px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .brand-section {
+    padding: 50px 20px;
+  }
+
+  .brand-title h2 {
+    font-size: 28px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .brand-section {
+    padding: 40px 16px;
+  }
+
+  .brand-title h2 {
+    font-size: 24px !important;
+  }
+
+  .brand-subtitle {
+    font-size: 14px !important;
+  }
+
+  .brand-card {
+    height: 180px !important;
+  }
+
+  .brand-image-container {
+    height: 120px;
+  }
+
+  .brand-image {
+    padding: 15px !important;
+  }
+
+  .brand-carousel .ant-carousel .ant-carousel-prev,
+  .brand-carousel .ant-carousel .ant-carousel-next {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-card {
+    height: 160px !important;
+  }
+
+  .brand-image-container {
+    height: 100px;
+  }
+
+  .brand-image {
+    padding: 10px !important;
+  }
+
+  .brand-info {
+    padding: 12px 16px;
+  }
+
+  .brand-name {
+    font-size: 14px !important;
+  }
+}
