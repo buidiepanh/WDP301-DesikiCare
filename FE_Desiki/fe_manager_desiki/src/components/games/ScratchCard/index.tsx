@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, TextField } from "@mui/material";
-import { ScratchCardUI } from "./ScratchCardUI";
+import ScratchCardUI from "./ScratchCardUI";
 import type { GameConfigJson } from "../../../data/types";
 
 interface Card {
@@ -103,13 +103,13 @@ const ScratchCardConfig: React.FC<Props> = ({
   };
 
   return (
-    <div className="bg-white p-4 flex flex-col">
+    <div className="bg-white p-4 flex flex-col w-full">
       <p className="text-xl font-bold text-cyan-600">
         Config Scratch Card Game
       </p>
 
-      <div className="my-5 grid grid-cols-2 gap-8">
-        <div className="flex flex-col">
+      <div className="my-5 flex flex-col items-start gap-8 w-full">
+        <div className="flex flex-col w-full">
           <TextField
             label="Số lượng thẻ"
             value={numCards}
@@ -120,14 +120,42 @@ const ScratchCardConfig: React.FC<Props> = ({
           />
 
           <p className="mb-2 font-semibold text-gray-700">Ảnh nền chung</p>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) =>
-              e.target.files && handleUploadBackCover(e.target.files[0])
-            }
-            className="mb-4"
-          />
+          <div className="mb-4">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                e.target.files && handleUploadBackCover(e.target.files[0])
+              }
+              className="hidden"
+              id="back-cover-upload"
+            />
+            <label htmlFor="back-cover-upload">
+              <Button
+                variant="outlined"
+                component="span"
+                className="w-full"
+                sx={{
+                  textTransform: "none",
+                  borderColor: "#e5e7eb",
+                  color: "#374151",
+                  "&:hover": {
+                    borderColor: "#d1d5db",
+                    backgroundColor: "#f9fafb",
+                  },
+                }}
+              >
+                📁 Chọn ảnh nền
+              </Button>
+            </label>
+            {backCoverImg && (
+              <img
+                src={backCoverImg}
+                alt="back-cover"
+                className="w-32 h-32 object-cover mt-3 rounded border"
+              />
+            )}
+          </div>
 
           <TextField
             label="Số lượt cào tối đa"
@@ -156,17 +184,38 @@ const ScratchCardConfig: React.FC<Props> = ({
                   onChange={(e) =>
                     handleCardChange(index, "label", e.target.value)
                   }
-                  className="mb-3"
+                  sx={{ marginBottom: "10px" }}
                 />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) =>
-                    e.target.files &&
-                    handleUploadImage(e.target.files[0], index)
-                  }
-                  className="mb-3"
-                />
+                <div className="mb-3">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      e.target.files &&
+                      handleUploadImage(e.target.files[0], index)
+                    }
+                    className="hidden"
+                    id={`card-image-upload-${index}`}
+                  />
+                  <label htmlFor={`card-image-upload-${index}`}>
+                    <Button
+                      variant="outlined"
+                      component="span"
+                      size="small"
+                      sx={{
+                        textTransform: "none",
+                        borderColor: "#e5e7eb",
+                        color: "#374151",
+                        "&:hover": {
+                          borderColor: "#d1d5db",
+                          backgroundColor: "#f9fafb",
+                        },
+                      }}
+                    >
+                      🖼️ Chọn ảnh thẻ
+                    </Button>
+                  </label>
+                </div>
                 {card.imgBase64 && (
                   <img
                     src={card.imgBase64}
@@ -182,7 +231,7 @@ const ScratchCardConfig: React.FC<Props> = ({
                   onChange={(e) =>
                     handleCardChange(index, "point", Number(e.target.value))
                   }
-                  className="mb-3"
+                  sx={{ marginBottom: "10px" }}
                 />
                 <TextField
                   label="Màu chữ"

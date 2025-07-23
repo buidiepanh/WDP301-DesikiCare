@@ -5,12 +5,12 @@ import * as z from "zod";
 import toast from "react-hot-toast";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import { Lock } from "lucide-react";
+// import { Lock } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   Form,
   FormControl,
@@ -57,7 +57,7 @@ const Login = () => {
         data: { loginInfo: { email: values.email, password: values.password } },
       });
 
-      if (response.status === 201) {
+      if (response.status === 200 || response.status === 201) {
         const token = response?.data.token;
         if (token) {
           const decoded: DecodedToken = jwtDecode(token);
@@ -105,11 +105,6 @@ const Login = () => {
         <Card className="backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl">
           <CardContent className="p-8">
             <div className="flex flex-col items-center mb-6">
-              {/* <Avatar className="mb-4 bg-black hover:bg-gray-900 transition-colors">
-                <AvatarFallback className="bg-black text-white flex items-center justify-center">
-                  <Lock className="h-5 w-5" />
-                </AvatarFallback>
-              </Avatar> */}
               <h1 className="text-2xl font-semibold text-white mb-2">
                 Đăng nhập
               </h1>

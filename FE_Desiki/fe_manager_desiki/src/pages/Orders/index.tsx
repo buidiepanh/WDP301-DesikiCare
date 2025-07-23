@@ -280,7 +280,7 @@ const Orders = () => {
         Swal.fire("Thành công", "Đã set trạng thái thành công", "success");
         fetch();
       } else {
-        Swal.fire("Lỗi", response?.message, "error");
+        Swal.fire("Lỗi", "Đã có lỗi xảy ra", "error");
         fetch();
       }
     } catch (error) {
@@ -324,7 +324,7 @@ const Orders = () => {
             >
               <AgGridReact
                 rowData={orders}
-                columnDefs={columnDefs}
+                columnDefs={columnDefs as any}
                 pagination={true}
                 paginationPageSize={9}
                 rowHeight={60}

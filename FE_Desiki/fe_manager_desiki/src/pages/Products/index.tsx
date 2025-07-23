@@ -3,6 +3,7 @@
 import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
+import type { ColDef } from "ag-grid-community";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "@/styles/ag-grid-glassmophorism.css";
 import { Edit, Visibility } from "@mui/icons-material";
@@ -86,7 +87,7 @@ const Products = () => {
     }
   };
 
-  const columnDefs = [
+  const columnDefs: ColDef[] = [
     {
       headerName: "Ảnh",
       field: "product.imageUrl",
@@ -426,7 +427,7 @@ const Products = () => {
       {/* Modals */}
       {showDetailPopup && selectedProduct && (
         <ProductDetailPopup
-          product={selectedProduct}
+          product={selectedProduct as any}
           onClose={onCloseDetailModal}
         />
       )}

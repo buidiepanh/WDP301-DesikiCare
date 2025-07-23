@@ -5,12 +5,16 @@ import { CircularProgress } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "@/styles/ag-grid-glassmophorism.css";
-import { Plus, Eye, Edit, Ban, Gamepad2, Play, Square } from "lucide-react";
+import { Plus, Eye, Edit, Ban, Play, Square } from "lucide-react";
 import type { GameEvent, GameType } from "../../data/types";
 import { CreateGameModal } from "./CreateGameModal";
 import { callAPIAdmin } from "../../api/axiosInstace";
-import { ca } from "zod/v4/locales";
+// import { ca } from "zod/v4/locales";
 import toast from "react-hot-toast";
+
+import { GetAllGames } from "@/services/Game/get-games";
+import { GetAllGameTypes } from "@/services/Game/get-game-types";
+import Swal from "sweetalert2";
 
 // Custom Glassmorphism Components
 const GlassButton = ({
@@ -117,25 +121,40 @@ const MiniGameManagement = () => {
 
   const fetch = async () => {
     try {
-      const response = await callAPIAdmin({
-        method: "GET",
-        url: `/api/Game/gameEvents`,
-      });
-      if (response?.status === 200) {
-        const responseGameType = await callAPIAdmin({
-          method: "GET",
-          url: `/api/Game/gameTypes`,
-        });
-        if (responseGameType?.status === 200) {
-          const events = response.data.gameEvents;
-          setGameEvents(events);
+      const response = await GetAllGames();
+
+      if (response && response.isSuccess && response.data) {
+        const responseGameType = await GetAllGameTypes();
+        if (
+          responseGameType &&
+          responseGameType.isSuccess &&
+          responseGameType.data
+        ) {
+          setGameEvents(response.data.gameEvents);
           setGameTypes(responseGameType.data.gameTypes);
+
           setGameEventRunnings(
-            events.filter((game: any) => !game.gameEvent.isDeactivated)
+            response.data.gameEvents.filter(
+              (game: any) => !game.gameEvent.isDeactivated
+            )
           );
           setGameEventClosings(
-            events.filter((game: any) => game.gameEvent.isDeactivated)
+            response.data.gameEvents.filter(
+              (game: any) => game.gameEvent.isDeactivated
+            )
           );
+        } else {
+          if (!responseGameType) {
+            Swal.fire("Lỗi", "Vui lòng thử lại sau, đã có lỗi xảy ra", "error");
+          } else if (!responseGameType.isSuccess) {
+            Swal.fire("Lỗi", `${responseGameType.message}`, "error");
+          }
+        }
+      } else {
+        if (!response) {
+          Swal.fire("Lỗi", "Vui lòng thử lại sau, đã có lỗi xảy ra", "error");
+        } else if (!response.isSuccess) {
+          Swal.fire("Lỗi", `${response.message}`, "error");
         }
       }
       setIsLoading(false);
@@ -146,10 +165,13 @@ const MiniGameManagement = () => {
   };
 
   const handleOpenCreateModal = () => setIsCreateModalOpen(true);
+
   const onCloseCreateModal = () => setIsCreateModalOpen(false);
 
   const handleViewDetails = (id: string) => console.log("View details:", id);
+
   const handleEdit = (id: string) => console.log("Edit:", id);
+
   const handleDeactivate = async (id: string) => {
     const game = gameEvents?.filter((g) => g.gameEvent._id === id)[0];
     const mode = game?.gameEvent.isDeactivated;
@@ -186,7 +208,7 @@ const MiniGameManagement = () => {
         color: "rgba(255, 255, 255, 0.9)",
         background: "transparent !important",
         fontFamily: "monospace",
-      },
+      } as any,
       minWidth: 120,
     },
     {
@@ -196,7 +218,7 @@ const MiniGameManagement = () => {
         color: "rgba(255, 255, 255, 0.95)",
         background: "transparent !important",
         fontWeight: "500",
-      },
+      } as any,
     },
     {
       headerName: "Tên trò chơi",
@@ -204,7 +226,7 @@ const MiniGameManagement = () => {
       cellStyle: {
         color: "rgba(255, 255, 255, 0.9)",
         background: "transparent !important",
-      },
+      } as any,
     },
     {
       headerName: "Loại trò chơi",
@@ -235,7 +257,7 @@ const MiniGameManagement = () => {
         background: "transparent !important",
         display: "flex",
         alignItems: "center",
-      },
+      } as any,
     },
     {
       headerName: "Điểm còn lại",
@@ -245,7 +267,7 @@ const MiniGameManagement = () => {
         color: "rgba(255, 255, 255, 0.9)",
         background: "transparent !important",
         fontWeight: "600",
-      },
+      } as any,
     },
     {
       headerName: "Người tham gia",
@@ -255,7 +277,7 @@ const MiniGameManagement = () => {
       cellStyle: {
         color: "rgba(255, 255, 255, 0.9)",
         background: "transparent !important",
-      },
+      } as any,
     },
     {
       headerName: "Ngày bắt đầu",
@@ -265,7 +287,7 @@ const MiniGameManagement = () => {
       cellStyle: {
         color: "rgba(255, 255, 255, 0.8)",
         background: "transparent !important",
-      },
+      } as any,
     },
     {
       headerName: "Ngày kết thúc",
@@ -275,7 +297,7 @@ const MiniGameManagement = () => {
       cellStyle: {
         color: "rgba(255, 255, 255, 0.8)",
         background: "transparent !important",
-      },
+      } as any,
     },
     {
       headerName: "Thao tác",
@@ -309,7 +331,7 @@ const MiniGameManagement = () => {
       },
       cellStyle: {
         background: "transparent !important",
-      },
+      } as any,
       minWidth: 180,
     },
   ];
@@ -319,7 +341,6 @@ const MiniGameManagement = () => {
       {/* Header */}
       <div className="mb-8 backdrop-blur-xl bg-black/20 border border-white/10 rounded-2xl p-6 shadow-2xl">
         <h1 className="text-white text-3xl font-bold mb-2 flex items-center gap-3">
-          <Gamepad2 className="h-8 w-8" />
           Mini Game Management
         </h1>
         <p className="text-white/70 text-lg">
@@ -373,7 +394,7 @@ const MiniGameManagement = () => {
               >
                 <AgGridReact
                   rowData={gameEventRunnings || []}
-                  columnDefs={columnDefs}
+                  columnDefs={columnDefs as any}
                   defaultColDef={defaultColDef}
                   pagination={true}
                   paginationPageSize={5}
@@ -410,7 +431,7 @@ const MiniGameManagement = () => {
               >
                 <AgGridReact
                   rowData={gameEventClosings || []}
-                  columnDefs={columnDefs}
+                  columnDefs={columnDefs as any}
                   defaultColDef={defaultColDef}
                   pagination={true}
                   paginationPageSize={5}
