@@ -56,7 +56,6 @@ const Profile = () => {
   const fetchProfile = async () => {
     try {
       const res = await getMe();
-      console.log("ALo: ", res);
       const acc = res.account;
 
       form.setFieldsValue({
@@ -89,7 +88,17 @@ const Profile = () => {
   const fetchPointsHistory = async () => {
     try {
       const res = await getPointHistory();
-      setHistory(res.gameEventRewardResults);
+      const formatted = res.gameEventRewardResults.map((item) => {
+        return {
+          points: item.gameEventRewardResult?.points,
+          createdAt: item.gameEventRewardResult?.createdAt,
+          gameEvent: {
+            eventName: item.gameEvent?.eventName,
+            gameName: item.gameEvent?.gameName,
+          },
+        };
+      });
+      setHistory(formatted);
     } catch (error) {
       console.log(error);
     }
@@ -227,6 +236,39 @@ const Profile = () => {
   const getPaymentStatusColor = (isPaid) => {
     return isPaid ? "green" : "red";
   };
+
+  const pointHistoryColumns = [
+    {
+      title: "Thời gian nhận",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (value) => dayjs(value).format("HH:mm DD/MM/YYYY"),
+    },
+    {
+      title: "Số điểm nhận",
+      dataIndex: "points",
+      key: "points",
+      render: (points) => (
+        <span style={{ color: "#2e7d32", fontWeight: "bold" }}>
+          {points} điểm
+        </span>
+      ),
+    },
+    {
+      title: "Tên game",
+      key: "gameName",
+      render: (_, record) => (
+        <div>
+          <div style={{ fontWeight: "bold" }}>
+            {record?.gameEvent?.gameName}
+          </div>
+          <div style={{ color: "#888", fontSize: 12 }}>
+            {record?.gameEvent?.eventName}
+          </div>
+        </div>
+      ),
+    },
+  ];
 
   useEffect(() => {
     fetchProfile();
@@ -742,6 +784,17 @@ const Profile = () => {
                 </div>
               )}
             </Modal>
+            <Divider />
+            <Title level={4}>Lịch sử nhận điểm Minigame</Title>
+            <Table
+              dataSource={history}
+              rowKey={(record) => record._id}
+              columns={pointHistoryColumns}
+              bordered
+              size="middle"
+              pagination={{ pageSize: 5 }}
+              locale={{ emptyText: "Chưa có lịch sử nhận điểm." }}
+            />
           </div>
         </div>
       </Content>

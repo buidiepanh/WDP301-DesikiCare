@@ -277,16 +277,7 @@ const CategoryBar = () => {
             Mini Game 🎮
           </Typography>
           {gameNames?.map((game) => (
-            <Button
-              key={game.id}
-              variant="outlined"
-              fullWidth
-              onClick={() =>
-                token !== null
-                  ? navigate(`/game-type/${game._id}`, { state: game })
-                  : navigate("/login")
-              }
-            >
+            <Button key={game.id} variant="outlined" fullWidth>
               {game.name}
             </Button>
           ))}
