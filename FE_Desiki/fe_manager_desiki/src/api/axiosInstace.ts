@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import { getAccessToken, hasRole } from "../utils/auth";
 
 // ✅ Base URL mặc định
-let baseURL = "https://2dda-14-161-1-203.ngrok-free.app";
+let baseURL = "https://wdp301-desikicare.onrender.com";
 
 // ✅ Cho phép cập nhật baseURL
 export const setBaseURL = (url: string) => {
@@ -13,7 +13,7 @@ export const setBaseURL = (url: string) => {
 // ✅ Khởi tạo instance Axios
 const axiosInstance = axios.create({
   baseURL,
-  timeout: 10000,
+  timeout: 60000,
 });
 
 // ✅ API không cần Auth
