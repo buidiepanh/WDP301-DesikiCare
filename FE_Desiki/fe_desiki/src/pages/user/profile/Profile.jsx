@@ -29,6 +29,7 @@ import {
   getOrderDetail,
   changePassword,
   getPaymentUrlForOrder,
+  getPointHistory,
 } from "../../../services/apiServices";
 import { UserOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -50,6 +51,7 @@ const Profile = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [avatarBase64, setAvatarBase64] = useState("");
   const [previewAvatar, setPreviewAvatar] = useState("");
+  const [history, setHistory] = useState([]);
 
   const fetchProfile = async () => {
     try {
@@ -80,6 +82,15 @@ const Profile = () => {
       setOrders(res);
     } catch {
       message.error("Không thể tải danh sách đơn hàng.");
+    }
+  };
+
+  const fetchPointsHistory = async () => {
+    try {
+      const res = await getPointHistory();
+      setHistory(res.gameEventRewardResults);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -219,6 +230,7 @@ const Profile = () => {
   useEffect(() => {
     fetchProfile();
     fetchOrders();
+    fetchPointsHistory();
   }, []);
 
   return (

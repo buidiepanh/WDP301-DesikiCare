@@ -242,3 +242,12 @@ export const updateGamePoints = async (gameEventId, points) => {
     throw error;
   }
 };
+
+export const getPointHistory = async () => {
+  try {
+    const res = await axios.get("/Game/gameEventsRewards/me");
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
