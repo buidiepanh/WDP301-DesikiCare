@@ -56,6 +56,7 @@ const Profile = () => {
   const fetchProfile = async () => {
     try {
       const res = await getMe();
+      console.log("ALo: ", res);
       const acc = res.account;
 
       form.setFieldsValue({

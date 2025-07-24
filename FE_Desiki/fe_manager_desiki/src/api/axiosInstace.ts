@@ -3,8 +3,13 @@ import Swal from "sweetalert2";
 import { getAccessToken, hasRole } from "../utils/auth";
 
 // ✅ Base URL mặc định
+<<<<<<< HEAD
 let baseURL = "https://wdp301-desikicare.onrender.com";
 
+=======
+let baseURL = import.meta.env.VITE_API_BASE_URL || "";
+console.log("Alo: ", import.meta.env.VITE_API_BASE_URL);
+>>>>>>> 1593df98b175df36216e408317abc8bf884a21d3
 // ✅ Cho phép cập nhật baseURL
 export const setBaseURL = (url: string) => {
   baseURL = url;

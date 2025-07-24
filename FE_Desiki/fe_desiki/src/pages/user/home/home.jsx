@@ -47,7 +47,7 @@ export default function App() {
         <Brand />
       </Box>
       {/* Danh sách sản phẩm */}
-      <Container>
+      <Container sx={{ gap: "20px", paddingBottom: "50px" }}>
         <Typography variant="h4" gutterBottom fontWeight="bold">
           Sản phẩm nổi bật
         </Typography>

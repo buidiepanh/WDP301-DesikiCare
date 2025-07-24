@@ -1,11 +1,10 @@
-import React from "react";
+
 import type { Order } from "../../data/types";
 import {
   Modal,
   Box,
   Typography,
   IconButton,
-  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { AgGridReact } from "ag-grid-react";
@@ -153,7 +152,7 @@ export const OrderDetailsPopup: React.FC<Props> = ({
         <div className="ag-theme-quartz" style={{ height: 300, width: "100%" }}>
           <AgGridReact
             rowData={orderItems}
-            columnDefs={columnDefs}
+            columnDefs={columnDefs as any}
             defaultColDef={defaultColDef}
             pagination={true}
             paginationPageSize={3}

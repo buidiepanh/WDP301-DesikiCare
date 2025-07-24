@@ -28,7 +28,7 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  bgcolor: "background.paper",
+  bgcolor: "rgba(255, 255, 255, 1)",
   borderRadius: 3,
   boxShadow: 24,
   p: 4,
@@ -45,7 +45,10 @@ const gameTypesData = [
   { id: 4, name: "Missing Words" },
 ];
 
-export const CreateGameModal: React.FC<CreateGameProps> = ({ isOpen, onClose }) => {
+export const CreateGameModal: React.FC<CreateGameProps> = ({
+  isOpen,
+  onClose,
+}) => {
   const today = new Date().toISOString().slice(0, 10);
 
   const [newGame, setNewGame] = useState<CreateGame>({
@@ -93,7 +96,10 @@ export const CreateGameModal: React.FC<CreateGameProps> = ({ isOpen, onClose }) 
     onClose();
   };
 
-  const handleChangeField = (key: keyof CreateGame["gameEvent"], value: any) => {
+  const handleChangeField = (
+    key: keyof CreateGame["gameEvent"],
+    value: any
+  ) => {
     setNewGame((prev) => ({
       ...prev,
       gameEvent: {
@@ -122,7 +128,10 @@ export const CreateGameModal: React.FC<CreateGameProps> = ({ isOpen, onClose }) 
 
   const handleCreateGame = async () => {
     if (newGame.gameEvent.configJson.backCoverImg) {
-      handleChangeField("imageBase64", newGame.gameEvent.configJson.backCoverImg);
+      handleChangeField(
+        "imageBase64",
+        newGame.gameEvent.configJson.backCoverImg
+      );
     }
     try {
       const response = await callAPIAdmin({
@@ -143,9 +152,14 @@ export const CreateGameModal: React.FC<CreateGameProps> = ({ isOpen, onClose }) 
 
   return (
     <Modal open={isOpen} onClose={handleCloseModal} closeAfterTransition>
-      <Box sx={style} className="text-black bg-white shadow-xl">
+      <Box sx={style} className="text-black  shadow-xl">
         {/* HEADER */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+        >
           <Typography variant="h6" fontWeight="bold" color="primary">
             Tạo Mini Game mới
           </Typography>
@@ -155,38 +169,101 @@ export const CreateGameModal: React.FC<CreateGameProps> = ({ isOpen, onClose }) 
         </Box>
 
         {/* BASIC INFORMATION */}
-        <Typography variant="subtitle1" fontWeight="bold" color="info.main" gutterBottom>
+        <Typography
+          variant="subtitle1"
+          fontWeight="bold"
+          color="info.main"
+          gutterBottom
+        >
           1. Điền các thông tin cơ bản của sự kiện
         </Typography>
 
         <Box display="flex" flexDirection="column" gap={2}>
-          <TextField label="Tên sự kiện" value={newGame.gameEvent.eventName} onChange={(e) => handleChangeField("eventName", e.target.value)} fullWidth />
-          <TextField label="Mô tả sự kiện" multiline rows={3} value={newGame.gameEvent.description} onChange={(e) => handleChangeField("description", e.target.value)} fullWidth />
-          <TextField label="Tên trò chơi" value={newGame.gameEvent.gameName} onChange={(e) => handleChangeField("gameName", e.target.value)} fullWidth />
-          <TextField label="Ngày bắt đầu" type="date" InputLabelProps={{ shrink: true }} value={newGame.gameEvent.startDate} onChange={(e) => handleChangeField("startDate", e.target.value)} fullWidth />
-          <TextField label="Ngày kết thúc" type="date" InputLabelProps={{ shrink: true }} value={newGame.gameEvent.endDate} onChange={(e) => handleChangeField("endDate", e.target.value)} fullWidth />
-          <TextField label="Điểm dự trù" type="number" value={newGame.gameEvent.balancePoints} onChange={(e) => handleChangeField("balancePoints", Number(e.target.value))} fullWidth />
+          <TextField
+            label="Tên sự kiện"
+            value={newGame.gameEvent.eventName}
+            onChange={(e) => handleChangeField("eventName", e.target.value)}
+            fullWidth
+          />
+          <TextField
+            label="Mô tả sự kiện"
+            multiline
+            rows={3}
+            value={newGame.gameEvent.description}
+            onChange={(e) => handleChangeField("description", e.target.value)}
+            fullWidth
+          />
+          <TextField
+            label="Tên trò chơi"
+            value={newGame.gameEvent.gameName}
+            onChange={(e) => handleChangeField("gameName", e.target.value)}
+            fullWidth
+          />
+          <TextField
+            label="Ngày bắt đầu"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={newGame.gameEvent.startDate}
+            onChange={(e) => handleChangeField("startDate", e.target.value)}
+            fullWidth
+          />
+          <TextField
+            label="Ngày kết thúc"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={newGame.gameEvent.endDate}
+            onChange={(e) => handleChangeField("endDate", e.target.value)}
+            fullWidth
+          />
+          <TextField
+            label="Điểm dự trù"
+            type="number"
+            value={newGame.gameEvent.balancePoints}
+            onChange={(e) =>
+              handleChangeField("balancePoints", Number(e.target.value))
+            }
+            fullWidth
+          />
         </Box>
 
         {/* GAME TYPE + CONFIG */}
         <Box mt={5}>
-          <Typography variant="subtitle1" fontWeight="bold" color="info.main" gutterBottom>
+          <Typography
+            variant="subtitle1"
+            fontWeight="bold"
+            color="info.main"
+            gutterBottom
+          >
             2. Chọn loại game và config chi tiết
           </Typography>
 
           <FormControl fullWidth sx={{ mt: 2 }}>
             <InputLabel>Game Type</InputLabel>
-            <Select value={newGame.gameEvent.gameTypeId} label="Game Type" onChange={handleChangeGameType}>
+            <Select
+              value={newGame.gameEvent.gameTypeId}
+              label="Game Type"
+              onChange={handleChangeGameType}
+            >
               {gameTypes.map((type) => (
-                <MenuItem key={type.id} value={type.id}>{type.name}</MenuItem>
+                <MenuItem key={type.id} value={type.id}>
+                  {type.name}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>
 
           {isLoading ? (
-            <Box display="flex" justifyContent="center" mt={4}><CircularProgress /></Box>
+            <Box display="flex" justifyContent="center" mt={4}>
+              <CircularProgress />
+            </Box>
           ) : (
-            <Box mt={4} p={3} bgcolor="#f5f5f5" borderRadius={2}>
+            <Box
+              sx={{ width: "100%" }}
+              mt={4}
+              p={3}
+              bgcolor="#f5f5f5"
+              borderRadius={2}
+            >
               <GameConfigLoader
                 gameTypeId={newGame.gameEvent.gameTypeId}
                 configJson={newGame.gameEvent.configJson}
@@ -201,7 +278,14 @@ export const CreateGameModal: React.FC<CreateGameProps> = ({ isOpen, onClose }) 
             fullWidth
             color="primary"
             variant="contained"
-            sx={{ mt: 4, borderRadius: 3, py: 1.5, fontWeight: "bold", backgroundColor: "#ec407a", ':hover': { backgroundColor: "#d81b60" } }}
+            sx={{
+              mt: 4,
+              borderRadius: 3,
+              py: 1.5,
+              fontWeight: "bold",
+              backgroundColor: "#1c79eb",
+              ":hover": { backgroundColor: "#0b50a3" },
+            }}
             onClick={handleCreateGame}
           >
             Tạo game
