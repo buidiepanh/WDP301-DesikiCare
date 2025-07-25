@@ -30,6 +30,7 @@ import {
   changePassword,
   getPaymentUrlForOrder,
   getPointHistory,
+  getProvince,
 } from "../../../services/apiServices";
 import { UserOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -52,6 +53,9 @@ const Profile = () => {
   const [avatarBase64, setAvatarBase64] = useState("");
   const [previewAvatar, setPreviewAvatar] = useState("");
   const [history, setHistory] = useState([]);
+  const [provinceList, setProvinceList] = useState([]);
+  const [districtList, setDistrictList] = useState([]);
+  const [wardList, setWardList] = useState([]);
 
   const fetchProfile = async () => {
     try {
@@ -102,6 +106,32 @@ const Profile = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const fetchProvince = async () => {
+    try {
+      const res = await getProvince();
+      setProvinceList(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleProvinceChange = (provinceCode) => {
+    const selectedProvince = provinceList.find(
+      (item) => item.code === provinceCode
+    );
+    setDistrictList(selectedProvince?.districts || []);
+    addressForm.setFieldsValue({ districtCode: null, wardCode: null });
+    setWardList([]);
+  };
+
+  const handleDistrictChange = (districtCode) => {
+    const selectedDistrict = districtList.find(
+      (item) => item.code === districtCode
+    );
+    setWardList(selectedDistrict?.wards || []);
+    addressForm.setFieldsValue({ wardCode: null });
   };
 
   const handleUpdate = async (values) => {
@@ -274,6 +304,7 @@ const Profile = () => {
     fetchProfile();
     fetchOrders();
     fetchPointsHistory();
+    fetchProvince();
   }, []);
 
   return (
@@ -389,42 +420,65 @@ const Profile = () => {
               onFinish={handleAddAddress}
             >
               <Form.Item
-                label="Tỉnh/Thành phố (mã số)"
+                label="Tỉnh/Thành phố"
                 name="provinceCode"
                 rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập mã tỉnh/thành phố (số)",
-                  },
+                  { required: true, message: "Vui lòng chọn tỉnh/thành phố" },
                 ]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <Select
+                  placeholder="Chọn tỉnh/thành phố"
+                  onChange={handleProvinceChange}
+                  showSearch
+                  optionFilterProp="children"
+                >
+                  {provinceList.map((province) => (
+                    <Option key={province.code} value={province.code}>
+                      {province.name}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
 
               <Form.Item
-                label="Quận/Huyện (mã số)"
+                label="Quận/Huyện"
                 name="districtCode"
                 rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập mã quận/huyện (số)",
-                  },
+                  { required: true, message: "Vui lòng chọn quận/huyện" },
                 ]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <Select
+                  placeholder="Chọn quận/huyện"
+                  onChange={handleDistrictChange}
+                  showSearch
+                  optionFilterProp="children"
+                  disabled={districtList.length === 0}
+                >
+                  {districtList.map((district) => (
+                    <Option key={district.code} value={district.code}>
+                      {district.name}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
 
               <Form.Item
-                label="Phường/Xã (mã số)"
+                label="Phường/Xã"
                 name="wardCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập mã phường/xã (số)",
-                  },
-                ]}
+                rules={[{ required: true, message: "Vui lòng chọn phường/xã" }]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <Select
+                  placeholder="Chọn phường/xã"
+                  showSearch
+                  optionFilterProp="children"
+                  disabled={wardList.length === 0}
+                >
+                  {wardList.map((ward) => (
+                    <Option key={ward.code} value={ward.code}>
+                      {ward.name}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
 
               <Form.Item
@@ -481,7 +535,7 @@ const Profile = () => {
                     ) : (
                       <Button
                         type="link"
-                        onClick={() => handleSetDefault(item.id)}
+                        onClick={() => handleSetDefault(item._id)}
                       >
                         Đặt mặc định
                       </Button>
@@ -649,7 +703,7 @@ const Profile = () => {
                         {orderDetail.order.orderStatus?.name}
                       </Tag>
                     </p>
-                    <p>
+                    {/* <p>
                       <strong>Thanh toán:</strong>{" "}
                       <Tag
                         color={getPaymentStatusColor(
@@ -660,7 +714,7 @@ const Profile = () => {
                           ? "Đã thanh toán"
                           : "Chưa thanh toán"}
                       </Tag>
-                    </p>
+                    </p> */}
                     <p
                       style={{ display: "flex", alignItems: "center", gap: 8 }}
                     >
