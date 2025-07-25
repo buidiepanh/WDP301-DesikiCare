@@ -156,9 +156,12 @@ export class PaymentsService {
         const session = await this.connection.startSession();
         session.startTransaction();
         try {
-            const orderId = new Types.ObjectId((webhookData.data.description as string).split(' ')[1]);
+            // const orderId = new Types.ObjectId((webhookData.data.description as string).split(' ')[1]);
+            const orderId = new Types.ObjectId(webhookData.data.description as string);
 
-            const order = await this.orderRepository.findById(new Types.ObjectId(orderId));
+            console.log("orderId: ", orderId);
+
+            const order = await this.orderRepository.findById(orderId);
             // await this.orderRepository.update(orderId, order, session);
 
             const payment = await this.getExistPaymentById(webhookData.data.orderCode);
