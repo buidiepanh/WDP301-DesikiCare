@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Layout,
-  Form,
-  Input,
-  Button,
-  Typography,
-  Divider,
-  Space,
-} from "antd";
+import { Layout, Form, Input, Button, Typography, Divider, Space } from "antd";
 import {
   UserOutlined,
   LockOutlined,
@@ -15,11 +7,10 @@ import {
   FacebookFilled,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { auth, provider } from "../../../config/firebase";
-import { signInWithPopup } from "firebase/auth";
 import toast from "react-hot-toast";
 import image2 from "../../../assets/authen/authen_background2.jpg";
 import "./login.css";
+import { loginFunction } from "../../../services/apiServices";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;
@@ -27,40 +18,24 @@ const { Content } = Layout;
 const Login = () => {
   const navigate = useNavigate();
 
-  const onFinish = (values) => {
-    const { email, password } = values;
+  const onFinish = async (values) => {
     try {
-      if (email === "buidiepanh@gmail.com" && password === "123") {
-        const user = { name: "Diệp Ánh", email };
-        localStorage.setItem("user", JSON.stringify(user));
-        window.dispatchEvent(new Event("userChanged"));
-        console.log("User logged in:", user);
-        toast.success("Đăng nhập thành công!");
-        navigate("/");
-      } else {
-        toast.error("Email hoặc mật khẩu đúng. Vui lòng thử lại!");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      toast.error(error.message);
-    }
-  };
+      const response = await loginFunction(values.email, values.password);
+      const { token } = response;
+      sessionStorage.setItem("accessToken", token);
 
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
       const user = {
-        name: result.user.displayName,
-        email: result.user.email,
+        fullName: values.email.split("@")[0],
+        email: values.email,
       };
-      localStorage.setItem("user", JSON.stringify(user));
+      sessionStorage.setItem("user", JSON.stringify(user));
       window.dispatchEvent(new Event("userChanged"));
-      console.log("Google user logged in:", user);
-      toast.success(`Chào mừng ${user.name}`);
+
+      toast.success("Đăng nhập thành công!");
       navigate("/");
     } catch (error) {
-      console.error("Google login error:", error);
-      toast.error(error.message);
+      toast.error("Đăng nhập thất bại!");
+      console.error(error);
     }
   };
 
@@ -72,7 +47,7 @@ const Login = () => {
       >
         <div className="login-overlay" />
         <div className="login-left-content">
-          <Title style={{ color: "#fff", marginTop: 0 }}>Desiki Care</Title>
+          <Title style={{ color: "#fff", marginTop: 0 }}>DESIKI CARE</Title>
           <Text
             style={{
               color: "#eee",
@@ -82,13 +57,8 @@ const Login = () => {
               marginTop: "16px",
             }}
           >
-            Chào mừng bạn quay trở lại với Desiki Care, nơi hành trình hướng tới
-            làn da khỏe mạnh và rạng rỡ của bạn được tiếp nối. Chúng tôi cam kết
-            kết hợp giữa chăm sóc da chuyên nghiệp và mỹ phẩm đạt chuẩn y khoa,
-            mang đến cho bạn những gì tốt nhất trong lĩnh vực làm đẹp và chăm
-            sóc sức khỏe. Hãy đăng nhập để khám phá các giải pháp chăm sóc da cá
-            nhân hóa, những ưu đãi độc quyền và lời khuyên chuyên sâu được thiết
-            kế riêng dành cho bạn.
+            Chào mừng bạn quay trở lại với Desiki Care. Hãy đăng nhập để khám
+            phá hành trình chăm sóc làn da khỏe mạnh và tỏa sáng.
           </Text>
         </div>
       </Content>
@@ -133,7 +103,7 @@ const Login = () => {
             </Form.Item>
 
             <Form.Item
-              label="Password"
+              label="Mật khẩu"
               name="password"
               rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
             >
@@ -169,7 +139,7 @@ const Login = () => {
             <Divider style={{ borderColor: "#f0f0f0" }}>hoặc</Divider>
 
             <Space direction="vertical" style={{ width: "100%" }}>
-              <Button icon={<GoogleOutlined />} block onClick={handleGoogleLogin}>
+              <Button icon={<GoogleOutlined />} block>
                 Đăng nhập với Google
               </Button>
               <Button

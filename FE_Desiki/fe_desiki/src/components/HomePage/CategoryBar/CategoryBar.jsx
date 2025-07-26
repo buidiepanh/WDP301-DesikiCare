@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -6,33 +6,94 @@ import {
   Popper,
   Paper,
   ClickAwayListener,
+  Modal,
+  Button,
 } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import styles from "./CategoryBar.module.css";
 import { useNavigate } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import {
+  getAllCategories,
+  getAllMiniGames,
+  getAllSkinStatuses,
+  getAllSkinTypes,
+} from "../../../services/apiServices";
 
 const CategoryBar = () => {
   const navigate = useNavigate();
   const [openDanhMuc, setOpenDanhMuc] = useState(false);
   const [anchorDanhMuc, setAnchorDanhMuc] = useState(null);
+  const token = sessionStorage.getItem("accessToken");
 
   const [openSanPham, setOpenSanPham] = useState(false);
   const [anchorSanPham, setAnchorSanPham] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [skinTypes, setSkinTypes] = useState([]);
+  const [skinStatuses, setSkinStatuses] = useState([]);
+  const [openGameModal, setOpenGameModal] = useState(false);
+  const [gameNames, setGameNames] = useState([]);
+
+  const handleOpenGameModal = () => setOpenGameModal(true);
+  const handleCloseGameModal = () => setOpenGameModal(false);
 
   const handleBanner = () => navigate("/hot-deal");
-  const handleDeals = () => navigate("/flash-deal-sale");
+  const handleDeals = () => navigate("/products-page");
   const handleBlog = () => navigate("/blog-grid");
+
   const handleDanhMucClick = (event) => {
     setAnchorDanhMuc(event.currentTarget);
     setOpenDanhMuc((prev) => !prev);
-    setOpenSanPham(false); // Đóng popper khác nếu đang mở
+    setOpenSanPham(false);
+  };
+
+  useEffect(() => {
+    fetchAllCategories();
+    fetchAllSkinTypes();
+    fetchAllSkinStatuses();
+    fetchAllMiniGames();
+  }, []);
+
+  const fetchAllCategories = async () => {
+    try {
+      const result = await getAllCategories();
+      setCategories(result.categories);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllMiniGames = async () => {
+    try {
+      const result = await getAllMiniGames();
+      setGameNames(result.gameTypes);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllSkinTypes = async () => {
+    try {
+      const result = await getAllSkinTypes();
+      setSkinTypes(result.skinTypes);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchAllSkinStatuses = async () => {
+    try {
+      const result = await getAllSkinStatuses();
+      setSkinStatuses(result.skinStatuses);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleSanPhamClick = (event) => {
     setAnchorSanPham(event.currentTarget);
     setOpenSanPham((prev) => !prev);
-    setOpenDanhMuc(false); // Đóng popper khác nếu đang mở
+    setOpenDanhMuc(false);
   };
 
   const handleCloseAll = () => {
@@ -40,60 +101,74 @@ const CategoryBar = () => {
     setOpenSanPham(false);
   };
 
-  const danhMucList = [
-    "Sức Khỏe - Làm Đẹp",
-    "Mỹ Phẩm High-End",
-    "Chăm Sóc Da Mặt",
-    "Trang Điểm",
-  
-    "Chăm Sóc Cơ Thể",
-    "Chăm Sóc Cá Nhân",
-    "Nước Hoa",
+  const danhMucList = categories.map((item) => item.name);
 
-    "DermaHair",
+  const sanPhamList = [
+    {
+      name: "Các loại da",
+      subItems: skinTypes.map((item) => item.name),
+    },
+    {
+      name: "Tình trạng da",
+      subItems: skinStatuses.map((item) => item.name),
+    },
   ];
-
- const sanPhamList = [
-  {
-    name: "Chăm Sóc Da",
-    subItems: ["Kem Dưỡng Da", "Sữa Rửa Mặt", "Mặt Nạ", "Toner", "Serum", "Tẩy Trang", "Kem Chống Nắng"],
-  },
-  {
-    name: "Trang Điểm",
-    subItems: ["Phấn Nước", "Son Môi", "Che Khuyết Điểm", "Kẻ Mắt"],
-  },
-  {
-    name: "Dưỡng Tóc",
-    subItems: ["Dầu Gội", "Dầu Xả", "Dưỡng Tóc"],
-  },
-];
-
 
   return (
     <Box className={styles.categoryContainer}>
       <Box className={styles.leftMenu}>
-        <Box display="flex" alignItems="center" onClick={handleDanhMucClick} style={{ cursor: "pointer" }}>
+        <Box
+          display="flex"
+          alignItems="center"
+          onClick={handleDanhMucClick}
+          style={{ cursor: "pointer" }}
+        >
           <Menu fontSize="small" />
-          <Typography fontWeight="bold" style={{ marginLeft: 4 }}>DANH MỤC</Typography>
+          <Typography fontWeight="bold" style={{ marginLeft: 4 }}>
+            DANH MỤC
+          </Typography>
         </Box>
 
         <span className={styles.divider}>|</span>
-        <Typography className={styles.categoryItem} onClick={handleDeals}>DeskiCare DEALS</Typography>
-        <Typography className={styles.categoryItem} onClick={handleBanner}>HOT DEALS</Typography>
-        <Typography className={styles.categoryItem}  onClick={handleSanPhamClick}>Sản Phẩm</Typography>
-        <Typography className={styles.categoryItem}>Chăm Sóc Da</Typography>
-        <Typography className={styles.categoryItem} onClick={handleBlog}>Tạp Chí Làm Đẹp</Typography>
-        <Typography className={styles.categoryItem}>Sản Phẩm Mới</Typography>
+        <Typography className={styles.categoryItem} onClick={handleDeals}>
+          Sản phẩm DeskiCare
+        </Typography>
+        <Typography className={styles.categoryItem} onClick={handleBanner}>
+          HOT DEALS
+        </Typography>
+        <Typography
+          className={styles.categoryItem}
+          onClick={handleSanPhamClick}
+        >
+          Loại Sản Phẩm
+        </Typography>
+        <Typography className={styles.categoryItem} onClick={handleBlog}>
+          Tạp Chí Làm Đẹp
+        </Typography>
+        <Typography
+          className={styles.categoryItem}
+          onClick={handleOpenGameModal}
+        >
+          Mini Game
+        </Typography>
       </Box>
 
       {/* Danh mục popper */}
-      <Popper open={openDanhMuc} anchorEl={anchorDanhMuc} placement="bottom-start">
+      <Popper
+        open={openDanhMuc}
+        anchorEl={anchorDanhMuc}
+        placement="bottom-start"
+      >
         <ClickAwayListener onClickAway={handleCloseAll}>
           <Paper elevation={3} sx={{ width: 240, padding: 1 }}>
             {danhMucList.map((cat, index) => (
               <MenuItem
                 key={index}
-                onClick={handleCloseAll}
+                onClick={() => {
+                  handleCloseAll();
+                  localStorage.setItem("category", cat);
+                  navigate("/products-page");
+                }}
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
@@ -108,67 +183,106 @@ const CategoryBar = () => {
         </ClickAwayListener>
       </Popper>
 
-     <Popper open={openSanPham} anchorEl={anchorSanPham} placement="bottom-start">
-  <ClickAwayListener onClickAway={handleCloseAll}>
-    <Paper
-      elevation={3}
-      sx={{
-        width: 900,
-        height: 300,             // tăng chiều cao
-        padding: 1,
-        bgcolor: 'background.paper',
-        borderRadius: 1,
-        boxShadow: 3,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'stretch',   // cho các phần con cao bằng nhau
-        overflowY: 'auto',
-      }}
-    >
-      {sanPhamList.map((item, index) => (
-        <Box
-          key={index}
-          sx={{
-            width: '33.33%',          // mỗi phần chiếm 1/3 chiều rộng
-            borderRight: index !== sanPhamList.length - 1 ? '1px solid #e0e0e0' : 'none',
-            paddingRight: 2,
-            pl: 1,
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <Typography
-            fontWeight="bold"
-            sx={{ py: 0.75, fontSize: '1rem', color: 'text.primary' }}
+      <Popper
+        open={openSanPham}
+        anchorEl={anchorSanPham}
+        placement="bottom-start"
+      >
+        <ClickAwayListener onClickAway={handleCloseAll}>
+          <Paper
+            elevation={3}
+            sx={{
+              width: 900,
+              height: 300, // tăng chiều cao
+              padding: 1,
+              bgcolor: "background.paper",
+              borderRadius: 1,
+              boxShadow: 3,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "stretch", // cho các phần con cao bằng nhau
+              overflowY: "auto",
+              zIndex: "10",
+            }}
           >
-            {item.name}
-          </Typography>
-          <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
-            {item.subItems.map((sub, i) => (
-              <MenuItem
-                key={i}
-                onClick={handleCloseAll}
+            {sanPhamList.map((item, index) => (
+              <Box
+                key={index}
                 sx={{
-                  pl: 3,
-                  py: 0.5,
-                  fontSize: '0.9rem',
-                  color: 'text.secondary',
-                  '&:hover': {
-                    bgcolor: 'action.hover',
-                  },
+                  flex: 1,
+                  borderRight:
+                    index !== sanPhamList.length - 1
+                      ? "1px solid #e0e0e0"
+                      : "none",
+                  px: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  minWidth: 0, // chống tràn
                 }}
               >
-                {sub}
-              </MenuItem>
+                <Typography
+                  fontWeight="bold"
+                  sx={{ py: 0.75, fontSize: "1rem", color: "text.primary" }}
+                >
+                  {item.name}
+                </Typography>
+                <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
+                  {item.subItems.map((sub, i) => (
+                    <MenuItem
+                      key={i}
+                      onClick={() => {
+                        handleCloseAll();
+                        localStorage.setItem("skin", sub);
+                        navigate("/products-page");
+                      }}
+                      sx={{
+                        pl: 3,
+                        py: 0.5,
+                        fontSize: "0.9rem",
+                        color: "text.secondary",
+                        "&:hover": {
+                          bgcolor: "action.hover",
+                        },
+                      }}
+                    >
+                      {sub}
+                    </MenuItem>
+                  ))}
+                </Box>
+              </Box>
             ))}
-          </Box>
-        </Box>
-      ))}
-    </Paper>
-  </ClickAwayListener>
-</Popper>
+          </Paper>
+        </ClickAwayListener>
+      </Popper>
 
+      <Modal open={openGameModal} onClose={handleCloseGameModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold" textAlign="center">
+            Mini Game 🎮
+          </Typography>
+          {gameNames?.map((game) => (
+            <Button key={game.id} variant="outlined" fullWidth>
+              {game.name}
+            </Button>
+          ))}
+        </Box>
+      </Modal>
     </Box>
   );
 };

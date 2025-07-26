@@ -1,0 +1,261 @@
+.scratchCardContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: sans-serif;
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff0f5 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  margin: 20px auto;
+  min-height: 600px;
+}
+
+.gameHeaderBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  margin-bottom: 20px;
+}
+
+.gameHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.backButton {
+  padding: 10px 20px;
+  background: #ec407a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.backButton:hover {
+  background: #d81b60;
+  transform: translateY(-1px);
+}
+
+.gameStats {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.statItem {
+  text-align: center;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f8f9fa, #fff);
+  border: 1px solid #e0e0e0;
+}
+
+.statValue {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #ec407a;
+  margin-bottom: 5px;
+}
+
+.statLabel {
+  font-size: 0.9em;
+  color: #666;
+  font-weight: 500;
+}
+
+.scratchCardsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 30px;
+}
+
+.scratchCard {
+  position: relative;
+  width: 200px;
+  height: 250px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: crosshair;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 3px solid #fff;
+}
+
+.scratchCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.scratchCard.scratched {
+  cursor: default;
+  border-color: #4caf50;
+  animation: revealCard 0.5s ease-out;
+}
+
+@keyframes revealCard {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.scratchCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  border-radius: 12px;
+}
+
+.cardContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+}
+
+.scratchOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+.scratchText {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+  backdrop-filter: blur(5px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.cardReward {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(236, 64, 122, 0.95),
+    rgba(216, 27, 96, 0.95)
+  );
+  color: white;
+  padding: 12px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.rewardLabel {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.rewardPoints {
+  font-size: 0.9em;
+  opacity: 0.9;
+}
+
+.progressBar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.scratchProgress {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  z-index: 3;
+}
+
+.completeSection {
+  text-align: center;
+  margin-top: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.completeButton {
+  padding: 15px 35px;
+  font-size: 1.2em;
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.completeButton:hover {
+  background: linear-gradient(135deg, #45a049, #3d8b40);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.infoSection {
+  background: #e3f2fd;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  color: #1976d2;
+  font-weight: 500;
+}

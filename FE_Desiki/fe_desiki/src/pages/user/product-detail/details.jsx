@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   Row,
@@ -9,85 +9,182 @@ import {
   Card,
   Divider,
   Image,
+  Tag,
+  Space,
+  Spin,
 } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
+import { addToCart, getAllProducts } from "../../../services/apiServices";
+import dayjs from "dayjs";
+import toast from "react-hot-toast";
+import "./styles.css";
 
 const { Title, Text, Paragraph } = Typography;
 
 function Details() {
   const { productId } = useParams();
+  const [productData, setProductData] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    fetchProductDetails();
+  }, []);
+
+  const fetchProductDetails = async () => {
+    try {
+      setLoading(true);
+      const result = await getAllProducts();
+      const foundProduct = result.find(
+        (item) => productId === item.product._id
+      );
+      setProductData(foundProduct);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddToCart = async (productId) => {
+    const token = sessionStorage.getItem("accessToken");
+
+    if (!token) {
+      toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng!");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const result = await addToCart(productId);
+
+      if (result) {
+        toast.success("Đã thêm sản phẩm vào giỏ hàng!");
+        navigate("/");
+      } else {
+        toast.error("Thêm sản phẩm thất bại, thử lại!");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Đã xảy ra lỗi khi thêm vào giỏ hàng.");
+    }
+  };
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", paddingTop: 100 }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (!productData) return null;
+
+  const {
+    product,
+    category,
+    shipmentProducts,
+    productSkinTypes,
+    productSkinStatuses,
+  } = productData;
+
+  const totalQuantity = shipmentProducts.reduce(
+    (sum, item) => sum + (item.shipmentProduct.quantity || 0),
+    0
+  );
+
   return (
-    <div style={{ padding: "24px" }}>
-      {/* Nút quay lại */}
+    <div className="product-detail-container">
       <Button
         type="link"
         icon={<ArrowLeftOutlined />}
         onClick={() => navigate(-1)}
-        style={{ marginBottom: 16, color: "#ec407a" }}
+        className="back-button"
       >
-        Quay trở lại
+        Quay lại
       </Button>
 
-      <Title level={2} style={{ color: "#ec407a" }}>
-        Chi tiết sản phẩm
-      </Title>
-
-      <Divider />
-
-      <Row gutter={32}>
-        {/* Hình ảnh sản phẩm */}
+      <Row gutter={[32, 32]}>
         <Col xs={24} md={10}>
-          <Card
-            bordered={false}
-            style={{ backgroundColor: "#fff0f5", padding: "16px" }}
-          >
+          <Card className="product-image-card">
             <Image
               width="100%"
-              src="https://via.placeholder.com/400x400"
-              alt="Hình sản phẩm"
-              style={{ borderRadius: "8px" }}
+              src={product.imageUrl}
+              alt={product.name}
+              className="product-image"
+              fallback="https://via.placeholder.com/400x400"
             />
           </Card>
         </Col>
 
-        {/* Thông tin sản phẩm */}
+        {/* Product Info */}
         <Col xs={24} md={14}>
-          <Title level={3}>Sữa rửa mặt dịu nhẹ</Title>
-          <Text type="secondary">Loại: Chăm sóc da</Text>
-          <br />
-          <Text delete style={{ fontSize: 16 }}>
-            150.000 đ
-          </Text>{" "}
-          <Text strong style={{ fontSize: 20, color: "#ec407a" }}>
-            120.000 đ
-          </Text>
-          <Divider />
-          <Paragraph>
-            <Text strong>Mô tả: </Text>
-            Sản phẩm sữa rửa mặt dịu nhẹ giúp làm sạch sâu, phù hợp với mọi loại
-            da, đặc biệt là da nhạy cảm.
-          </Paragraph>
-          <Row align="middle" gutter={16} style={{ marginTop: 16 }}>
-            <Col>
-              <Text>Số lượng:</Text>
-            </Col>
-            <Col>
-              <InputNumber min={1} defaultValue={100} disabled />
-            </Col>
-          </Row>
-          <Button
-            type="primary"
-            size="large"
-            style={{
-              marginTop: 24,
-              backgroundColor: "#ec407a",
-              borderColor: "#ec407a",
-            }}
-          >
-            Thêm vào giỏ hàng
-          </Button>
+          <div className="product-info-container">
+            <Title level={2} className="product-title">
+              {product.name}
+            </Title>
+            <Text className="product-category">
+              {category?.name || "Chưa phân loại"}
+            </Text>
+
+            <div className="product-price">
+              {product.salePrice.toLocaleString()} đ
+            </div>
+
+            <Divider className="divider-custom" />
+
+            <div className="info-section">
+              <Text className="info-label">Mô tả sản phẩm:</Text>
+              <div className="info-content">
+                {product.description || "Chưa có mô tả"}
+              </div>
+            </div>
+
+            <div className="info-section">
+              <Text className="info-label">Thể tích:</Text>
+              <div className="info-content">{product.volume} ml</div>
+            </div>
+
+            <div className="info-section">
+              <Text className="info-label">Loại da phù hợp:</Text>
+              <div className="tag-container">
+                {productSkinTypes && productSkinTypes.length > 0 ? (
+                  productSkinTypes.map((skin) => (
+                    <Tag key={skin._id} className="skin-tag skin-type-tag">
+                      {skin.name}
+                    </Tag>
+                  ))
+                ) : (
+                  <Text className="no-data-text">Chưa có cụ thể</Text>
+                )}
+              </div>
+            </div>
+
+            <div className="info-section">
+              <Text className="info-label">Tình trạng da:</Text>
+              <div className="tag-container">
+                {productSkinStatuses && productSkinStatuses.length > 0 ? (
+                  productSkinStatuses.map((status) => (
+                    <Tag key={status._id} className="skin-tag skin-status-tag">
+                      {status.name}
+                    </Tag>
+                  ))
+                ) : (
+                  <Text className="no-data-text">Chưa có cụ thể</Text>
+                )}
+              </div>
+            </div>
+
+            <Button
+              type="primary"
+              size="large"
+              onClick={() => handleAddToCart(productId)}
+              className="add-to-cart-btn"
+              block
+            >
+              Thêm vào giỏ hàng
+            </Button>
+          </div>
         </Col>
       </Row>
     </div>

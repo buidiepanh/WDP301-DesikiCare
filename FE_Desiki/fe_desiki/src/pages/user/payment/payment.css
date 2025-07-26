@@ -1,0 +1,61 @@
+.payment-container {
+  padding: 50px 80px;
+  background-color: #f2f4f7;
+  min-height: 100vh;
+}
+
+.ant-card {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.ant-form-item-label > label {
+  font-weight: 500;
+  color: #333;
+}
+
+.ant-input,
+.ant-select-selector,
+.ant-radio-wrapper {
+  border-radius: 8px !important;
+}
+
+.ant-input:focus,
+.ant-select-focused .ant-select-selector {
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+}
+
+.ant-radio-wrapper {
+  margin-right: 20px;
+}
+
+.order-summary .summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 15px;
+}
+
+.order-summary .summary-total {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid #e0e0e0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+button.ant-btn-primary {
+  background-color: #f06292 !important; 
+  border-color: #f06292 !important;
+  border-radius: 8px;
+  font-weight: 600;
+  height: 45px;
+  transition: background-color 0.3s ease;
+}
+
+button.ant-btn-primary:hover {
+  background-color: #e91e63 !important; 
+  border-color: #e91e63 !important;
+}

@@ -1,0 +1,83 @@
+.warranty-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 40px;
+  background-color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  line-height: 1.7;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a202c;
+  text-align: center;
+  margin-bottom: 32px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 16px;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2c5282;
+  margin-top: 32px;
+  margin-bottom: 12px;
+  border-left: 4px solid #4299e1;
+  padding-left: 12px;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
+ul {
+  margin-left: 24px;
+  padding-left: 12px;
+  list-style-type: disc;
+}
+
+ul li {
+  margin-bottom: 6px;
+}
+
+p {
+  margin: 12px 0;
+}
+
+strong {
+  color: #d53f8c;
+  font-weight: 700;
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+@media screen and (max-width: 768px) {
+  .warranty-container {
+    padding: 20px;
+    margin: 20px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+}
