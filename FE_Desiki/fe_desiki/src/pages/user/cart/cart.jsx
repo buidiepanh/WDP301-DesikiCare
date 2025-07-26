@@ -20,6 +20,7 @@ import {
   getAuthenitcatedUserCart,
   getMe,
   getPaymentUrlForCart,
+  getAllProducts,
 } from "../../../services/apiServices";
 import toast from "react-hot-toast";
 
@@ -50,15 +51,24 @@ const Cart = () => {
 
   const fetchAuthenticatedUserCart = async () => {
     try {
-      const result = await getAuthenitcatedUserCart();
-      const transformed = result?.cartItems.map((item) => ({
-        id: item.cartItem._id,
-        name: item.product.name,
-        quantity: item.cartItem.quantity,
-        image: item.product.image,
-        price: item.product.salePrice,
-        volume: item.product.volume,
-      }));
+      const cart = await getAuthenitcatedUserCart();
+      const allProducts = await getAllProducts();
+
+      const transformed = cart?.cartItems.map((item) => {
+        const matchedProduct = allProducts.find(
+          (p) => p.product._id === item.product._id
+        );
+
+        return {
+          id: item.cartItem._id,
+          name: item.product.name,
+          quantity: item.cartItem.quantity,
+          image: matchedProduct?.product?.imageUrl || "/default-image.jpg",
+          price: item.product.salePrice,
+          volume: item.product.volume,
+        };
+      });
+
       setCartItems(transformed);
     } catch (error) {
       console.log(error);
@@ -225,7 +235,9 @@ const Cart = () => {
                   <InputNumber
                     min={1}
                     value={item.quantity}
-                    onChange={(value) => handleQuantityChange(item.id, value)}
+                    onChange={(value) =>
+                      handleQuantityChange(item.id, value)
+                    }
                   />
                 </Col>
 
