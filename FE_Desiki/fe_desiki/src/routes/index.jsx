@@ -1,6 +1,4 @@
 import { Route, Routes, useLocation } from "react-router";
-// src/routes/route.jsx
-import { Route, Routes } from "react-router";
 
 import Home from "../pages/user/home/home";
 import Login from "../pages/authen/login/login";
@@ -15,27 +13,18 @@ import BlogGrid from "../pages/user/blog/BlogGrid";
 import WarrantyPolicy from "../pages/user/policy/WarrantyPolicy";
 import Payment from "../pages/user/payment/payment";
 import GameTypePage from "../pages/user/Game/Type/GameTypePage";
-import GamePlayPage from "../pages/user/Game/Play/GamePlayPage";
-import PaymentReturn from "../pages/user/payment-return/paymentReturn";
-
-import Profile from "../pages/user/profile/Profile";
-import PersonalInfo from "../pages/user/profile/components/PersonalInfo";
-import ChangePassword from "../pages/user/profile/components/ChangePassword";
-import OrderHistory from "../pages/user/profile/components/OrderHistory";
-import GameRewardHistory from "../pages/user/profile/components/GameRewardHistory";
-import ShippingAddresses from "../pages/user/profile/components/ShippingAddresses";
 
 import UserManagement from "../pages/admin/UserManagement";
 import CustomerPoints from "../pages/admin/CustomerPoints";
 import GameManagement from "../pages/admin/GameManagement";
 import ChatbotContent from "../pages/admin/ChatbotContent";
+import Profile from "../pages/user/profile/Profile";
 
 import ProductManagement from "../pages/manager/ProductManagement";
 import InventoryManagement from "../pages/manager/InventoryManagement";
 import OrderManagement from "../pages/manager/OrderManagement";
 import Statistics from "../pages/manager/Statistics";
 import CustomerInfo from "../pages/manager/CustomerInfo";
-
 import ManagerLayout from "../layouts/manager/ManagerLayout";
 import AdminLayout from "../layouts/admin/AdminLayout";
 import GamePlayPage from "../pages/user/Game/Play/GamePlayPage";
@@ -129,13 +118,6 @@ function UserRouter() {
           <Route path="/payment-return" element={<PaymentReturn />} />
           <Route path="/game-type/:id" element={<GameTypePage />} />
           <Route path="/game-event/:id" element={<GamePlayPage />} />
-
-          {/* Optional: Sub-routes for Profile sections */}
-          <Route path="/profile/personal-info" element={<PersonalInfo />} />
-          <Route path="/profile/change-password" element={<ChangePassword />} />
-          <Route path="/profile/orders" element={<OrderHistory />} />
-          <Route path="/profile/game-rewards" element={<GameRewardHistory />} />
-          <Route path="/profile/addresses" element={<ShippingAddresses />} />
         </Routes>
       </div>
 

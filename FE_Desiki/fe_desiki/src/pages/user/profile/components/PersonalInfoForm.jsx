@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, Button, DatePicker, Select, Avatar, Typography, message } from "antd";
+import React, { useState, useEffect } from "react";
+import { Avatar, Form, Input, Button, DatePicker, Select, Typography, message } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
@@ -8,7 +8,7 @@ import { getMe, updateAccount } from "../../../../services/apiServices";
 const { Title } = Typography;
 const { Option } = Select;
 
-const PersonalInfo = () => {
+const AvatarAndInfo = () => {
   const [form] = Form.useForm();
   const [user, setUser] = useState(null);
   const [avatarBase64, setAvatarBase64] = useState("");
@@ -18,7 +18,7 @@ const PersonalInfo = () => {
     try {
       const res = await getMe();
       const acc = res.account;
-
+      setUser(acc);
       form.setFieldsValue({
         fullName: acc.fullName || "",
         email: acc.email || "",
@@ -26,13 +26,25 @@ const PersonalInfo = () => {
         gender: acc.gender || "",
         dob: acc.dob ? dayjs(acc.dob) : null,
       });
-
-      setUser(acc);
       setPreviewAvatar(acc.imageUrl || "");
       setAvatarBase64("");
-    } catch (err) {
+    } catch {
       message.error("Không thể tải thông tin người dùng.");
     }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const handleUploadAvatar = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setAvatarBase64(reader.result);
+      setPreviewAvatar(reader.result);
+    };
+    return false;
   };
 
   const handleUpdate = async (values) => {
@@ -49,7 +61,6 @@ const PersonalInfo = () => {
           isDeactivated: user.isDeactivated || false,
         },
       };
-
       await updateAccount(user._id, payload);
       toast.success("Cập nhật thông tin thành công!");
       fetchProfile();
@@ -58,22 +69,8 @@ const PersonalInfo = () => {
     }
   };
 
-  const handleUploadAvatar = (file) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      setAvatarBase64(reader.result);
-      setPreviewAvatar(reader.result);
-    };
-    return false;
-  };
-
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
   return (
-    <div style={{ maxWidth: 500, margin: "0 auto" }}>
+    <div className="profile-section">
       <div style={{ textAlign: "center", marginBottom: 24 }}>
         <Avatar
           size={120}
@@ -88,14 +85,13 @@ const PersonalInfo = () => {
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => handleUploadAvatar(e.target.files[0])}
+          onChange={e => handleUploadAvatar(e.target.files[0])}
           style={{ marginTop: 8, fontSize: "13px", border: "none" }}
         />
         <Title level={4} style={{ marginTop: 12 }}>
           Thông tin cá nhân
         </Title>
       </div>
-
       <Form layout="vertical" form={form} onFinish={handleUpdate}>
         <Form.Item label="Họ tên" name="fullName">
           <Input size="large" />
@@ -131,4 +127,4 @@ const PersonalInfo = () => {
   );
 };
 
-export default PersonalInfo;
+export default AvatarAndInfo;

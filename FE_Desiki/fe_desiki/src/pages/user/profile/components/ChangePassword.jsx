@@ -1,6 +1,7 @@
+// src/pages/user/profile/components/ChangePassword.jsx
 import React, { useState, useEffect } from "react";
 import { Form, Input, Button, message } from "antd";
-import { changePassword, getMe } from "../../../../services/apiServices"; 
+import { changePassword, getMe } from "../../../../services/apiServices";
 
 const ChangePassword = () => {
   const [form] = Form.useForm();
@@ -12,22 +13,19 @@ const ChangePassword = () => {
       try {
         const data = await getMe();
         setUserId(data.account._id);
-      } catch (err) {
+      } catch {
         message.error("Không thể tải thông tin người dùng.");
       }
     };
-
     fetchUser();
   }, []);
 
-  const handleChangePassword = async (values) => {
+  const handleChangePassword = async values => {
     const { oldPassword, newPassword, confirmPassword } = values;
-
     if (newPassword !== confirmPassword) {
       message.error("Mật khẩu mới và xác nhận không khớp!");
       return;
     }
-
     try {
       setLoading(true);
       await changePassword(userId, oldPassword, newPassword);
@@ -41,37 +39,37 @@ const ChangePassword = () => {
   };
 
   return (
-    <Form form={form} layout="vertical" onFinish={handleChangePassword}>
-      <Form.Item
-        label="Mật khẩu hiện tại"
-        name="oldPassword"
-        rules={[{ required: true, message: "Vui lòng nhập mật khẩu hiện tại" }]}
-      >
-        <Input.Password />
-      </Form.Item>
-
-      <Form.Item
-        label="Mật khẩu mới"
-        name="newPassword"
-        rules={[{ required: true, message: "Vui lòng nhập mật khẩu mới" }]}
-      >
-        <Input.Password />
-      </Form.Item>
-
-      <Form.Item
-        label="Xác nhận mật khẩu mới"
-        name="confirmPassword"
-        rules={[{ required: true, message: "Vui lòng xác nhận mật khẩu mới" }]}
-      >
-        <Input.Password />
-      </Form.Item>
-
-      <Form.Item>
-        <Button type="primary" htmlType="submit" loading={loading}>
-          Đổi mật khẩu
-        </Button>
-      </Form.Item>
-    </Form>
+    <div className="profile-section">
+      <h3>Đổi mật khẩu</h3>
+      <Form form={form} layout="vertical" onFinish={handleChangePassword}>
+        <Form.Item
+          label="Mật khẩu hiện tại"
+          name="oldPassword"
+          rules={[{ required: true, message: "Vui lòng nhập mật khẩu hiện tại" }]}
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item
+          label="Mật khẩu mới"
+          name="newPassword"
+          rules={[{ required: true, message: "Vui lòng nhập mật khẩu mới" }]}
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item
+          label="Xác nhận mật khẩu mới"
+          name="confirmPassword"
+          rules={[{ required: true, message: "Vui lòng xác nhận mật khẩu mới" }]}
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            Đổi mật khẩu
+          </Button>
+        </Form.Item>
+      </Form>
+    </div>
   );
 };
 
