@@ -20,7 +20,7 @@
     "axios": "^1.9.0",
     "dayjs": "^1.11.13",
     "fe_desiki": "file:",
-    "firebase": "^11.8.1",
+    "firebase": "^11.9.1",
     "jwt-decode": "^4.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

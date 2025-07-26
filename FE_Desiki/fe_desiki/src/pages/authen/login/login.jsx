@@ -11,7 +11,6 @@ import toast from "react-hot-toast";
 import image2 from "../../../assets/authen/authen_background2.jpg";
 import "./login.css";
 import { loginFunction } from "../../../services/apiServices";
-import axios from "axios";
 
 const { Title, Text, Link } = Typography;
 const { Content } = Layout;

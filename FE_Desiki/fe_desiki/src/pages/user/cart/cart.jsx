@@ -9,6 +9,7 @@ import {
   Divider,
   Popconfirm,
   Empty,
+  Switch,
 } from "antd";
 import { ShoppingOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -28,6 +29,8 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [user, setUser] = useState(null);
   const [deliveryAddresses, setDeliveryAddresses] = useState([]);
+  const [pointUsing, setPointUsing] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -98,7 +101,11 @@ const Cart = () => {
     }
 
     try {
-      const result = await getPaymentUrlForCart(user?.points || 0, defaultAddress._id);
+      const result = await getPaymentUrlForCart(
+        pointUsing ? user?.points || 0 : 0,
+        defaultAddress._id
+      );
+      sessionStorage.setItem("isPaid", "true");
       window.location.href = result.paymentLink;
     } catch (error) {
       toast.error("Thanh toán thất bại.");
@@ -114,7 +121,11 @@ const Cart = () => {
     }
 
     try {
-      const result = await addNewOrder(user?.points || 0, defaultAddress._id);
+      const result = await addNewOrder(
+        null,
+        pointUsing ? user?.points || 0 : 0,
+        defaultAddress._id
+      );
       if (result) {
         toast.success("Tạo đơn hàng thành công!");
         navigate("/");
@@ -127,22 +138,37 @@ const Cart = () => {
     }
   };
 
-  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const total = cartItems.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
   return (
     <div style={{ padding: "24px" }}>
-      <Title level={2} style={{ color: "#ec407a" }}>Giỏ hàng của bạn</Title>
+      <Title level={2} style={{ color: "#ec407a" }}>
+        Giỏ hàng của bạn
+      </Title>
       <Divider />
 
       {cartItems?.length === 0 ? (
         <div style={{ textAlign: "center", padding: "40px 0" }}>
           <Empty
-            image={<ShoppingOutlined style={{ fontSize: 60, color: "#ec407a" }} />}
-            description={<Text style={{ fontSize: 16, color: "#888" }}>Giỏ hàng của bạn đang trống</Text>}
+            image={
+              <ShoppingOutlined style={{ fontSize: 60, color: "#ec407a" }} />
+            }
+            description={
+              <Text style={{ fontSize: 16, color: "#888" }}>
+                Giỏ hàng của bạn đang trống
+              </Text>
+            }
           />
           <Button
             type="primary"
-            style={{ marginTop: 24, backgroundColor: "#ec407a", borderColor: "#ec407a" }}
+            style={{
+              marginTop: 24,
+              backgroundColor: "#ec407a",
+              borderColor: "#ec407a",
+            }}
             href="/"
           >
             Quay lại mua sắm
@@ -178,13 +204,19 @@ const Cart = () => {
                     <img
                       src={item.image}
                       alt={item.name}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
                     />
                   </div>
                 </Col>
 
                 <Col flex="auto">
-                  <Title level={4} style={{ margin: 0 }}>{item.name}</Title>
+                  <Title level={4} style={{ margin: 0 }}>
+                    {item.name}
+                  </Title>
                   <Text type="secondary">Dung tích: {item.volume} ml</Text>
                   <br />
                   <Text>{item.price?.toLocaleString()} đ</Text>
@@ -204,7 +236,9 @@ const Cart = () => {
                     cancelText="Hủy"
                     onConfirm={() => handleDeleteItem(item.id)}
                   >
-                    <Button type="text" danger icon={<DeleteOutlined />}>Xóa</Button>
+                    <Button type="text" danger icon={<DeleteOutlined />}>
+                      Xóa
+                    </Button>
                   </Popconfirm>
                 </Col>
               </Row>
@@ -212,6 +246,23 @@ const Cart = () => {
           ))}
 
           <Divider />
+
+          <Row justify="end" style={{ marginBottom: 16 }}>
+            <Col>
+              <Text strong>
+                Điểm hiện tại của bạn:{" "}
+                <span style={{ color: "#ec407a" }}>{user?.points || 0}</span>
+              </Text>
+              <br />
+              <Switch
+                checked={pointUsing}
+                onChange={setPointUsing}
+                disabled={!user?.points}
+                style={{ marginTop: 8 }}
+              />{" "}
+              <Text style={{ marginLeft: 8 }}>Sử dụng điểm</Text>
+            </Col>
+          </Row>
 
           <Row justify="end">
             <Col>

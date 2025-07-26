@@ -18,7 +18,6 @@ import {
   getAllMiniGames,
   getAllSkinStatuses,
   getAllSkinTypes,
-  getGamesEvent,
 } from "../../../services/apiServices";
 
 const CategoryBar = () => {
@@ -45,7 +44,7 @@ const CategoryBar = () => {
   const handleDanhMucClick = (event) => {
     setAnchorDanhMuc(event.currentTarget);
     setOpenDanhMuc((prev) => !prev);
-    setOpenSanPham(false); // Đóng popper khác nếu đang mở
+    setOpenSanPham(false);
   };
 
   useEffect(() => {
@@ -102,24 +101,9 @@ const CategoryBar = () => {
     setOpenSanPham(false);
   };
 
-  const danhMucList = [
-    "Sức Khỏe - Làm Đẹp",
-    "Mỹ Phẩm High-End",
-    "Chăm Sóc Da Mặt",
-    "Trang Điểm",
-
-    "Chăm Sóc Cơ Thể",
-    "Chăm Sóc Cá Nhân",
-    "Nước Hoa",
-
-    "DermaHair",
-  ];
+  const danhMucList = categories.map((item) => item.name);
 
   const sanPhamList = [
-    {
-      name: "Chăm Sóc Da",
-      subItems: categories.map((item) => item.name),
-    },
     {
       name: "Các loại da",
       subItems: skinTypes.map((item) => item.name),
@@ -180,7 +164,11 @@ const CategoryBar = () => {
             {danhMucList.map((cat, index) => (
               <MenuItem
                 key={index}
-                onClick={handleCloseAll}
+                onClick={() => {
+                  handleCloseAll();
+                  localStorage.setItem("category", cat);
+                  navigate("/products-page");
+                }}
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
@@ -222,15 +210,15 @@ const CategoryBar = () => {
               <Box
                 key={index}
                 sx={{
-                  width: "33.33%", // mỗi phần chiếm 1/3 chiều rộng
+                  flex: 1,
                   borderRight:
                     index !== sanPhamList.length - 1
                       ? "1px solid #e0e0e0"
                       : "none",
-                  paddingRight: 2,
-                  pl: 1,
+                  px: 2,
                   display: "flex",
                   flexDirection: "column",
+                  minWidth: 0, // chống tràn
                 }}
               >
                 <Typography
@@ -243,7 +231,11 @@ const CategoryBar = () => {
                   {item.subItems.map((sub, i) => (
                     <MenuItem
                       key={i}
-                      onClick={handleCloseAll}
+                      onClick={() => {
+                        handleCloseAll();
+                        localStorage.setItem("skin", sub);
+                        navigate("/products-page");
+                      }}
                       sx={{
                         pl: 3,
                         py: 0.5,
@@ -285,16 +277,7 @@ const CategoryBar = () => {
             Mini Game 🎮
           </Typography>
           {gameNames?.map((game) => (
-            <Button
-              key={game.id}
-              variant="outlined"
-              fullWidth
-              onClick={() =>
-                token !== null
-                  ? navigate(`/game-type/${game._id}`, { state: game })
-                  : navigate("/login")
-              }
-            >
+            <Button key={game.id} variant="outlined" fullWidth>
               {game.name}
             </Button>
           ))}

@@ -1,41 +1,63 @@
 import { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  TextField,
-  Button,
-  Paper,
-  Avatar,
-  Fade,
-  Grid,
-} from "@mui/material";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import toast from "react-hot-toast";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Swal from "sweetalert2";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+// import { Lock } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+// import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
 import { callAPIUnAuth } from "../../../api/axiosInstace";
+
+// Import background image
+import backgroundImage from "../../../assets/Background/bgBlack2.png";
 
 interface DecodedToken {
   role: { _id: number; name: string };
   [key: string]: any;
 }
 
+const loginSchema = z.object({
+  email: z.string().email("Email không hợp lệ").min(1, "Email là bắt buộc"),
+  password: z.string().min(1, "Mật khẩu là bắt buộc"),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
 
-  const login = async () => {
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const login = async (values: LoginFormValues) => {
     try {
       const response = await callAPIUnAuth({
         method: "POST",
         url: "/api/Account/login",
-        data: { loginInfo: { email, password } },
+        data: { loginInfo: { email: values.email, password: values.password } },
       });
 
-      if (response.status === 201) {
+      if (response.status === 200 || response.status === 201) {
         const token = response?.data.token;
         if (token) {
           const decoded: DecodedToken = jwtDecode(token);
@@ -60,92 +82,90 @@ const Login = () => {
   };
 
   useEffect(() => {
-    setEmail("");
-    setPassword("");
+    form.reset();
     setTimeout(() => setShow(true), 200);
-  }, []);
+  }, [form]);
 
   return (
-    <Grid
-      container
-      justifyContent="center"
-      alignItems="center"
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
       style={{
-        minHeight: "100vh",
-        backgroundImage:
-          "url('https://png.pngtree.com/background/20250202/original/pngtree-a-pink-table-filled-with-pink-things-such-as-cosmetics-and-picture-image_12895045.jpg')",
+        backgroundImage: `url(${backgroundImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed",
       }}
     >
-      <Fade in={show} timeout={600}>
-        <Paper
-          elevation={8}
-          sx={{
-            p: 4,
-            width: "90%",
-            maxWidth: 400,
-            borderRadius: 6,
-            backdropFilter: "blur(12px)",
-            backgroundColor: "rgba(255, 182, 193, 0.2)",
-            boxShadow: "0 12px 24px rgba(0,0,0,0.3)",
-            color: "#fff",
-          }}
-        >
-          <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
-            <Avatar sx={{ bgcolor: "#e91e63", mb: 1 }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography variant="h5" fontWeight={600} color="white">
-              Đăng nhập
-            </Typography>
-            <Typography variant="body2" sx={{ color: "rgba(255, 255, 255, 0.7)" }} align="center">
-              Dành cho Manager & Admin của Desiki
-            </Typography>
-          </Box>
+      <div
+        className={`w-full max-w-md transition-all duration-600 ${
+          show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        }`}
+      >
+        <Card className="backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl">
+          <CardContent className="p-8">
+            <div className="flex flex-col items-center mb-6">
+              <h1 className="text-2xl font-semibold text-white mb-2">
+                Đăng nhập
+              </h1>
+              <p className="text-white/70 text-center text-sm">
+                Dành cho Manager & Admin của Desiki
+              </p>
+            </div>
 
-          <TextField
-            label="Email"
-            variant="filled"
-            type="email"
-            value={email}
-            fullWidth
-            margin="normal"
-            onChange={(e) => setEmail(e.target.value)}
-            InputProps={{ style: { color: "#fff" } }}
-            InputLabelProps={{ style: { color: "#f0f0f0" } }}
-          />
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(login)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white/90">Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="Nhập email của bạn"
+                          className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-300" />
+                    </FormItem>
+                  )}
+                />
 
-          <TextField
-            label="Mật khẩu"
-            variant="filled"
-            type="password"
-            value={password}
-            fullWidth
-            margin="normal"
-            onChange={(e) => setPassword(e.target.value)}
-            InputProps={{ style: { color: "#fff" } }}
-            InputLabelProps={{ style: { color: "#f0f0f0" } }}
-          />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white/90">Mật khẩu</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Nhập mật khẩu của bạn"
+                          className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/20"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-300" />
+                    </FormItem>
+                  )}
+                />
 
-          <Button
-            variant="contained"
-            fullWidth
-            size="large"
-            sx={{
-              mt: 2,
-              backgroundColor: "#e91e63",
-              ":hover": { backgroundColor: "#d81b60" },
-            }}
-            onClick={login}
-          >
-            ĐĂNG NHẬP
-          </Button>
-        </Paper>
-      </Fade>
-    </Grid>
+                <Button
+                  type="submit"
+                  className="cursor-pointer w-full mt-6 bg-black hover:bg-gray-900 text-white font-medium py-2.5 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  size="lg"
+                >
+                  ĐĂNG NHẬP
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
 

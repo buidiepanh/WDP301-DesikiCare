@@ -1,57 +1,108 @@
 .appBar {
-  background-color: #ec407a;
-  padding-top: 8px;
-  padding-bottom: 8px;
+  background: linear-gradient(135deg, #ec407a 0%, #d81b60 100%) !important;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  box-shadow: 0 4px 20px rgba(236, 64, 122, 0.3) !important;
+  backdrop-filter: blur(10px);
 }
 
 .toolbar {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   flex-wrap: wrap;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .logoSloganBox {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .logoImg {
-  height: 60px;
-  border-radius: 40px;
+  height: 64px;
+  width: 64px;
+  border-radius: 50%;
   cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.logoImg:hover {
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.sloganText {
+  color: white !important;
+  font-weight: 500 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .menuSearchBox {
   display: flex;
   flex-direction: column;
-  align-items: center; 
+  align-items: center;
   gap: 8px;
   flex: 1;
   color: white;
-  margin-left: 56px;
-  margin-right: 36px;
-  max-width: 600px; 
+  margin-left: 48px;
+  margin-right: 32px;
+  max-width: 600px;
+}
+
+.searchField {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-radius: 25px !important;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.searchField:hover {
+  background-color: white !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.searchField .MuiOutlinedInput-root {
+  border-radius: 25px !important;
+}
+
+.searchField .MuiOutlinedInput-notchedOutline {
+  border: none !important;
+}
+
+.searchButton {
+  background: linear-gradient(135deg, #ec407a, #d81b60) !important;
+  color: white !important;
+  border-radius: 50% !important;
+  transition: all 0.3s ease !important;
+}
+
+.searchButton:hover {
+  background: linear-gradient(135deg, #d81b60, #c2185b) !important;
+  transform: scale(1.1) !important;
 }
 
 .menuItems {
   display: flex;
-  gap: 16px;
+  gap: 24px;
   flex-wrap: wrap;
   font-size: 14px;
   font-weight: 500;
-}
-
-.searchInput {
-  width: 100% !important;
-  margin-left: 0; 
+  cursor: pointer;
 }
 
 .iconsMenu {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   color: white;
   margin-left: 16px;
 }
@@ -62,42 +113,177 @@
   align-items: center;
   cursor: pointer;
   text-align: center;
-  min-width: 60px;
+  min-width: 70px;
+  padding: 8px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.iconBox:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.iconBox .MuiIconButton-root {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.iconBox .MuiIconButton-root:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.iconBox .MuiTypography-caption {
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .authButtons {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   cursor: pointer;
-  margin-top: 35px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.authButtons:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
 }
 
 .cartLogoutGroup {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   margin-left: 16px;
+}
+
+.cartButton {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  padding: 10px !important;
+  transition: all 0.3s ease !important;
+}
+
+.cartButton:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  transform: scale(1.1) !important;
 }
 
 .shoppingCartIcon {
   color: white;
+  font-size: 24px !important;
 }
 
 .loginText {
   cursor: pointer;
-  transition: color 0.3s ease, text-decoration 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 8px;
 }
 
 .loginText:hover {
-  color: #ffd54f;
-  text-decoration: underline;
+  color: #ffd54f !important;
+  background-color: rgba(255, 255, 255, 0.1);
   transform: scale(1.05);
 }
 
 .userInfoBox {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.userInfoBox:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.userInfoBox .MuiSvgIcon-root {
+  font-size: 24px;
+}
+
+.userInfoBox .MuiTypography-root {
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+.logoutButton {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  padding: 10px !important;
+  transition: all 0.3s ease !important;
+}
+
+.logoutButton:hover {
+  background-color: rgba(255, 69, 58, 0.2) !important;
+  transform: scale(1.1) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .menuSearchBox {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+
+  .iconsMenu {
+    gap: 16px;
+  }
+
+  .iconBox {
+    min-width: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .logoSloganBox {
+    justify-content: center;
+  }
+
+  .menuSearchBox {
+    margin: 0;
+    order: 3;
+  }
+
+  .iconsMenu {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    order: 2;
+  }
+
+  .iconBox {
+    flex-direction: row;
+    gap: 6px;
+    min-width: auto;
+  }
+
+  .iconBox .MuiTypography-caption {
+    margin-top: 0;
+  }
 }

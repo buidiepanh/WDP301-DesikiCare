@@ -1,0 +1,354 @@
+/* Spinning Wheel Container - Fixed */
+.spinning-wheel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  /* Removed min-height: 500px - không cần thiết */
+}
+
+.wheel-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  /* Không set height cố định */
+}
+
+/* SVG Spinning Wheel */
+.spinning-wheel-svg {
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #fff, 0 0 0 8px #ec407a,
+    0 10px 30px rgba(236, 64, 122, 0.3);
+  transition: transform 4s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-origin: center center;
+  background: #fff;
+}
+
+/* Spinning Animation */
+.spinning-wheel-svg.spinning {
+  transition: transform 4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* SVG Elements */
+.wheel-svg {
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.wheel-sector-svg {
+  transition: filter 0.3s ease;
+  cursor: pointer;
+}
+
+.wheel-sector-svg:hover {
+  filter: brightness(1.1);
+}
+
+.wheel-center-svg {
+  filter: drop-shadow(0 2px 8px rgba(236, 64, 122, 0.3));
+}
+
+.center-icon-svg {
+  animation: pulse 2s infinite;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* Wheel Pointer - Adjusted positioning */
+.wheel-pointer {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 40px solid #ec407a;
+  z-index: 20;
+  filter: drop-shadow(0 4px 8px rgba(236, 64, 122, 0.4));
+  animation: pointer-bounce 2s infinite ease-in-out;
+}
+
+/* Buttons - Compact spacing */
+.spin-button {
+  margin-top: 20px !important;
+  padding: 16px 40px !important;
+  font-size: 1.3rem !important;
+  font-weight: bold !important;
+  background: linear-gradient(135deg, #ec407a, #f06292) !important;
+  border-radius: 30px !important;
+  box-shadow: 0 6px 20px rgba(236, 64, 122, 0.4) !important;
+  transition: all 0.3s ease !important;
+  text-transform: none !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.spin-button:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(236, 64, 122, 0.5) !important;
+}
+
+.spin-button:disabled {
+  background: #ccc !important;
+  transform: none !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+.spinning-button {
+  animation: button-pulse 1s infinite;
+}
+
+.complete-button {
+  background: linear-gradient(135deg, #4caf50, #66bb6a) !important;
+  animation: success-glow 2s infinite;
+}
+
+/* Game Stats - Compact */
+.game-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ec407a;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+.game-header {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #ec407a, #f06292);
+  color: white;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+
+.back-button {
+  margin: 10px !important;
+  color: #ec407a !important;
+  border-color: #ec407a !important;
+}
+
+.back-button:hover {
+  background-color: #ec407a !important;
+  color: white !important;
+}
+
+/* Result Animation - Compact spacing */
+.result-animation {
+  animation: result-appear 0.8s ease-out;
+  border: 2px solid #ec407a !important;
+  margin-top: 15px !important; /* Reduced from 24px */
+}
+
+/* Animations */
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes pointer-bounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-5px);
+  }
+}
+
+@keyframes button-pulse {
+  0%,
+  100% {
+    box-shadow: 0 6px 20px rgba(236, 64, 122, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(236, 64, 122, 0.8);
+  }
+}
+
+@keyframes success-glow {
+  0%,
+  100% {
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.8);
+  }
+}
+
+@keyframes result-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.spinner-icon {
+  display: inline-block;
+  animation: rotate 1s linear infinite;
+  margin-right: 8px;
+}
+
+.play-icon {
+  margin-right: 8px;
+  animation: bounce-icon 2s infinite;
+}
+
+.trophy-icon {
+  margin-right: 8px;
+  animation: trophy-shine 2s infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce-icon {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-3px);
+  }
+  60% {
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes trophy-shine {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.1);
+    filter: brightness(1.3);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .spinning-wheel-container {
+    padding: 15px; /* Reduced padding on mobile */
+  }
+
+  .wheel-container {
+    margin: 15px 0; /* Reduced margin on mobile */
+  }
+
+  .spinning-wheel-svg {
+    transform: scale(0.8);
+  }
+
+  .wheel-pointer {
+    border-left-width: 15px;
+    border-right-width: 15px;
+    border-top-width: 30px;
+  }
+
+  .spin-button {
+    padding: 12px 30px !important;
+    font-size: 1.1rem !important;
+    margin-top: 15px !important; /* Reduced margin on mobile */
+  }
+
+  .game-stats {
+    margin: 8px 0; /* Reduced margin on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .spinning-wheel-container {
+    padding: 10px; /* Further reduced padding */
+  }
+
+  .wheel-container {
+    margin: 10px 0; /* Further reduced margin */
+  }
+
+  .spinning-wheel-svg {
+    transform: scale(0.7);
+  }
+
+  .game-stats {
+    flex-direction: column;
+    gap: 10px;
+    margin: 5px 0; /* Minimal margin */
+  }
+
+  .stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .result-animation {
+    margin-top: 10px !important; /* Minimal margin on small screens */
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .spinning-wheel-svg,
+  .spinning-wheel-svg.spinning {
+    transition: none;
+  }
+
+  .wheel-pointer,
+  .center-icon-svg,
+  .spin-button,
+  .spinner-icon,
+  .play-icon {
+    animation: none;
+  }
+}
+
+/* Remove any global styles that might be causing issues */
+.spinning-wheel-container * {
+  box-sizing: border-box;
+}
+
+/* Ensure no unwanted margins/paddings */
+.spinning-wheel-container > * {
+  margin-left: auto;
+  margin-right: auto;
+}

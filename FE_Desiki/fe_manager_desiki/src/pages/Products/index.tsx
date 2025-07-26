@@ -1,353 +1,68 @@
-import { CircularProgress, Chip, IconButton, Button } from "@mui/material";
-import { useCallback, useEffect, useMemo, useState } from "react";
+"use client";
+
+import { CircularProgress } from "@mui/material";
+import { useEffect, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
-// import "ag-grid-community/styles/ag-grid.css";
+import type { ColDef } from "ag-grid-community";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import { Delete, Edit, Visibility } from "@mui/icons-material";
+import "@/styles/ag-grid-glassmophorism.css";
+import { Edit, Visibility } from "@mui/icons-material";
 import BlockIcon from "@mui/icons-material/Block";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { ProductDetailPopup } from "./ProductDetailPopup";
 import {
   categoriesData,
-  productsData,
   skinStatusesData,
   skinTypesData,
 } from "../../data/mockData";
 import { ProductEditPopup } from "./ProductEditPopup";
 import Swal from "sweetalert2";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import type { ProductAPI, SkinStatus, SkinType } from "../../data/types";
 import { callAPIManager } from "../../api/axiosInstace";
-import { token } from "../../api/token";
 
-const data = [
-  {
-    product: {
-      _id: "p1",
-      categoryId: 1,
-      name: "Hydrating Cleanser",
-      description: "A gentle cleanser for daily use.",
-      volume: 150,
-      salePrice: 250000,
-      isDeactivated: false,
-      createdAt: "2025-06-05T01:03:33.421Z",
-      updatedAt: "2025-06-05T01:03:33.421Z",
-      imageUrl:
-        "https://i.pinimg.com/736x/45/e8/ad/45e8ade79968a9223b43e1ce177245fc.jpg",
-    },
-    shipmentProducts: [
-      {
-        shipment: {
-          _id: "s1",
-          shipmentDate: "2025-06-01",
-          createdAt: "2025-06-01T10:00:00.000Z",
-          updatedAt: "2025-06-01T10:00:00.000Z",
-        },
-        shipmentProduct: {
-          _id: "sp1",
-          productId: "p1",
-          shipmentId: "s1",
-          quantity: 100,
-          manufacturingDate: "2025-05-01",
-          expiryDate: "2027-05-01",
-          buyPrice: 150000,
-          createdAt: "2025-06-01T10:00:00.000Z",
-          updatedAt: "2025-06-01T10:00:00.000Z",
-        },
-      },
-    ],
-    productSkinTypes: [
-      {
-        _id: 1,
-        name: "Dry Skin",
-      },
-    ],
-    productSkinStatuses: [
-      {
-        _id: 1,
-        name: "Sensitive",
-      },
-    ],
-  },
-  {
-    product: {
-      _id: "p2",
-      categoryId: 2,
-      name: "Oil-Free Moisturizer",
-      description: "Lightweight moisturizer for oily skin.",
-      volume: 100,
-      salePrice: 320000,
-      isDeactivated: false,
-      createdAt: "2025-06-05T01:03:33.421Z",
-      updatedAt: "2025-06-05T01:03:33.421Z",
-      imageUrl:
-        "https://i.pinimg.com/736x/7b/89/e3/7b89e30e2a80726c32d3c7fed63b6856.jpg",
-    },
-    shipmentProducts: [
-      {
-        shipment: {
-          _id: "s2",
-          shipmentDate: "2025-05-25",
-          createdAt: "2025-05-25T09:30:00.000Z",
-          updatedAt: "2025-05-25T09:30:00.000Z",
-        },
-        shipmentProduct: {
-          _id: "sp2",
-          productId: "p2",
-          shipmentId: "s2",
-          quantity: 150,
-          manufacturingDate: "2025-04-20",
-          expiryDate: "2027-04-20",
-          buyPrice: 180000,
-          createdAt: "2025-05-25T09:30:00.000Z",
-          updatedAt: "2025-05-25T09:30:00.000Z",
-        },
-      },
-    ],
-    productSkinTypes: [
-      {
-        _id: 2,
-        name: "Oily Skin",
-      },
-    ],
-    productSkinStatuses: [
-      {
-        _id: 2,
-        name: "Acne-Prone",
-      },
-    ],
-  },
-  {
-    product: {
-      _id: "p3",
-      categoryId: 3,
-      name: "Vitamin C Serum",
-      description: "Brightens and evens out skin tone.",
-      volume: 30,
-      salePrice: 450000,
-      isDeactivated: false,
-      createdAt: "2025-06-05T01:03:33.421Z",
-      updatedAt: "2025-06-05T01:03:33.421Z",
-      imageUrl:
-        "https://i.pinimg.com/736x/cd/e7/57/cde7577c542140868d776dca0e9b2def.jpg",
-    },
-    shipmentProducts: [
-      {
-        shipment: {
-          _id: "s3",
-          shipmentDate: "2025-05-15",
-          createdAt: "2025-05-15T11:00:00.000Z",
-          updatedAt: "2025-05-15T11:00:00.000Z",
-        },
-        shipmentProduct: {
-          _id: "sp3",
-          productId: "p3",
-          shipmentId: "s3",
-          quantity: 80,
-          manufacturingDate: "2025-03-30",
-          expiryDate: "2027-03-30",
-          buyPrice: 270000,
-          createdAt: "2025-05-15T11:00:00.000Z",
-          updatedAt: "2025-05-15T11:00:00.000Z",
-        },
-      },
-    ],
-    productSkinTypes: [
-      {
-        _id: 3,
-        name: "Normal Skin",
-      },
-    ],
-    productSkinStatuses: [
-      {
-        _id: 3,
-        name: "Dull",
-      },
-    ],
-  },
-  {
-    product: {
-      _id: "p4",
-      categoryId: 4,
-      name: "Exfoliating Toner",
-      description: "Gently removes dead skin cells.",
-      volume: 120,
-      salePrice: 280000,
-      isDeactivated: false,
-      createdAt: "2025-06-05T01:03:33.421Z",
-      updatedAt: "2025-06-05T01:03:33.421Z",
-      imageUrl:
-        "https://i.pinimg.com/736x/ee/b6/d5/eeb6d52183d304b815a31e05720ca5eb.jpg",
-    },
-    shipmentProducts: [
-      {
-        shipment: {
-          _id: "s4",
-          shipmentDate: "2025-05-10",
-          createdAt: "2025-05-10T08:45:00.000Z",
-          updatedAt: "2025-05-10T08:45:00.000Z",
-        },
-        shipmentProduct: {
-          _id: "sp4",
-          productId: "p4",
-          shipmentId: "s4",
-          quantity: 120,
-          manufacturingDate: "2025-04-01",
-          expiryDate: "2027-04-01",
-          buyPrice: 160000,
-          createdAt: "2025-05-10T08:45:00.000Z",
-          updatedAt: "2025-05-10T08:45:00.000Z",
-        },
-      },
-    ],
-    productSkinTypes: [
-      {
-        _id: 4,
-        name: "Combination Skin",
-      },
-    ],
-    productSkinStatuses: [
-      {
-        _id: 4,
-        name: "Uneven Texture",
-      },
-    ],
-  },
-  {
-    product: {
-      _id: "p5",
-      categoryId: 5,
-      name: "Night Repair Cream",
-      description: "Deeply nourishes skin overnight.",
-      volume: 50,
-      salePrice: 390000,
-      isDeactivated: false,
-      createdAt: "2025-06-05T01:03:33.421Z",
-      updatedAt: "2025-06-05T01:03:33.421Z",
-      imageUrl:
-        "https://down-vn.img.susercontent.com/file/4111dcf10173cfe0c75ae22766890dfe@resize_w900_nl.webp",
-    },
-    shipmentProducts: [
-      {
-        shipment: {
-          _id: "s5",
-          shipmentDate: "2025-05-05",
-          createdAt: "2025-05-05T07:00:00.000Z",
-          updatedAt: "2025-05-05T07:00:00.000Z",
-        },
-        shipmentProduct: {
-          _id: "sp5",
-          productId: "p5",
-          shipmentId: "s5",
-          quantity: 90,
-          manufacturingDate: "2025-03-15",
-          expiryDate: "2027-03-15",
-          buyPrice: 230000,
-          createdAt: "2025-05-05T07:00:00.000Z",
-          updatedAt: "2025-05-05T07:00:00.000Z",
-        },
-      },
-    ],
-    productSkinTypes: [
-      {
-        _id: 5,
-        name: "All Skin Types",
-      },
-    ],
-    productSkinStatuses: [
-      {
-        _id: 5,
-        name: "Aging",
-      },
-    ],
-  },
-  {
-    product: {
-      _id: "p6",
-      categoryId: 1,
-      name: "Advanced Repair Serum",
-      description:
-        "A multi-correctional serum for various skin types and issues.",
-      volume: 40,
-      salePrice: 520000,
-      isDeactivated: false,
-      createdAt: "2025-06-05T01:03:33.421Z",
-      updatedAt: "2025-06-05T01:03:33.421Z",
-      imageUrl:
-        "https://i.pinimg.com/736x/58/de/80/58de801f931c1d2f1700cab288d91f96.jpg",
-    },
-    shipmentProducts: [
-      {
-        shipment: {
-          _id: "s6",
-          shipmentDate: "2025-05-30",
-          createdAt: "2025-05-30T14:00:00.000Z",
-          updatedAt: "2025-05-30T14:00:00.000Z",
-        },
-        shipmentProduct: {
-          _id: "sp6",
-          productId: "p6",
-          shipmentId: "s6",
-          quantity: 200,
-          manufacturingDate: "2025-04-10",
-          expiryDate: "2027-04-10",
-          buyPrice: 310000,
-          createdAt: "2025-05-30T14:00:00.000Z",
-          updatedAt: "2025-05-30T14:00:00.000Z",
-        },
-      },
-    ],
-    productSkinTypes: [
-      {
-        _id: 1,
-        name: "Dry Skin",
-      },
-      {
-        _id: 2,
-        name: "Oily Skin",
-      },
-      {
-        _id: 3,
-        name: "Normal Skin",
-      },
-      {
-        _id: 4,
-        name: "Combination Skin",
-      },
-    ],
-    productSkinStatuses: [
-      {
-        _id: 1,
-        name: "Sensitive",
-      },
-      {
-        _id: 3,
-        name: "Dull",
-      },
-      {
-        _id: 4,
-        name: "Uneven Texture",
-      },
-      {
-        _id: 5,
-        name: "Aging",
-      },
-    ],
-  },
-];
+// Custom Glassmorphism Chip Component - FORCE dark theme
+const GlassChip = ({
+  label,
+  variant = "default",
+}: {
+  label: string;
+  variant?: "success" | "error" | "default";
+}) => {
+  const getVariantStyles = () => {
+    switch (variant) {
+      case "success":
+        return "bg-emerald-500/20 border-emerald-400/40 text-emerald-100 shadow-lg";
+      case "error":
+        return "bg-red-500/20 border-red-400/40 text-red-100 shadow-lg";
+      default:
+        return "bg-slate-500/20 border-slate-400/40 text-slate-100 shadow-lg";
+    }
+  };
+
+  return (
+    <span
+      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium backdrop-blur-sm border mr-1 mb-1 ${getVariantStyles()}`}
+      style={{
+        backdropFilter: "blur(8px)",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+      }}
+    >
+      {label}
+    </span>
+  );
+};
 
 const Products = () => {
   // STATES
   const [products, setProducts] = useState<ProductAPI[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  // Handle Actions of Product
   const [selectedProduct, setSelectedProduct] = useState<ProductAPI | null>(
     null
   );
   const [showDetailPopup, setShowDetailPopup] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
-  const [imgBase64, setImgBase64] = useState("");
+
   // HOOKS
   useEffect(() => {
     fetchAPI();
@@ -372,28 +87,65 @@ const Products = () => {
     }
   };
 
-  const columnDefs = [
+  const columnDefs: ColDef[] = [
     {
       headerName: "Ảnh",
       field: "product.imageUrl",
-      cellRenderer: (params: any) => (
-        <div className="flex items-center justify-center p-2">
-          <img
-            src={params.value}
-            alt="product"
-            style={{
-              width: 100,
-              height: 100,
-              objectFit: "cover",
-              borderRadius: 8,
-              margin: "auto",
-            }}
-          />
-        </div>
-      ),
+      cellRenderer: (params: any) => {
+        // Replace old ngrok URL with new one
+        let imageUrl = params.value;
+        if (
+          imageUrl &&
+          imageUrl.includes("9068-104-28-205-73.ngrok-free.app")
+        ) {
+          imageUrl = imageUrl.replace(
+            "https://9068-104-28-205-73.ngrok-free.app",
+            "https://a555-116-110-42-126.ngrok-free.app"
+          );
+        }
+
+        return (
+          <div className="flex items-center justify-center p-2">
+            <img
+              src={
+                imageUrl ||
+                "https://i.pinimg.com/736x/bf/b2/15/bfb2154f0173a6d4499896d1a56b19d0.jpg"
+              }
+              alt="product"
+              className="w-20 h-20 object-cover rounded-lg border border-white/30 shadow-lg"
+              style={{
+                backdropFilter: "blur(4px)",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+              }}
+            />
+          </div>
+        );
+      },
+      cellStyle: {
+        background: "transparent !important",
+        padding: "8px",
+      },
     },
-    { headerName: "ID", field: "product._id", filter: true },
-    { headerName: "Tên", field: "product.name", filter: true },
+    {
+      headerName: "ID",
+      field: "product._id",
+      filter: true,
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.9)",
+        background: "transparent !important",
+        fontFamily: "monospace",
+      },
+    },
+    {
+      headerName: "Tên",
+      field: "product.name",
+      filter: true,
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.95)",
+        fontWeight: "500",
+        background: "transparent !important",
+      },
+    },
     {
       headerName: "Giá bán",
       field: "product.salePrice",
@@ -403,11 +155,20 @@ const Products = () => {
           currency: "VND",
         }),
       sortable: true,
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.9)",
+        fontWeight: "600",
+        background: "transparent !important",
+      },
     },
     {
       headerName: "Dung tích",
       field: "product.volume",
       valueFormatter: (params: any) => `${params.value} ml`,
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.8)",
+        background: "transparent !important",
+      },
     },
     {
       headerName: "Số lượng",
@@ -418,90 +179,109 @@ const Products = () => {
           0
         ),
       sortable: true,
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.9)",
+        fontWeight: "500",
+        background: "transparent !important",
+      },
     },
     {
       headerName: "Tình trạng",
       field: "product.isDeactivated",
       cellRenderer: (params: any) => (
-        <Chip
-          label={params.value ? "Không hoạt động" : "Đang bán"}
-          color={params.value ? "error" : "success"}
-          size="small"
-        />
+        <div className="flex items-center h-full">
+          <GlassChip
+            label={params.value ? "Không hoạt động" : "Đang bán"}
+            variant={params.value ? "error" : "success"}
+          />
+        </div>
       ),
       filter: true,
+      cellStyle: {
+        background: "transparent !important",
+        display: "flex",
+        alignItems: "center",
+      },
     },
     {
       headerName: "Loại da",
       field: "productSkinTypes",
       cellRenderer: (params: any) => (
-        <>
+        <div className="flex flex-wrap items-center h-full py-2">
           {params.value.map((st: SkinType) => (
-            <Chip key={st._id} label={st.name} size="small" className="mr-1" />
+            <GlassChip key={st._id} label={st.name} />
           ))}
-        </>
+        </div>
       ),
       filter: true,
+      cellStyle: {
+        background: "transparent !important",
+      },
     },
     {
       headerName: "Tình trạng da",
       field: "productSkinStatuses",
       cellRenderer: (params: any) => (
-        <>
+        <div className="flex flex-wrap items-center h-full py-2">
           {params.value.map((ss: SkinStatus) => (
-            <Chip key={ss._id} label={ss.name} size="small" className="mr-1" />
+            <GlassChip key={ss._id} label={ss.name} />
           ))}
-        </>
+        </div>
       ),
       filter: true,
+      cellStyle: {
+        background: "transparent !important",
+      },
     },
     {
       headerName: "Thao tác",
       field: "product._id",
       cellRenderer: (params: any) => (
-        <div>
-          <IconButton
+        <div className="flex items-center gap-2 h-full">
+          <button
             onClick={() => handleViewDetail(params.data.product._id)}
-            color="primary"
+            className="p-2 rounded-lg bg-blue-500/20 border border-blue-400/40 text-blue-200 hover:bg-blue-500/30 transition-all duration-200 backdrop-blur-sm shadow-lg"
           >
             <Visibility fontSize="small" />
-          </IconButton>
-          <IconButton
+          </button>
+          <button
             onClick={() => handleEdit(params.data.product._id)}
-            color="info"
+            className="p-2 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-200 hover:bg-amber-500/30 transition-all duration-200 backdrop-blur-sm shadow-lg"
           >
             <Edit fontSize="small" />
-          </IconButton>
+          </button>
           {params.data.product.isDeactivated ? (
-            <IconButton
+            <button
               onClick={() => handleToggleActivate(params.data.product._id)}
-              color="error"
+              className="p-2 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 hover:bg-emerald-500/30 transition-all duration-200 backdrop-blur-sm shadow-lg"
             >
-              <CheckBoxIcon color="primary" fontSize="small" />
-            </IconButton>
+              <CheckBoxIcon fontSize="small" />
+            </button>
           ) : (
-            <IconButton
+            <button
               onClick={() => handleToggleActivate(params.data.product._id)}
-              color="error"
+              className="p-2 rounded-lg bg-red-500/20 border border-red-400/40 text-red-200 hover:bg-red-500/30 transition-all duration-200 backdrop-blur-sm shadow-lg"
             >
               <BlockIcon fontSize="small" />
-            </IconButton>
+            </button>
           )}
         </div>
       ),
+      cellStyle: {
+        background: "transparent !important",
+      },
     },
   ];
 
-  const autoSizeAllColumns = (params: GridReadyEvent) => {
+  const autoSizeAllColumns = (params: any) => {
     const allColumnIds: string[] = [];
-    params.columnApi.getAllColumns()?.forEach((col) => {
+    params.columnApi.getAllColumns()?.forEach((col: any) => {
       if (col.getColId()) allColumnIds.push(col.getColId());
     });
     params.columnApi.autoSizeColumns(allColumnIds, false);
   };
 
   const handleViewDetail = async (id: string) => {
-    // Call API Right Here To Get Product Details
     const product = products.filter((p) => p.product._id === id);
     setSelectedProduct(product[0]);
     setShowDetailPopup(true);
@@ -543,7 +323,7 @@ const Products = () => {
         Swal.fire("Lỗi", "Không thể cập nhật sản phẩm", "error");
       }
       onCloseEditModal();
-      fetchAPI(); // Reload danh sách sản phẩm
+      fetchAPI();
     } catch (err) {
       console.error("❌ Lỗi khi cập nhật sản phẩm:", err);
     }
@@ -576,7 +356,6 @@ const Products = () => {
   };
 
   const confirmToggleActivate = async (id: string, boolean: boolean) => {
-    // Call API to deactivate the Product
     try {
       const response = await callAPIManager({
         method: "PUT",
@@ -590,63 +369,84 @@ const Products = () => {
   };
 
   return (
-    <div className="w-full flex flex-col p-5">
-      <h1 className="text-black text-3xl font-bold">Manage Products</h1>
-      <p className="text-black text-xl font-normal">Quản lý sản phẩm.</p>
-      <div className="my-5 flex items-center justify-end w-full">
-        <Button
-          component={Link}
-          to={"/Products/create"}
-          variant="contained"
-          color="primary"
+    <div className="w-full flex flex-col p-0">
+      {/* Header Section */}
+      <div className="mb-8 backdrop-blur-xl bg-gray-400/20 border border-white/10 rounded-2xl p-6 shadow-2xl">
+        <h1 className="text-white text-3xl font-bold mb-2">Manage Products</h1>
+        <p className="text-white/70 text-lg">Quản lý sản phẩm của hệ thống.</p>
+      </div>
+
+      {/* Action Button */}
+      <div className="mb-6 flex items-center justify-end">
+        <Link to="/Products/create">
+          <button className="px-6 py-3 bg-blue-200/20 border border-blue-400/40 text-white rounded-xl hover:bg-blue-500/30 transition-all duration-200 backdrop-blur-sm font-medium shadow-lg">
+            Tạo sản phẩm mới
+          </button>
+        </Link>
+      </div>
+
+      {/* Data Grid Container */}
+      <div className="backdrop-blur-xl bg-gray-400/20 border border-white/10 rounded-2xl p-4 shadow-2xl">
+        <div
+          className="ag-theme-alpine w-full"
+          style={
+            {
+              width: "100%",
+              height: "100%",
+              minHeight: "500px",
+              "--ag-background-color": "transparent",
+              "--ag-foreground-color": "rgba(255, 255, 255, 0.9)",
+              "--ag-border-color": "rgba(255, 255, 255, 0.1)",
+            } as any
+          }
         >
-          Tạo sản phẩm mới
-        </Button>
+          {isLoading ? (
+            <div className="w-full h-full flex items-center justify-center py-20">
+              <div className="backdrop-blur-xl bg-black/20 border border-white/20 rounded-2xl p-8">
+                <CircularProgress sx={{ color: "rgba(255, 255, 255, 0.8)" }} />
+                <p className="text-white/80 mt-4 text-center">
+                  Đang tải dữ liệu...
+                </p>
+              </div>
+            </div>
+          ) : (
+            <AgGridReact
+              rowHeight={120}
+              rowData={products}
+              columnDefs={columnDefs}
+              domLayout="autoHeight"
+              onGridReady={autoSizeAllColumns}
+              animateRows={true}
+              pagination={true}
+              paginationPageSize={4}
+            />
+          )}
+        </div>
       </div>
-      <div
-        className="ag-theme-alpine w-full"
-        style={{ width: "100%", height: "100%", minHeight: "850px" }}
-      >
-        {isLoading ? (
-          <div className="w-full h-full flex items-center justify-center">
-            <CircularProgress />
-          </div>
-        ) : (
-          <AgGridReact
-            rowHeight={120}
-            rowData={products}
-            columnDefs={columnDefs}
-            domLayout="autoHeight"
-            onGridReady={autoSizeAllColumns}
-            animateRows={true}
-            pagination={true}
-            paginationPageSize={5} // hoặc 5, 20, tùy ý
-          />
-        )}
 
-        {showDetailPopup && selectedProduct && (
-          <ProductDetailPopup
-            product={selectedProduct}
-            onClose={onCloseDetailModal}
-          />
-        )}
+      {/* Modals */}
+      {showDetailPopup && selectedProduct && (
+        <ProductDetailPopup
+          product={selectedProduct as any}
+          onClose={onCloseDetailModal}
+        />
+      )}
 
-        {showEditPopup && selectedProduct && (
-          <ProductEditPopup
-            open={showEditPopup}
-            onClose={onCloseEditModal}
-            onSubmit={onSubmitEditProduct}
-            product={{
-              ...selectedProduct.product,
-              productSkinTypes: selectedProduct.productSkinTypes,
-              productSkinStatuses: selectedProduct.productSkinStatuses,
-            }}
-            categories={categoriesData}
-            skinTypes={skinTypesData}
-            skinStatuses={skinStatusesData}
-          />
-        )}
-      </div>
+      {showEditPopup && selectedProduct && (
+        <ProductEditPopup
+          open={showEditPopup}
+          onClose={onCloseEditModal}
+          onSubmit={onSubmitEditProduct}
+          product={{
+            ...selectedProduct.product,
+            productSkinTypes: selectedProduct.productSkinTypes,
+            productSkinStatuses: selectedProduct.productSkinStatuses,
+          }}
+          categories={categoriesData}
+          skinTypes={skinTypesData}
+          skinStatuses={skinStatusesData}
+        />
+      )}
     </div>
   );
 };

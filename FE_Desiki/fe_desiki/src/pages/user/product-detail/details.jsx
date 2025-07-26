@@ -17,6 +17,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import { addToCart, getAllProducts } from "../../../services/apiServices";
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
+import "./styles.css";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -93,27 +94,24 @@ function Details() {
   );
 
   return (
-    <div style={{ padding: "24px", background: "#fff" }}>
+    <div className="product-detail-container">
       <Button
         type="link"
         icon={<ArrowLeftOutlined />}
         onClick={() => navigate(-1)}
-        style={{ marginBottom: 24, color: "#ec407a" }}
+        className="back-button"
       >
         Quay lại
       </Button>
 
       <Row gutter={[32, 32]}>
         <Col xs={24} md={10}>
-          <Card
-            bordered={false}
-            style={{ background: "#fff0f5", padding: "16px", borderRadius: 8 }}
-          >
+          <Card className="product-image-card">
             <Image
               width="100%"
               src={product.imageUrl}
               alt={product.name}
-              style={{ borderRadius: 8 }}
+              className="product-image"
               fallback="https://via.placeholder.com/400x400"
             />
           </Card>
@@ -121,111 +119,74 @@ function Details() {
 
         {/* Product Info */}
         <Col xs={24} md={14}>
-          <Title level={3} style={{ marginBottom: 0, color: "#ec407a" }}>
-            {product.name}
-          </Title>
-          <Text type="secondary">{category?.name}</Text>
-
-          <div style={{ marginTop: 12 }}>
-            <Text strong style={{ fontSize: 20, color: "#ec407a" }}>
-              {product.salePrice.toLocaleString()} đ
+          <div className="product-info-container">
+            <Title level={2} className="product-title">
+              {product.name}
+            </Title>
+            <Text className="product-category">
+              {category?.name || "Chưa phân loại"}
             </Text>
+
+            <div className="product-price">
+              {product.salePrice.toLocaleString()} đ
+            </div>
+
+            <Divider className="divider-custom" />
+
+            <div className="info-section">
+              <Text className="info-label">Mô tả sản phẩm:</Text>
+              <div className="info-content">
+                {product.description || "Chưa có mô tả"}
+              </div>
+            </div>
+
+            <div className="info-section">
+              <Text className="info-label">Thể tích:</Text>
+              <div className="info-content">{product.volume} ml</div>
+            </div>
+
+            <div className="info-section">
+              <Text className="info-label">Loại da phù hợp:</Text>
+              <div className="tag-container">
+                {productSkinTypes && productSkinTypes.length > 0 ? (
+                  productSkinTypes.map((skin) => (
+                    <Tag key={skin._id} className="skin-tag skin-type-tag">
+                      {skin.name}
+                    </Tag>
+                  ))
+                ) : (
+                  <Text className="no-data-text">Chưa có cụ thể</Text>
+                )}
+              </div>
+            </div>
+
+            <div className="info-section">
+              <Text className="info-label">Tình trạng da:</Text>
+              <div className="tag-container">
+                {productSkinStatuses && productSkinStatuses.length > 0 ? (
+                  productSkinStatuses.map((status) => (
+                    <Tag key={status._id} className="skin-tag skin-status-tag">
+                      {status.name}
+                    </Tag>
+                  ))
+                ) : (
+                  <Text className="no-data-text">Chưa có cụ thể</Text>
+                )}
+              </div>
+            </div>
+
+            <Button
+              type="primary"
+              size="large"
+              onClick={() => handleAddToCart(productId)}
+              className="add-to-cart-btn"
+              block
+            >
+              Thêm vào giỏ hàng
+            </Button>
           </div>
-
-          <Divider />
-
-          <Paragraph>
-            <Text strong>Mô tả: </Text>
-            {product.description}
-          </Paragraph>
-
-          <Paragraph>
-            <Text strong>Thể tích: </Text>
-            {product.volume} ml
-          </Paragraph>
-
-          <Paragraph>
-            <Text strong>Loại da phù hợp: </Text>
-            <Space wrap>
-              {productSkinTypes.map((skin) => (
-                <Tag key={skin._id} color="blue">
-                  {skin.name}
-                </Tag>
-              ))}
-            </Space>
-          </Paragraph>
-
-          <Paragraph>
-            <Text strong>Tình trạng da: </Text>
-            <Space wrap>
-              {productSkinStatuses.map((status) => (
-                <Tag key={status._id} color="red">
-                  {status.name}
-                </Tag>
-              ))}
-            </Space>
-          </Paragraph>
-
-          <Row gutter={16} align="middle" style={{ marginTop: 12 }}>
-            <Col>
-              <Text strong>Số lượng còn lại:</Text>
-            </Col>
-            <Col>
-              <InputNumber min={1} value={totalQuantity} disabled />
-            </Col>
-          </Row>
-
-          <Button
-            type="primary"
-            size="large"
-            onClick={() => handleAddToCart(productId)}
-            style={{
-              marginTop: 24,
-              backgroundColor: "#ec407a",
-              borderColor: "#ec407a",
-              borderRadius: 6,
-            }}
-          >
-            Thêm vào giỏ hàng
-          </Button>
         </Col>
       </Row>
-
-      {/* Extra Info */}
-      <Divider />
-
-      <Title level={4}>Lô hàng gần nhất</Title>
-      {shipmentProducts.length > 0 ? (
-        <div>
-          {shipmentProducts.map(({ shipmentProduct, shipment }) => (
-            <Card key={shipmentProduct._id} style={{ marginBottom: 16 }}>
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Text strong>Ngày sản xuất:</Text>{" "}
-                  {dayjs(shipmentProduct.manufacturingDate).format(
-                    "DD/MM/YYYY"
-                  )}
-                </Col>
-                <Col span={12}>
-                  <Text strong>Hạn sử dụng:</Text>{" "}
-                  {dayjs(shipmentProduct.expiryDate).format("DD/MM/YYYY")}
-                </Col>
-              </Row>
-              <Row gutter={16} style={{ marginTop: 8 }}>
-                <Col span={12}>
-                  <Text strong>Giá nhập:</Text>{" "}
-                  {shipmentProduct.buyPrice.toLocaleString()} đ
-                </Col>
-                <Col span={12}>
-                  <Text strong>Số lượng:</Text> {shipmentProduct.quantity}
-                </Col>
-              </Row>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <Text type="secondary">Chưa có thông tin lô hàng</Text>
-      )}
     </div>
   );
 }

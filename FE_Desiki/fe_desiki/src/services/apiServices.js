@@ -1,11 +1,12 @@
 import axios from "../util/axios.customize";
+import axiosRaw from "../util/axios.raw";
 
-export const loginFunction = async (email, password) => {
+export const loginFunction = async (mail, pass) => {
   try {
     const login = await axios.post("/Account/login", {
       loginInfo: {
-        email,
-        password,
+        email: mail,
+        password: pass,
       },
     });
     return login.data;
@@ -121,8 +122,15 @@ export const changePassword = async (accountId, oldPassword, newPassword) => {
 };
 
 export const addAddress = async (accountId, payload) => {
-  const res = await axios.post(`/Account/accounts/${accountId}/deliveryAddresses`, payload);
-  return res.data;
+  try {
+    const res = await axios.post(
+      `/Account/accounts/${accountId}/deliveryAddresses`,
+      payload
+    );
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const setDefaultAddress = async (deliveryAddressId) => {
@@ -144,10 +152,11 @@ export const getAllOrders = async () => {
   return res.data.orders;
 };
 
-export const addNewOrder = async (point, address) => {
+export const addNewOrder = async (orderId, point, address) => {
   try {
     const result = await axios.post("/Order/orders", {
       order: {
+        newOrderId: orderId,
         pointUsed: point,
         deliveryAddressId: address,
       },
@@ -177,10 +186,22 @@ export const getPaymentUrlForCart = async (point, address) => {
       },
       metaData: {
         cancelUrl: `http://localhost:5173/cart`,
-        returnUrl: "http://localhost:5173/cart",
+        returnUrl: "http://localhost:5173/payment-return",
       },
     });
     return result.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getPaymentUrlForOrder = async (orderId) => {
+  try {
+    const res = await axios.post(`/Order/orders/${orderId}/getPaymentLink`, {
+      cancelUrl: "http://localhost:5173/profile",
+      returnUrl: "http://localhost:5173/payment-return",
+    });
+    return res.data;
   } catch (error) {
     console.log(error);
   }
@@ -199,6 +220,46 @@ export const getGamesEvent = async () => {
   try {
     const result = await axios.get("/Game/gameEvents");
     return result.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateGamePoints = async (gameEventId, points) => {
+  try {
+    // Thay thế bằng API endpoint thực tế của bạn
+    const result = axios.post("/Game/gameEventsRewards", {
+      gameEventReward: {
+        gameEventId: gameEventId,
+        points: points,
+      },
+    });
+    if (result && result.status === 200) {
+      return true;
+    } else {
+      throw new Error("Failed to update points");
+    }
+  } catch (error) {
+    console.error("Error updating game points:", error);
+    throw error;
+  }
+};
+
+export const getPointHistory = async () => {
+  try {
+    const res = await axios.get("/Game/gameEventsRewards/me");
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getProvince = async () => {
+  try {
+    const res = await axiosRaw.get(
+      "https://provinces.open-api.vn/api/?depth=3"
+    );
+    return res.data;
   } catch (error) {
     console.log(error);
   }
