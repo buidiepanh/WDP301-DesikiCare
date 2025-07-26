@@ -105,6 +105,7 @@ const Cart = () => {
         pointUsing ? user?.points || 0 : 0,
         defaultAddress._id
       );
+      sessionStorage.setItem("isPaid", "true");
       window.location.href = result.paymentLink;
     } catch (error) {
       toast.error("Thanh toán thất bại.");
@@ -121,6 +122,7 @@ const Cart = () => {
 
     try {
       const result = await addNewOrder(
+        null,
         pointUsing ? user?.points || 0 : 0,
         defaultAddress._id
       );

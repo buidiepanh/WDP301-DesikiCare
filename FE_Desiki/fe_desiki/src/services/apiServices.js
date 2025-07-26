@@ -152,10 +152,11 @@ export const getAllOrders = async () => {
   return res.data.orders;
 };
 
-export const addNewOrder = async (point, address) => {
+export const addNewOrder = async (orderId, point, address) => {
   try {
     const result = await axios.post("/Order/orders", {
       order: {
+        newOrderId: orderId,
         pointUsed: point,
         deliveryAddressId: address,
       },
@@ -185,7 +186,7 @@ export const getPaymentUrlForCart = async (point, address) => {
       },
       metaData: {
         cancelUrl: `http://localhost:5173/cart`,
-        returnUrl: "http://localhost:5173/cart",
+        returnUrl: "http://localhost:5173/payment-return",
       },
     });
     return result.data;
