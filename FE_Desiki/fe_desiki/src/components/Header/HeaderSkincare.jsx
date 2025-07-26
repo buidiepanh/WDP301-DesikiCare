@@ -100,26 +100,17 @@ const HeaderSkincare = () => {
 
   return (
     <>
-      <AppBar
-        position="fixed"
-        className={styles.appBar}
-        sx={{
-          backgroundColor: "#ec407a",
-          paddingTop: "8px",
-          paddingBottom: "8px",
-        }}
-      >
+      <AppBar position="fixed" className={styles.appBar} elevation={0}>
         <Toolbar className={styles.toolbar}>
           <Box className={styles.logoSloganBox}>
             <img
               src={logo}
-              alt="Logo"
+              alt="Desiki Care Logo"
               className={styles.logoImg}
               onClick={() => handleLogoClick()}
-              style={{ cursor: "pointer" }}
             />
             <Box>
-              <Typography fontSize={14}>
+              <Typography className={styles.sloganText} fontSize={14}>
                 Chất lượng thật - Giá trị thật
               </Typography>
             </Box>
@@ -136,17 +127,22 @@ const HeaderSkincare = () => {
               variant="outlined"
               size="small"
               fullWidth
+              className={styles.searchField}
               sx={{
-                backgroundColor: "white",
-                borderRadius: "4px",
-                input: {
-                  padding: "10px 14px",
+                "& .MuiInputBase-input": {
+                  padding: "12px 16px",
+                  fontSize: "14px",
                 },
               }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={handleSearchFunction} edge="end">
+                    <IconButton
+                      onClick={handleSearchFunction}
+                      edge="end"
+                      className={styles.searchButton}
+                      size="small"
+                    >
                       <SearchIcon />
                     </IconButton>
                   </InputAdornment>
@@ -172,7 +168,11 @@ const HeaderSkincare = () => {
 
             {userName ? (
               <Box className={styles.cartLogoutGroup}>
-                <IconButton color="inherit" onClick={() => navigate("/cart")}>
+                <IconButton
+                  color="inherit"
+                  onClick={() => navigate("/cart")}
+                  className={styles.cartButton}
+                >
                   <Badge badgeContent={0} color="error">
                     <ShoppingCartOutlined className={styles.shoppingCartIcon} />
                   </Badge>
@@ -181,19 +181,19 @@ const HeaderSkincare = () => {
                 <Box
                   className={styles.userInfoBox}
                   onClick={() => navigate("/profile")}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    cursor: "pointer",
-                  }}
                 >
                   <AccountCircle />
-                  <Typography variant="body2" sx={{ ml: 0.5, color: "white" }}>
+                  <Typography variant="body2">
                     {user?.account?.points ?? 0} điểm
                   </Typography>
                 </Box>
 
-                <IconButton color="inherit" onClick={handleLogout}>
+                <IconButton
+                  color="inherit"
+                  onClick={handleLogout}
+                  className={styles.logoutButton}
+                  title="Đăng xuất"
+                >
                   <Logout />
                 </IconButton>
               </Box>
@@ -205,7 +205,9 @@ const HeaderSkincare = () => {
                 >
                   Đăng nhập
                 </Typography>
-                <span>/</span>
+                <Typography sx={{ color: "rgba(255, 255, 255, 0.7)" }}>
+                  /
+                </Typography>
                 <Typography
                   onClick={() => navigate("/register")}
                   className={styles.loginText}

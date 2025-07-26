@@ -45,6 +45,7 @@ import { getGamesEvent, updateGamePoints } from "../services/apiServices";
 import { IconButton, Badge } from "@mui/material";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import { GamesModal } from "./components/gamesModal";
+import toast from "react-hot-toast";
 
 function UserRouter() {
   const [isGameAvailable, setIsGameAvailable] = useState(false);
@@ -77,8 +78,6 @@ function UserRouter() {
   const fetchGames = async () => {
     try {
       const response = await getGamesEvent();
-      console.log("Games: ", response);
-      console.log("Length: ", response.gameEvents.length);
       if (response && response.gameEvents.length !== 0) {
         setIsGameAvailable(true);
         setGames(response);
@@ -99,7 +98,9 @@ function UserRouter() {
     try {
       const response = updateGamePoints(id, points);
       if (response) {
-        alert(`Cập nhật điểm thưởng thành công cho bạn với số điểm: ${points}`);
+        toast.success(
+          `Cập nhật điểm thưởng thành công cho bạn với số điểm: ${points}`
+        );
 
         setIsShowGamesModal(false);
         await fetchGames();

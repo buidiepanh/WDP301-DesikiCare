@@ -1,4 +1,5 @@
 import axios from "../util/axios.customize";
+import axiosRaw from "../util/axios.raw";
 
 export const loginFunction = async (mail, pass) => {
   try {
@@ -151,10 +152,11 @@ export const getAllOrders = async () => {
   return res.data.orders;
 };
 
-export const addNewOrder = async (point, address) => {
+export const addNewOrder = async (orderId, point, address) => {
   try {
     const result = await axios.post("/Order/orders", {
       order: {
+        newOrderId: orderId,
         pointUsed: point,
         deliveryAddressId: address,
       },
@@ -184,7 +186,7 @@ export const getPaymentUrlForCart = async (point, address) => {
       },
       metaData: {
         cancelUrl: `http://localhost:5173/cart`,
-        returnUrl: "http://localhost:5173/cart",
+        returnUrl: "http://localhost:5173/payment-return",
       },
     });
     return result.data;
@@ -240,5 +242,25 @@ export const updateGamePoints = async (gameEventId, points) => {
   } catch (error) {
     console.error("Error updating game points:", error);
     throw error;
+  }
+};
+
+export const getPointHistory = async () => {
+  try {
+    const res = await axios.get("/Game/gameEventsRewards/me");
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getProvince = async () => {
+  try {
+    const res = await axiosRaw.get(
+      "https://provinces.open-api.vn/api/?depth=3"
+    );
+    return res.data;
+  } catch (error) {
+    console.log(error);
   }
 };
