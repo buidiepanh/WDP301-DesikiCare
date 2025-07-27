@@ -142,6 +142,20 @@ export class OrderController {
     };
   }
 
+  // Danh sách đơn hàng (Dashboard) trả về status = 3 và nhận về startDate, endDate trong query (dd-MM-yyyy)
+  @Get('revenueDashboard')
+  @Roles("admin", "manager")
+  @UseGuards(RolesGuard)
+  async getRevenueDashboard(
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string
+  ) {
+    const orders = await this.ordersService.getRevenueDashboard(startDate, endDate);
+    return {
+      orders: orders,
+    };
+  }
+
   // Chi tiết đơn hàng (bao gồm orderItems)
   @Get('orders/:orderId')
   @UseGuards(LoginJwtGuard)

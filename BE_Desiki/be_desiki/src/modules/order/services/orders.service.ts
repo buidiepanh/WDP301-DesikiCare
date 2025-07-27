@@ -242,8 +242,8 @@ export class OrdersService {
                 accountId: account._id,
                 isActive: true,
             }, session);
-            
-            
+
+
             await session.commitTransaction();
             return newObjectId;
 
@@ -253,6 +253,74 @@ export class OrdersService {
             throw new HttpException('Failed to create order: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             session.endSession();
+        }
+    }
+
+    async getRevenueDashboard(startDate?: string, endDate?: string): Promise<any> {
+        try {
+            let start: Date | null = null;
+            let end: Date | null = null;
+
+            // Xử lý logic cho các trường hợp khác nhau
+            if (startDate && endDate) {
+                // Có cả Start và End => lấy từ 00:00 của Start đến 23:59:59 của End
+                const [startDay, startMonth, startYear] = startDate.split('-').map(Number);
+                const [endDay, endMonth, endYear] = endDate.split('-').map(Number);
+
+                start = new Date(startYear, startMonth - 1, startDay, 0, 0, 0, 0);
+                end = new Date(endYear, endMonth - 1, endDay, 23, 59, 59, 999);
+            }
+            else if (startDate && !endDate) {
+                // Chỉ có Start => lấy từ 00:00 đến 23:59:59 của StartDate
+                const [startDay, startMonth, startYear] = startDate.split('-').map(Number);
+
+                start = new Date(startYear, startMonth - 1, startDay, 0, 0, 0, 0);
+                end = new Date(startYear, startMonth - 1, startDay, 23, 59, 59, 999);
+            }
+            else if (!startDate && endDate) {
+                // Chỉ có End => lấy tất cả từ trước đến 23:59:59 của EndDate
+                const [endDay, endMonth, endYear] = endDate.split('-').map(Number);
+
+                start = null; // Không giới hạn start
+                end = new Date(endYear, endMonth - 1, endDay, 23, 59, 59, 999);
+            }
+            // Nếu không có cả hai => lấy tất cả orders với status = 3
+
+            console.log('Date range:', { start, end });
+
+            // Sử dụng repository method đã tối ưu
+            const orders = await this.orderRepository.findOrdersForRevenueDashboard(start, end);
+
+            console.log(`Found ${orders.length} orders matching criteria`);
+
+            // Process orders
+            const result = [];
+            for (const order of orders) {
+                const { orderItems, orderStatusId: orderStatus, ...orderBase } = order;
+                result.push({
+                    order: orderBase,
+                    orderStatus: orderStatus,
+                    orderItems: await Promise.all(orderItems.map(async (item) => {
+                        const { shipmentProductId: shipmentProduct, ...orderItemBase } = item;
+                        const { productId: product, ...shipmentProductBase } = shipmentProduct as any;
+
+                        return {
+                            orderItem: orderItemBase,
+                            shipmentProduct: shipmentProductBase,
+                            product: {
+                                ...product,
+                                imageUrl: await this.fileService.getImageUrl(this.configService.get<string>('imagePathConfig.PRODUCT_IMAGE_PATH'), product._id, "main")
+                            }
+
+                        }
+                    }
+                    ))
+                });
+            }
+
+            return result;
+        } catch (error) {
+            throw new HttpException('Error fetching revenue dashboard: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
