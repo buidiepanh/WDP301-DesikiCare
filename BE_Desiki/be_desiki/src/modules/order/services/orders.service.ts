@@ -243,8 +243,9 @@ export class OrdersService {
                 isActive: true,
             }, session);
             
-            return newObjectId;
+            
             await session.commitTransaction();
+            return newObjectId;
 
         } catch (error) {
             await session.abortTransaction();
