@@ -63,6 +63,44 @@ export class OrderRepository {
       .exec();
   }
 
+  async findOrdersForRevenueDashboard(start?: Date, end?: Date): Promise<OrderDocument[]> {
+    const query: any = { orderStatusId: 3 };
+
+    if (start && end) {
+      query.createdAt = {
+        $gte: start,
+        $lte: end
+      };
+    } else if (start && !end) {
+      query.createdAt = {
+        $gte: start,
+        $lte: end // end đã được set từ service
+      };
+    } else if (!start && end) {
+      query.createdAt = {
+        $lte: end
+      };
+    }
+    // Nếu không có cả hai, query chỉ có orderStatusId: 3
+
+    return this.orderModel
+      .find(query)
+      .populate('orderStatusId')
+      .populate({
+        path: 'orderItems',
+        populate: {
+          path: 'shipmentProductId',
+          model: 'ShipmentProduct',
+          populate: {
+            path: 'productId',
+            model: 'Product',
+          }
+        }
+      })
+      .lean()
+      .exec();
+  }
+
   async create(order: Order, session: ClientSession): Promise<Order> {
     // return this.orderModel.create(order);
     const created = new this.orderModel(order);
