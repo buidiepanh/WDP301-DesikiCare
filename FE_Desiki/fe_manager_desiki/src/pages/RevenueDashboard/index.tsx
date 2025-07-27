@@ -2,7 +2,6 @@
 
 import type React from "react";
 
-import { dashboardData } from "@/data/dashboardMockData";
 import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
@@ -27,6 +26,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { callAPIAuth } from "@/api/axiosInstace";
+import Swal from "sweetalert2";
 
 const categoriesData = [
   { _id: 1, name: "Sữa Rửa Mặt" },
@@ -115,60 +116,111 @@ const RevenueDashboard = () => {
     handleViewModeChange("today");
   }, []);
 
+  // HELPER FUNCTIONS
+  const formatDateToDDMMYYYY = (date: Date): string => {
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   // FUNCTIONS
+
   const handleViewModeChange = async (mode: string) => {
     setIsLoading(true);
     setViewMode(mode);
     try {
       const today = new Date();
       if (mode === "today") {
-        const todayStr = today.toISOString().split("T")[0];
-        const response = dashboardData.filter((item) => {
-          const createdAtDate = item.order.createdAt.split("T")[0];
-          return createdAtDate === todayStr;
+        const todayStr = formatDateToDDMMYYYY(today);
+        console.log("Gọi API với startDate là: ", todayStr);
+        console.log("Gọi API với endDate là: ", todayStr);
+        const response = await callAPIAuth({
+          method: "GET",
+          url: `/api/Order/revenueDashboard`,
+          data: {
+            startDate: todayStr,
+            endDate: null,
+          },
         });
-        await prepareData(response, todayStr, null, mode);
+        if (response && response.status === 200) {
+          await prepareData(response.data.orders, todayStr, null, mode);
+        }
       } else if (mode === "week") {
         const currentDay = (today.getDay() + 6) % 7;
         const firstDayOfWeek = new Date(today);
         firstDayOfWeek.setDate(today.getDate() - currentDay);
         firstDayOfWeek.setHours(0, 0, 0, 0);
+        const firstDayStr = formatDateToDDMMYYYY(firstDayOfWeek);
 
         const lastDayOfWeek = new Date(firstDayOfWeek);
         lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
         lastDayOfWeek.setHours(23, 59, 59, 999);
+        const lastDayStr = formatDateToDDMMYYYY(lastDayOfWeek);
 
-        const response = dashboardData.filter((item) => {
-          const createdAt = new Date(item.order.createdAt);
-          return createdAt >= firstDayOfWeek && createdAt <= lastDayOfWeek;
+        const response = await callAPIAuth({
+          method: "GET",
+          url: `/api/Order/revenueDashboard`,
+          data: {
+            startDate: firstDayStr,
+            endDate: lastDayStr,
+          },
         });
 
-        const { from, to } = getDateRangeFromData(response);
-        await prepareData(response, from, to, mode);
-      } else if (mode === "month") {
-        const currentMonth = today.getMonth();
-        const currentYear = today.getFullYear();
-
-        const response = dashboardData.filter((item) => {
-          const createdAt = new Date(item.order.createdAt);
-          return (
-            createdAt.getMonth() === currentMonth &&
-            createdAt.getFullYear() === currentYear
+        if (response && response.status === 200) {
+          await prepareData(
+            response.data.orders,
+            firstDayStr,
+            lastDayStr,
+            mode
           );
+        }
+      } else if (mode === "month") {
+        // Get first and last day of current month
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        const fromStr = formatDateToDDMMYYYY(firstDay);
+        const toStr = formatDateToDDMMYYYY(lastDay);
+
+        console.log("Gọi API với startDate là: ", fromStr);
+        console.log("Gọi API với endDate là: ", toStr);
+
+        const response = await callAPIAuth({
+          method: "GET",
+          url: `/api/Order/revenueDashboard`,
+          data: {
+            startDate: fromStr,
+            endDate: toStr,
+          },
         });
 
-        const { from, to } = getDateRangeFromData(response);
-        await prepareData(response, from, to, mode);
+        if (response && response.status === 200) {
+          await prepareData(response.data.orders, fromStr, toStr, mode);
+        }
       } else if (mode === "year") {
-        const currentYear = today.getFullYear();
+        // Get first and last day of current year
+        const firstDay = new Date(today.getFullYear(), 0, 1);
+        const lastDay = new Date(today.getFullYear(), 11, 31);
 
-        const response = dashboardData.filter((item) => {
-          const createdAt = new Date(item.order.createdAt);
-          return createdAt.getFullYear() === currentYear;
+        const fromStr = formatDateToDDMMYYYY(firstDay);
+        const toStr = formatDateToDDMMYYYY(lastDay);
+
+        console.log("Gọi API với startDate là: ", fromStr);
+        console.log("Gọi API với endDate là: ", toStr);
+
+        const response = await callAPIAuth({
+          method: "GET",
+          url: `/api/Order/revenueDashboard`,
+          data: {
+            startDate: fromStr,
+            endDate: toStr,
+          },
         });
 
-        const { from, to } = getDateRangeFromData(response);
-        await prepareData(response, from, to, mode);
+        if (response && response.status === 200) {
+          await prepareData(response.data.orders, fromStr, toStr, mode);
+        }
       }
     } catch (error) {
       console.log("Error while fetching dashboard: ", error);
@@ -177,31 +229,49 @@ const RevenueDashboard = () => {
     }
   };
 
-  const getDateRangeFromData = (data: any[]) => {
-    const dates = data.map((d) => new Date(d.order.createdAt));
-    const from = dates.reduce((a, b) => (a < b ? a : b)).toISOString();
-    const to = dates.reduce((a, b) => (a > b ? a : b)).toISOString();
-    return { from, to };
-  };
-
   const prepareData = async (
     data: any[],
     from: string | null,
     to: string | null,
     mode: string
   ) => {
-    const totalRevenue = data.reduce((acc, order) => {
+    console.log("=== DEBUG REVENUE CALCULATION ===");
+    console.log("Số đơn hàng:", data.length);
+
+    const totalRevenue = data.reduce((acc, order, orderIndex) => {
+      console.log(`\n--- Đơn hàng ${orderIndex + 1} ---`);
       const orderProfit = order.orderItems.reduce(
-        (orderAcc: number, item: any) => {
+        (orderAcc: number, item: any, itemIndex: number) => {
           const quantity = item.orderItem.quantity;
           const unitPrice = item.orderItem.unitPrice;
           const buyPrice = item.shipmentProduct.buyPrice;
-          return orderAcc + (unitPrice - buyPrice) * quantity;
+          const itemProfit = (unitPrice - buyPrice) * quantity;
+
+          console.log(`  Item ${itemIndex + 1}:`);
+          console.log(`    - Sản phẩm: ${item.product?.name || "N/A"}`);
+          console.log(`    - Số lượng: ${quantity}`);
+          console.log(`    - Giá bán: ${unitPrice}`);
+          console.log(`    - Giá nhập: ${buyPrice}`);
+          console.log(`    - Lợi nhuận item: ${itemProfit}`);
+
+          if (itemProfit < 0) {
+            console.warn(
+              `    ⚠️  CẢNH BÁO: Lợi nhuận âm! Giá nhập (${buyPrice}) > Giá bán (${unitPrice})`
+            );
+          }
+
+          return orderAcc + itemProfit;
         },
         0
       );
+
+      console.log(`  Tổng lợi nhuận đơn hàng: ${orderProfit}`);
       return acc + orderProfit;
     }, 0);
+
+    console.log(`\n=== TỔNG KẾT ===`);
+    console.log(`Tổng revenue: ${totalRevenue}`);
+    console.log("=================================\n");
 
     const amount = data.length;
     const revenueMap = new Map<number, { amount: number; revenue: number }>();
@@ -230,14 +300,24 @@ const RevenueDashboard = () => {
         const profit =
           (orderItem.unitPrice - shipmentProduct.buyPrice) * orderItem.quantity;
 
+        // Debug profit calculation for each item in category mapping
+        if (profit < 0) {
+          console.warn(`⚠️  Item trong category có lợi nhuận âm:`, {
+            product: product.name,
+            unitPrice: orderItem.unitPrice,
+            buyPrice: shipmentProduct.buyPrice,
+            quantity: orderItem.quantity,
+            profit: profit,
+          });
+        }
+
         const cat = revenueMap.get(product.categoryId) || {
           amount: 0,
           revenue: 0,
         };
         cat.amount += orderItem.quantity;
-        cat.revenue += profit;
+        cat.revenue += profit; // Vẫn cộng cả profit âm để thấy thực tế
         revenueMap.set(product.categoryId, cat);
-
         const prod = productMap.get(product._id) || {
           product,
           totalQuantity: 0,
@@ -366,8 +446,23 @@ const RevenueDashboard = () => {
             const quantity = item.orderItem.quantity;
             const unitPrice = item.orderItem.unitPrice;
             const buyPrice = item.shipmentProduct.buyPrice;
+            const itemRevenue = (unitPrice - buyPrice) * quantity;
+
             amount += quantity;
-            revenue += (unitPrice - buyPrice) * quantity;
+            revenue += itemRevenue;
+
+            if (itemRevenue < 0) {
+              console.warn(
+                `⚠️  Chart data - Item có revenue âm tại ${title}:`,
+                {
+                  product: item.product?.name,
+                  unitPrice,
+                  buyPrice,
+                  quantity,
+                  itemRevenue,
+                }
+              );
+            }
           }
         });
       });
@@ -467,7 +562,7 @@ const RevenueDashboard = () => {
               </div>
             </GlassCard>
 
-            <GlassCard className="p-6 flex flex-col items-start justify-between gap-3">
+            {/* <GlassCard className="p-6 flex flex-col items-start justify-between gap-3">
               <div className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-purple-400" />
                 <p className="text-white/70 text-md font-bold">
@@ -477,7 +572,7 @@ const RevenueDashboard = () => {
               <p className="text-white text-2xl font-bold">
                 {preparedData?.bestCustomer.fullName}
               </p>
-            </GlassCard>
+            </GlassCard> */}
           </div>
 
           {/* Revenue Chart */}
