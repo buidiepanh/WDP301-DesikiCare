@@ -138,7 +138,7 @@ export class OrderController {
     const newObjectId = await this.ordersService.createOrderFromActiveCart(user._id, body.order);
     return {
       message: 'Order created successfully',
-      newObjectId: newObjectId,
+      newOrderId: newObjectId,
     };
   }
 
