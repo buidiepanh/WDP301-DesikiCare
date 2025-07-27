@@ -145,6 +145,7 @@ export type Order = {
     pointUsed: number;
     totalPrice: number;
     orderStatusId: number;
+    isPaid: boolean;
     createdAt: string;
     updatedAt: string;
   };
