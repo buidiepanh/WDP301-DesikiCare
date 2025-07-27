@@ -40,11 +40,11 @@ const adminNavItems: NavItem[] = [
     path: "/MiniGames",
     icon: <Gamepad2 className="h-5 w-5" />,
   },
-  {
-    label: "Chatbot Config",
-    path: "/Chatbot",
-    icon: <MessageCircle className="h-5 w-5" />,
-  },
+  // {
+  //   label: "Chatbot Config",
+  //   path: "/Chatbot",
+  //   icon: <MessageCircle className="h-5 w-5" />,
+  // },
 ];
 
 const managerNavItems: NavItem[] = [

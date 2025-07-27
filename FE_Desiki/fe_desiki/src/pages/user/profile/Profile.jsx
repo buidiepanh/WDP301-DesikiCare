@@ -29,6 +29,8 @@ import {
   getOrderDetail,
   changePassword,
   getPaymentUrlForOrder,
+  getPointHistory,
+  getProvince,
 } from "../../../services/apiServices";
 import { UserOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -50,11 +52,14 @@ const Profile = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [avatarBase64, setAvatarBase64] = useState("");
   const [previewAvatar, setPreviewAvatar] = useState("");
+  const [history, setHistory] = useState([]);
+  const [provinceList, setProvinceList] = useState([]);
+  const [districtList, setDistrictList] = useState([]);
+  const [wardList, setWardList] = useState([]);
 
   const fetchProfile = async () => {
     try {
       const res = await getMe();
-      console.log("ALo: ", res);
       const acc = res.account;
 
       form.setFieldsValue({
@@ -82,6 +87,51 @@ const Profile = () => {
     } catch {
       message.error("Không thể tải danh sách đơn hàng.");
     }
+  };
+
+  const fetchPointsHistory = async () => {
+    try {
+      const res = await getPointHistory();
+      const formatted = res.gameEventRewardResults.map((item) => {
+        return {
+          points: item.gameEventRewardResult?.points,
+          createdAt: item.gameEventRewardResult?.createdAt,
+          gameEvent: {
+            eventName: item.gameEvent?.eventName,
+            gameName: item.gameEvent?.gameName,
+          },
+        };
+      });
+      setHistory(formatted);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchProvince = async () => {
+    try {
+      const res = await getProvince();
+      setProvinceList(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleProvinceChange = (provinceCode) => {
+    const selectedProvince = provinceList.find(
+      (item) => item.code === provinceCode
+    );
+    setDistrictList(selectedProvince?.districts || []);
+    addressForm.setFieldsValue({ districtCode: null, wardCode: null });
+    setWardList([]);
+  };
+
+  const handleDistrictChange = (districtCode) => {
+    const selectedDistrict = districtList.find(
+      (item) => item.code === districtCode
+    );
+    setWardList(selectedDistrict?.wards || []);
+    addressForm.setFieldsValue({ wardCode: null });
   };
 
   const handleUpdate = async (values) => {
@@ -217,9 +267,44 @@ const Profile = () => {
     return isPaid ? "green" : "red";
   };
 
+  const pointHistoryColumns = [
+    {
+      title: "Thời gian nhận",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (value) => dayjs(value).format("HH:mm DD/MM/YYYY"),
+    },
+    {
+      title: "Số điểm nhận",
+      dataIndex: "points",
+      key: "points",
+      render: (points) => (
+        <span style={{ color: "#2e7d32", fontWeight: "bold" }}>
+          {points} điểm
+        </span>
+      ),
+    },
+    {
+      title: "Tên game",
+      key: "gameName",
+      render: (_, record) => (
+        <div>
+          <div style={{ fontWeight: "bold" }}>
+            {record?.gameEvent?.gameName}
+          </div>
+          <div style={{ color: "#888", fontSize: 12 }}>
+            {record?.gameEvent?.eventName}
+          </div>
+        </div>
+      ),
+    },
+  ];
+
   useEffect(() => {
     fetchProfile();
     fetchOrders();
+    fetchPointsHistory();
+    fetchProvince();
   }, []);
 
   return (
@@ -335,42 +420,65 @@ const Profile = () => {
               onFinish={handleAddAddress}
             >
               <Form.Item
-                label="Tỉnh/Thành phố (mã số)"
+                label="Tỉnh/Thành phố"
                 name="provinceCode"
                 rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập mã tỉnh/thành phố (số)",
-                  },
+                  { required: true, message: "Vui lòng chọn tỉnh/thành phố" },
                 ]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <Select
+                  placeholder="Chọn tỉnh/thành phố"
+                  onChange={handleProvinceChange}
+                  showSearch
+                  optionFilterProp="children"
+                >
+                  {provinceList.map((province) => (
+                    <Option key={province.code} value={province.code}>
+                      {province.name}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
 
               <Form.Item
-                label="Quận/Huyện (mã số)"
+                label="Quận/Huyện"
                 name="districtCode"
                 rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập mã quận/huyện (số)",
-                  },
+                  { required: true, message: "Vui lòng chọn quận/huyện" },
                 ]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <Select
+                  placeholder="Chọn quận/huyện"
+                  onChange={handleDistrictChange}
+                  showSearch
+                  optionFilterProp="children"
+                  disabled={districtList.length === 0}
+                >
+                  {districtList.map((district) => (
+                    <Option key={district.code} value={district.code}>
+                      {district.name}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
 
               <Form.Item
-                label="Phường/Xã (mã số)"
+                label="Phường/Xã"
                 name="wardCode"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập mã phường/xã (số)",
-                  },
-                ]}
+                rules={[{ required: true, message: "Vui lòng chọn phường/xã" }]}
               >
-                <InputNumber style={{ width: "100%" }} />
+                <Select
+                  placeholder="Chọn phường/xã"
+                  showSearch
+                  optionFilterProp="children"
+                  disabled={wardList.length === 0}
+                >
+                  {wardList.map((ward) => (
+                    <Option key={ward.code} value={ward.code}>
+                      {ward.name}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
 
               <Form.Item
@@ -427,7 +535,7 @@ const Profile = () => {
                     ) : (
                       <Button
                         type="link"
-                        onClick={() => handleSetDefault(item.id)}
+                        onClick={() => handleSetDefault(item._id)}
                       >
                         Đặt mặc định
                       </Button>
@@ -595,7 +703,7 @@ const Profile = () => {
                         {orderDetail.order.orderStatus?.name}
                       </Tag>
                     </p>
-                    <p>
+                    {/* <p>
                       <strong>Thanh toán:</strong>{" "}
                       <Tag
                         color={getPaymentStatusColor(
@@ -606,7 +714,7 @@ const Profile = () => {
                           ? "Đã thanh toán"
                           : "Chưa thanh toán"}
                       </Tag>
-                    </p>
+                    </p> */}
                     <p
                       style={{ display: "flex", alignItems: "center", gap: 8 }}
                     >
@@ -730,6 +838,17 @@ const Profile = () => {
                 </div>
               )}
             </Modal>
+            <Divider />
+            <Title level={4}>Lịch sử nhận điểm Minigame</Title>
+            <Table
+              dataSource={history}
+              rowKey={(record) => record._id}
+              columns={pointHistoryColumns}
+              bordered
+              size="middle"
+              pagination={{ pageSize: 5 }}
+              locale={{ emptyText: "Chưa có lịch sử nhận điểm." }}
+            />
           </div>
         </div>
       </Content>

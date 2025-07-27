@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 
 import {
@@ -23,10 +21,12 @@ import {
   PlayArrow as PlayArrowIcon,
 } from "@mui/icons-material";
 
-import SpinningWheel from "./games/SpinningWheel";
 import MemoryCatching from "./games/MemoryCatching";
-import ScratchCard from "./games/ScratchCard";
+
 import "./styles.css";
+import SpinWheelUI from "./games/SpinWheel";
+import ScratchCardUI from "./games/ScratchCard";
+import ErrorBoundary from "./games/ErrorBoundary";
 
 const modalStyle = {
   position: "absolute",
@@ -63,6 +63,7 @@ export const GamesModal = ({ games, onClose, isOpen, onUpdatePoints }) => {
   const [gameTypes, setGameTypes] = useState([]);
 
   useEffect(() => {
+    console.log("Thông tin game: ", games);
     if (games && games.gameEvents && games.gameEvents.length > 0) {
       // Phân loại games theo gameTypeId
       const types = {};
@@ -120,33 +121,87 @@ export const GamesModal = ({ games, onClose, isOpen, onUpdatePoints }) => {
   const renderGameComponent = (gameData) => {
     const { gameEvent } = gameData;
 
-    switch (gameEvent.gameTypeId) {
-      case 1:
-        return (
-          <SpinningWheel
-            gameData={gameData}
-            onComplete={handleGameComplete}
-            onBack={handleBackToList}
-          />
-        );
-      case 2:
-        return (
-          <MemoryCatching
-            gameData={gameData}
-            onComplete={handleGameComplete}
-            onBack={handleBackToList}
-          />
-        );
-      case 3:
-        return (
-          <ScratchCard
-            gameData={gameData}
-            onComplete={handleGameComplete}
-            onBack={handleBackToList}
-          />
-        );
-      default:
-        return <div>Game type not supported</div>;
+    console.log(
+      "Rendering game component for type:",
+      gameEvent.gameTypeId,
+      "with data:",
+      gameData
+    );
+
+    try {
+      switch (gameEvent.gameTypeId) {
+        case 1:
+          return (
+            <ErrorBoundary onBack={handleBackToList}>
+              <SpinWheelUI
+                gameName={gameEvent.gameName}
+                sectors={gameEvent.configJson.sectors}
+                isDuplicate={gameEvent.configJson.isDuplicate}
+                maxSpin={gameEvent.configJson.maxSpin}
+                gameEventId={gameEvent._id}
+                onComplete={handleGameComplete}
+                onBack={handleBackToList}
+              />
+            </ErrorBoundary>
+          );
+        case 2:
+          return (
+            <ErrorBoundary onBack={handleBackToList}>
+              <MemoryCatching
+                gameData={gameData}
+                onComplete={handleGameComplete}
+                onBack={handleBackToList}
+              />
+            </ErrorBoundary>
+          );
+        case 3:
+          // Add extra validation for ScratchCard
+          if (
+            !gameData.gameEvent.configJson ||
+            !gameData.gameEvent.configJson.cards
+          ) {
+            console.error(
+              "ScratchCard missing required config:",
+              gameData.gameEvent.configJson
+            );
+            return (
+              <div style={{ padding: 20, textAlign: "center" }}>
+                <Typography variant="h6" color="error">
+                  Cấu hình game cào thẻ không hợp lệ
+                </Typography>
+                <Button onClick={handleBackToList}>Quay lại</Button>
+              </div>
+            );
+          }
+          return (
+            <ErrorBoundary onBack={handleBackToList}>
+              <ScratchCardUI
+                gameData={gameData}
+                onComplete={handleGameComplete}
+                onBack={handleBackToList}
+              />
+            </ErrorBoundary>
+          );
+        default:
+          return (
+            <div style={{ padding: 20, textAlign: "center" }}>
+              <Typography variant="h6">
+                Game type not supported: {gameEvent.gameTypeId}
+              </Typography>
+              <Button onClick={handleBackToList}>Quay lại</Button>
+            </div>
+          );
+      }
+    } catch (error) {
+      console.error("Error in renderGameComponent:", error);
+      return (
+        <div style={{ padding: 20, textAlign: "center" }}>
+          <Typography variant="h6" color="error">
+            Lỗi khi tải game
+          </Typography>
+          <Button onClick={handleBackToList}>Quay lại</Button>
+        </div>
+      );
     }
   };
 

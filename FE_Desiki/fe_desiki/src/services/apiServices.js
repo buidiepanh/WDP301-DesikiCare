@@ -1,4 +1,5 @@
 import axios from "../util/axios.customize";
+import axiosRaw from "../util/axios.raw";
 
 export const loginFunction = async (mail, pass) => {
   try {
@@ -240,5 +241,25 @@ export const updateGamePoints = async (gameEventId, points) => {
   } catch (error) {
     console.error("Error updating game points:", error);
     throw error;
+  }
+};
+
+export const getPointHistory = async () => {
+  try {
+    const res = await axios.get("/Game/gameEventsRewards/me");
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getProvince = async () => {
+  try {
+    const res = await axiosRaw.get(
+      "https://provinces.open-api.vn/api/?depth=3"
+    );
+    return res.data;
+  } catch (error) {
+    console.log(error);
   }
 };
