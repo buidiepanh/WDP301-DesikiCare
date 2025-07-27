@@ -57,6 +57,17 @@ const Orders = () => {
   const [showOrderDetailsPopup, setShowOrderDetailsPopup] = useState(false);
   const [showEditStatusPopup, setShowEditStatusPopup] = useState(false);
 
+  // HELPER FUNCTIONS
+  const formatDateTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${hours}:${minutes} - ${day}/${month}/${year}`;
+  };
+
   // HOOKS
   useEffect(() => {
     fetch();
@@ -124,6 +135,18 @@ const Orders = () => {
         background: "transparent !important",
         fontFamily: "monospace",
       },
+    },
+    {
+      headerName: "Ngày tạo",
+      field: "order.createdAt",
+      sortable: true,
+      cellRenderer: (params: any) => formatDateTime(params.value),
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.9)",
+        background: "transparent !important",
+        fontWeight: "500",
+      },
+      minWidth: 160,
     },
     {
       headerName: "Số điểm dùng",
@@ -197,6 +220,27 @@ const Orders = () => {
         return (
           <div className="flex items-center h-full">
             <GlassChip label={name} variant={variant} />
+          </div>
+        );
+      },
+      cellStyle: {
+        background: "transparent !important",
+        display: "flex",
+        alignItems: "center",
+      },
+    },
+    {
+      headerName: "Trạng Thái Thanh Toán",
+      field: "order.isPaid",
+      filter: "agSetColumnFilter",
+      cellRenderer: (params: any) => {
+        const isPaid = params.value;
+        const variant = isPaid ? "success" : "error";
+        const label = isPaid ? "Đã thanh toán" : "Chưa thanh toán";
+
+        return (
+          <div className="flex items-center h-full">
+            <GlassChip label={label} variant={variant} />
           </div>
         );
       },
@@ -350,6 +394,7 @@ const Orders = () => {
           open={showEditStatusPopup}
           orderStatuses={orderStatuses}
           currentStatusId={selectedOrder.orderStatus._id}
+          isPaid={selectedOrder.order.isPaid}
           onClose={onCloseEditStatusPopup}
           onSubmit={onSubmitEditStatus}
         />
