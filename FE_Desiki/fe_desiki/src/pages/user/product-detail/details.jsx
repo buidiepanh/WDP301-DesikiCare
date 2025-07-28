@@ -175,15 +175,32 @@ function Details() {
               </div>
             </div>
 
-            <Button
-              type="primary"
-              size="large"
-              onClick={() => handleAddToCart(productId)}
-              className="add-to-cart-btn"
-              block
-            >
-              Thêm vào giỏ hàng
-            </Button>
+            <div className="info-section">
+              <Text className="info-label">Tình trạng kho:</Text>
+              <div className="info-content">
+                {totalQuantity > 0 ? (
+                  <Tag color="green">Còn hàng</Tag>
+                ) : (
+                  <Tag color="red">Hết hàng</Tag>
+                )}
+              </div>
+            </div>
+
+            {totalQuantity > 0 ? (
+              <Button
+                type="primary"
+                size="large"
+                onClick={() => handleAddToCart(productId)}
+                className="add-to-cart-btn"
+                block
+              >
+                Thêm vào giỏ hàng
+              </Button>
+            ) : (
+              <Button type="primary" size="large" disabled block danger>
+                Hết hàng
+              </Button>
+            )}
           </div>
         </Col>
       </Row>
