@@ -77,7 +77,7 @@ export class AccountsService {
 
     async login(email: string, password: string): Promise<string> {
         const account = await this.accountModel.findOne({ email: email });
-        if (!account || !account.isDeactivated == true) {
+        if (!account || account.isDeactivated == true) {
             throw new HttpException('Invalid email or password', HttpStatus.INTERNAL_SERVER_ERROR);
         }
         console.log('oldPassword: ', password);
