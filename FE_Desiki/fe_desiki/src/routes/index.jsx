@@ -1,4 +1,5 @@
 import { Route, Routes, useLocation } from "react-router";
+import PrivateRoute from "./PrivateRoute";
 
 import Home from "../pages/user/home/home";
 import Login from "../pages/authen/login/login";
@@ -107,15 +108,43 @@ function UserRouter() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/cart" element={<Cart />} />
+          <Route
+            path="/cart"
+            element={
+              <PrivateRoute>
+                <Cart />
+              </PrivateRoute>
+            }
+          />
           <Route path="/products/:productId" element={<Details />} />
-          <Route path="/payment" element={<Payment />} />
           <Route path="/hot-deal" element={<BannerSection />} />
           <Route path="/warranty-policy" element={<WarrantyPolicy />} />
           <Route path="/products-page" element={<ProductsPage />} />
           <Route path="/blog-grid" element={<BlogGrid />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/payment-return" element={<PaymentReturn />} />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/payment"
+            element={
+              <PrivateRoute>
+                <Payment />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/payment-return"
+            element={
+              <PrivateRoute>
+                <PaymentReturn />
+              </PrivateRoute>
+            }
+          />
           <Route path="/game-type/:id" element={<GameTypePage />} />
           <Route path="/game-event/:id" element={<GamePlayPage />} />
         </Routes>
