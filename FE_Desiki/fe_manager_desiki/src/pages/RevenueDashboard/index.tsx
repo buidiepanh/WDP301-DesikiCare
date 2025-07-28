@@ -129,22 +129,41 @@ const RevenueDashboard = () => {
   const handleViewModeChange = async (mode: string) => {
     setIsLoading(true);
     setViewMode(mode);
+    console.log(
+      `\n🚀 === STARTING API CALL FOR MODE: ${mode.toUpperCase()} ===`
+    );
+
     try {
       const today = new Date();
+
       if (mode === "today") {
         const todayStr = formatDateToDDMMYYYY(today);
-        console.log("Gọi API với startDate là: ", todayStr);
-        console.log("Gọi API với endDate là: ", todayStr);
+        const payload = {
+          startDate: todayStr,
+          endDate: null,
+        };
+
+        console.log("📋 Today mode payload:", payload);
+        console.log("🌐 API URL: /api/Order/revenueDashboard");
+        console.log("📤 Making API call...");
+
         const response = await callAPIAuth({
           method: "GET",
           url: `/api/Order/revenueDashboard`,
-          data: {
-            startDate: todayStr,
-            endDate: null,
-          },
+          params: payload, // Đổi từ data sang params cho GET request
         });
+
+        console.log("📥 API Response Status:", response?.status);
+        console.log(
+          "📊 API Response Data Keys:",
+          response?.data ? Object.keys(response.data) : "No data"
+        );
+        console.log("📈 Orders count:", response?.data?.orders?.length || 0);
+
         if (response && response.status === 200) {
           await prepareData(response.data.orders, todayStr, null, mode);
+        } else {
+          console.error("❌ API call failed or returned non-200 status");
         }
       } else if (mode === "week") {
         const currentDay = (today.getDay() + 6) % 7;
@@ -158,14 +177,27 @@ const RevenueDashboard = () => {
         lastDayOfWeek.setHours(23, 59, 59, 999);
         const lastDayStr = formatDateToDDMMYYYY(lastDayOfWeek);
 
+        const payload = {
+          startDate: firstDayStr,
+          endDate: lastDayStr,
+        };
+
+        console.log("📋 Week mode payload:", payload);
+        console.log("🌐 API URL: /api/Order/revenueDashboard");
+        console.log("📤 Making API call...");
+
         const response = await callAPIAuth({
           method: "GET",
           url: `/api/Order/revenueDashboard`,
-          data: {
-            startDate: firstDayStr,
-            endDate: lastDayStr,
-          },
+          params: payload, // Đổi từ data sang params cho GET request
         });
+
+        console.log("📥 API Response Status:", response?.status);
+        console.log(
+          "📊 API Response Data Keys:",
+          response?.data ? Object.keys(response.data) : "No data"
+        );
+        console.log("📈 Orders count:", response?.data?.orders?.length || 0);
 
         if (response && response.status === 200) {
           await prepareData(
@@ -174,6 +206,8 @@ const RevenueDashboard = () => {
             lastDayStr,
             mode
           );
+        } else {
+          console.error("❌ API call failed or returned non-200 status");
         }
       } else if (mode === "month") {
         // Get first and last day of current month
@@ -183,20 +217,32 @@ const RevenueDashboard = () => {
         const fromStr = formatDateToDDMMYYYY(firstDay);
         const toStr = formatDateToDDMMYYYY(lastDay);
 
-        console.log("Gọi API với startDate là: ", fromStr);
-        console.log("Gọi API với endDate là: ", toStr);
+        const payload = {
+          startDate: fromStr,
+          endDate: toStr,
+        };
+
+        console.log("📋 Month mode payload:", payload);
+        console.log("🌐 API URL: /api/Order/revenueDashboard");
+        console.log("📤 Making API call...");
 
         const response = await callAPIAuth({
           method: "GET",
           url: `/api/Order/revenueDashboard`,
-          data: {
-            startDate: fromStr,
-            endDate: toStr,
-          },
+          params: payload, // Đổi từ data sang params cho GET request
         });
+
+        console.log("📥 API Response Status:", response?.status);
+        console.log(
+          "📊 API Response Data Keys:",
+          response?.data ? Object.keys(response.data) : "No data"
+        );
+        console.log("📈 Orders count:", response?.data?.orders?.length || 0);
 
         if (response && response.status === 200) {
           await prepareData(response.data.orders, fromStr, toStr, mode);
+        } else {
+          console.error("❌ API call failed or returned non-200 status");
         }
       } else if (mode === "year") {
         // Get first and last day of current year
@@ -206,26 +252,42 @@ const RevenueDashboard = () => {
         const fromStr = formatDateToDDMMYYYY(firstDay);
         const toStr = formatDateToDDMMYYYY(lastDay);
 
-        console.log("Gọi API với startDate là: ", fromStr);
-        console.log("Gọi API với endDate là: ", toStr);
+        const payload = {
+          startDate: fromStr,
+          endDate: toStr,
+        };
+
+        console.log("📋 Year mode payload:", payload);
+        console.log("🌐 API URL: /api/Order/revenueDashboard");
+        console.log("📤 Making API call...");
 
         const response = await callAPIAuth({
           method: "GET",
           url: `/api/Order/revenueDashboard`,
-          data: {
-            startDate: fromStr,
-            endDate: toStr,
-          },
+          params: payload, // Đổi từ data sang params cho GET request
         });
+
+        console.log("📥 API Response Status:", response?.status);
+        console.log(
+          "📊 API Response Data Keys:",
+          response?.data ? Object.keys(response.data) : "No data"
+        );
+        console.log("📈 Orders count:", response?.data?.orders?.length || 0);
 
         if (response && response.status === 200) {
           await prepareData(response.data.orders, fromStr, toStr, mode);
+        } else {
+          console.error("❌ API call failed or returned non-200 status");
         }
       }
     } catch (error) {
-      console.log("Error while fetching dashboard: ", error);
+      console.error("💥 Error while fetching dashboard:", error);
+      
     } finally {
       setIsLoading(false);
+      console.log(
+        `✅ === FINISHED API CALL FOR MODE: ${mode.toUpperCase()} ===\n`
+      );
     }
   };
 
