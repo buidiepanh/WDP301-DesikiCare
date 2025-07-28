@@ -282,11 +282,7 @@ const RevenueDashboard = () => {
       }
     } catch (error) {
       console.error("💥 Error while fetching dashboard:", error);
-      console.log("🔍 Error details:", {
-        message: error?.message,
-        status: error?.response?.status,
-        data: error?.response?.data,
-      });
+      
     } finally {
       setIsLoading(false);
       console.log(
