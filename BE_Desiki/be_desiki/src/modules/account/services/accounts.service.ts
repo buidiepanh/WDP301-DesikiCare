@@ -109,6 +109,7 @@ export class AccountsService {
                 dob: account.dob || null,
                 gender: account.gender || null,
                 points: account.points || 0,
+                gameTicketCount : account.gameTicketCount || 0,
             })
 
             const folderPath = this.configService.get<string>('imagePathConfig.ACCOUNT_IMAGE_PATH') + `/${addedAccount._id}`;

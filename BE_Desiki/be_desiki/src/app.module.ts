@@ -13,6 +13,7 @@ import { ProductModule } from './modules/product/Product.module';
 import { OrderModule } from './modules/order/Order.module';
 import { ChatbotModule } from './modules/chatbot/Chatbot.module';
 import { GameModule } from './modules/game/Game.module';
+import { QuizModule } from './modules/quiz/Quiz.module';
 
 //*** thứ tự thực thi */
 //1. Load các module trong imports
@@ -29,6 +30,7 @@ import { GameModule } from './modules/game/Game.module';
     ProductModule,
     OrderModule,
     ChatbotModule,
+    QuizModule,
     DatabaseModule,
 
 

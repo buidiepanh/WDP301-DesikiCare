@@ -24,6 +24,11 @@ import { Payment, PaymentModel, PaymentSchema } from './database/schemas/payment
 import { Shipment, ShipmentModel, ShipmentSchema } from './database/schemas/shipment/shipment.schema';
 import { ShipmentProduct, ShipmentProductModel, ShipmentProductSchema } from './database/schemas/shipmentProduct/shipmentProduct.schema';
 import { ChatbotConfig, ChatbotConfigModel, ChatbotConfigSchema } from './database/schemas/chatbotConfig/chatbotConfig.schema';
+import { OrderPriceBaseGameTicketReward, OrderPriceBaseGameTicketRewardModel, OrderPriceBaseGameTicketRewardSchema } from './database/schemas/orderPriceBaseGameTicketReward/orderPriceBaseGameTicketReward.schema';
+import { QuizQuestion, QuizQuestionSchema } from './database/schemas/quizQuestion/quizQuestion.schema';
+import { QuizOption, QuizOptionSchema } from './database/schemas/quizOption/quizOption.schema';
+import { QuizOptionSkinType, QuizOptionSkinTypeSchema } from './database/schemas/quizOptionSkinType/quizOptionSkinType.schema';
+import { QuizOptionSkinStatus, QuizOptionSkinStatusSchema } from './database/schemas/quizOptionSkinStatus/quizOptionSkinStatus.schema';
 
 type migrateSchemaType = [
   Model<any>,
@@ -57,6 +62,11 @@ export class AppMigration implements OnApplicationBootstrap {
     @InjectModel(Shipment.name) private readonly shipmentModel: ShipmentModel,
     @InjectModel(ShipmentProduct.name) private readonly shipmentProductModel: ShipmentProductModel,
     @InjectModel(ChatbotConfig.name) private readonly chatbotConfigModel: ChatbotConfigModel,
+    @InjectModel(OrderPriceBaseGameTicketReward.name) private readonly orderPriceBaseGameTicketRewardModel: OrderPriceBaseGameTicketRewardModel,
+    @InjectModel(QuizQuestion.name) private readonly quizQuestionModel: Model<QuizQuestion>,
+    @InjectModel(QuizOption.name) private readonly quizOptionModel: Model<QuizOption>,
+    @InjectModel(QuizOptionSkinType.name) private readonly quizOptionSkinTypeModel: Model<QuizOptionSkinType>,
+    @InjectModel(QuizOptionSkinStatus.name) private readonly quizOptionSkinStatusModel: Model<QuizOptionSkinStatus>,
   ) { }
 
   async onApplicationBootstrap() {
@@ -85,6 +95,11 @@ export class AppMigration implements OnApplicationBootstrap {
       [this.paymentStatusModel, PaymentStatusSchema.obj],
       [this.paymentModel, PaymentSchema.obj],
       [this.chatbotConfigModel, ChatbotConfigSchema.obj],
+      [this.orderPriceBaseGameTicketRewardModel, OrderPriceBaseGameTicketRewardSchema.obj],
+      [this.quizQuestionModel, QuizQuestionSchema.obj],
+      [this.quizOptionModel, QuizOptionSchema.obj],
+      [this.quizOptionSkinTypeModel, QuizOptionSkinTypeSchema.obj],
+      [this.quizOptionSkinStatusModel, QuizOptionSkinStatusSchema.obj],
     ]
     await this.execute_migration(migrateSchemas);
 

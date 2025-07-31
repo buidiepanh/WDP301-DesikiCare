@@ -61,6 +61,10 @@ export class Account {
   @IsOptional()
   points: number;
 
+  @Prop({ required: true, default: 0 })
+  @IsOptional()
+  gameTicketCount: number;
+
   @Prop({ required: true, ref: Role.name })
   @IsNumber({}, { message: 'Role ID must be a number' })
   roleId: number;

@@ -20,6 +20,11 @@ import { Payment, PaymentSchema } from "./schemas/payment/payment.schema";
 import { Shipment, ShipmentSchema } from "./schemas/shipment/shipment.schema";
 import { ShipmentProduct, ShipmentProductSchema } from "./schemas/shipmentProduct/shipmentProduct.schema";
 import { ChatbotConfig, ChatbotConfigSchema } from "./schemas/chatbotConfig/chatbotConfig.schema";
+import { OrderPriceBaseGameTicketReward, OrderPriceBaseGameTicketRewardSchema } from "./schemas/orderPriceBaseGameTicketReward/orderPriceBaseGameTicketReward.schema";
+import { QuizQuestion, QuizQuestionSchema } from "./schemas/quizQuestion/quizQuestion.schema";
+import { QuizOption, QuizOptionSchema } from "./schemas/quizOption/quizOption.schema";
+import { QuizOptionSkinType, QuizOptionSkinTypeSchema } from "./schemas/quizOptionSkinType/quizOptionSkinType.schema";
+import { QuizOptionSkinStatus, QuizOptionSkinStatusSchema } from "./schemas/quizOptionSkinStatus/quizOptionSkinStatus.schema";
 
 export const databaseFeatures = [
   //** name ở đây để sử dụng trong @InjectModel inject trong service/controller, @InjectModel(User.name) 
@@ -45,4 +50,10 @@ export const databaseFeatures = [
   { name: PaymentStatus.name, schema: PaymentStatusSchema },
   { name: Payment.name, schema: PaymentSchema },
   { name: ChatbotConfig.name, schema: ChatbotConfigSchema },
+  { name: OrderPriceBaseGameTicketReward.name, schema: OrderPriceBaseGameTicketRewardSchema },
+  { name: QuizQuestion.name, schema: QuizQuestionSchema },
+  { name: QuizOption.name, schema: QuizOptionSchema },
+  { name: QuizOptionSkinType.name, schema: QuizOptionSkinTypeSchema },
+  { name: QuizOptionSkinStatus.name, schema: QuizOptionSkinStatusSchema },
+  
 ]

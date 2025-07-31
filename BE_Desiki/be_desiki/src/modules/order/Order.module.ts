@@ -24,6 +24,8 @@ import { AccountModule } from '../account/Account.module';
 import { PaymentsService } from './services/payments.service';
 import { PaymentRepository } from 'src/database/schemas/payment/payment.repository';
 import { PaymentStatusRepository } from 'src/database/schemas/paymentStatus/paymentStatus.repository';
+import { OrderPriceBaseGameTicketReward, OrderPriceBaseGameTicketRewardSchema } from 'src/database/schemas/orderPriceBaseGameTicketReward/orderPriceBaseGameTicketReward.schema';
+import { OrderPriceBaseGameTicketRewardRepository } from 'src/database/schemas/orderPriceBaseGameTicketReward/orderPriceBaseGameTicketReward.repository';
 
 @Module({
   imports: [
@@ -34,7 +36,8 @@ import { PaymentStatusRepository } from 'src/database/schemas/paymentStatus/paym
       { name: Cart.name, schema: CartSchema },                            // carts
       { name: CartItem.name, schema: CartItemSchema },                    // cartItems
       { name: Payment.name, schema: PaymentSchema },                      // payments
-      { name: PaymentStatus.name, schema: PaymentStatusSchema }           // paymentStatuses
+      { name: PaymentStatus.name, schema: PaymentStatusSchema },          // paymentStatuses
+      { name: OrderPriceBaseGameTicketReward.name, schema: OrderPriceBaseGameTicketRewardSchema } // orderPriceBaseGameTicketRewards
 
     ]),
     ProductModule,
@@ -50,6 +53,7 @@ import { PaymentStatusRepository } from 'src/database/schemas/paymentStatus/paym
     CartItemRepository,
     PaymentRepository,
     PaymentStatusRepository,
+    OrderPriceBaseGameTicketRewardRepository,
 
 
     // Inner Services
@@ -73,6 +77,7 @@ import { PaymentStatusRepository } from 'src/database/schemas/paymentStatus/paym
     CartItemRepository,
     PaymentRepository,
     PaymentStatusRepository,
+    OrderPriceBaseGameTicketRewardRepository,
 
     // Inner Services
     OrdersService,

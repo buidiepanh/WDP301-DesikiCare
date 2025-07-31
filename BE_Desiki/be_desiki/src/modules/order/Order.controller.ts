@@ -135,10 +135,13 @@ export class OrderController {
     }
   ) {
     const user = req.user;
-    const newObjectId = await this.ordersService.createOrderFromActiveCart(user._id, body.order);
+    const newOrder = await this.ordersService.createOrderFromActiveCart(user._id, body.order);
     return {
       message: 'Order created successfully',
-      newOrderId: newObjectId,
+      newOrderId: newOrder.newOrderId,
+      refundPoints: newOrder.refundPoints,
+      gameTicketReward: newOrder.gameTicketReward,
+      outOfStockProducts: newOrder.outOfStockProducts,
     };
   }
 
@@ -185,12 +188,88 @@ export class OrderController {
     };
   }
 
+  // Huỷ đơn hàng (customer)
+  @Put('orders/:orderId/cancel')
+  @Roles("customer")
+  @UseGuards(RolesGuard)
+  async cancelOrder(
+    @Req() req,
+    @Param('orderId') orderId: Types.ObjectId
+  ) {
+    const user = req.user;
+    await this.ordersService.cancelOrder(user._id, orderId);
+    return {
+      message: 'Order cancelled successfully',
+    };
+  }
+
   // Danh sách trạng thái đơn hàng
   @Get('orderStatuses')
   async getOrderStatuses() {
     const orderStatuses = await this.ordersService.getOrderStatuses();
     return {
       orderStatuses: orderStatuses,
+    };
+  }
+
+  // Lấy danh sách điều kiện vé thưởng theo giá trị đơn hàng
+  @Get('orderPriceBaseGameTicketRewards')
+  @Roles("admin", "manager")
+  @UseGuards(RolesGuard)
+  async getOrderPriceBaseGameTicketRewards() {
+    const orderPriceBaseGameTicketRewards = await this.ordersService.getOrderPriceBaseGameTicketRewards();
+    return {
+      orderPriceBaseGameTicketRewards: orderPriceBaseGameTicketRewards,
+    };
+  }
+
+  // Thêm điều kiện vé thưởng cho giá trị đơn hàng
+  @Post('orderPriceBaseGameTicketRewards')
+  @Roles("admin", "manager")
+  @UseGuards(RolesGuard)
+  async createOrderPriceBaseGameTicketReward(
+    @Body() body: {
+      orderPriceBaseGameTicketReward: {
+        orderPriceThreshold: number;
+        gameTicketReward: number;
+      }
+    }
+  ) {
+    await this.ordersService.createOrderPriceBaseGameTicketReward(body.orderPriceBaseGameTicketReward);
+    return {
+      message: 'Order price base game ticket reward created successfully',
+    };
+  }
+
+  // Chỉnh sửa điều kiện vé thưởng cho giá trị đơn hàng
+  @Put('orderPriceBaseGameTicketRewards/:orderPriceBaseGameTicketRewardId')
+  @Roles("admin", "manager")
+  @UseGuards(RolesGuard)
+  async updateOrderPriceBaseGameTicketReward(
+    @Param('orderPriceBaseGameTicketRewardId') orderPriceBaseGameTicketRewardId: Types.ObjectId,
+    @Body() body: {
+      orderPriceBaseGameTicketReward: {
+        orderPriceThreshold: number;
+        gameTicketReward: number;
+      }
+    }
+  ) {
+    await this.ordersService.updateOrderPriceBaseGameTicketReward(orderPriceBaseGameTicketRewardId, body.orderPriceBaseGameTicketReward);
+    return {
+      message: 'Order price base game ticket reward updated successfully',
+    };
+  }
+
+  // Xóa điều kiện vé thưởng
+  @Delete('orderPriceBaseGameTicketRewards/:orderPriceBaseGameTicketRewardId')
+  @Roles("admin", "manager")
+  @UseGuards(RolesGuard)
+  async deleteOrderPriceBaseGameTicketReward(
+    @Param('orderPriceBaseGameTicketRewardId') orderPriceBaseGameTicketRewardId: Types.ObjectId
+  ) {
+    await this.ordersService.deleteOrderPriceBaseGameTicketReward(orderPriceBaseGameTicketRewardId);
+    return {
+      message: 'Order price base game ticket reward deleted successfully',
     };
   }
 
@@ -256,9 +335,9 @@ export class OrderController {
     }
     const webhookData = payOS.verifyPaymentWebhookData(body);
     await this.paymentsService.confirmPayment(body);
-
-
   }
+
+
 
 
 }

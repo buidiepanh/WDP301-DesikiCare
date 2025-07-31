@@ -193,7 +193,8 @@ export class ShipmentsService {
     async updateShipmentProduct(
         shipmentProductId: Types.ObjectId,
         shipmentProductData: {
-            quantity: number;
+            // quantity: number;
+            importQuantity: number;
             manufacturingDate: Date;
             expiryDate: Date;
             buyPrice: number;
@@ -207,8 +208,13 @@ export class ShipmentsService {
                 throw new HttpException('Shipment product not found: id ' + shipmentProductId, HttpStatus.NOT_FOUND);
             }
 
+            if(shipmentProduct.saleQuantity > 0 && shipmentProductData.importQuantity != shipmentProduct.importQuantity) {
+                throw new HttpException('Cannot update shipment product with sale quantity greater than 0', HttpStatus.BAD_REQUEST);
+            }
+
             const shipmentProductUpdate = {
                 ...shipmentProductData,
+                saleQuantity: shipmentProductData.importQuantity,
                 productId: new Types.ObjectId((shipmentProduct.productId as any)._id),
                 shipmentId: shipmentProduct.shipmentId,
             }
@@ -227,7 +233,8 @@ export class ShipmentsService {
         shipmentProduct: {
             productId: Types.ObjectId;
             shipmentId: string;
-            quantity: number;
+            // quantity: number;
+            importQuantity: number;
             manufacturingDate: Date;
             expiryDate: Date;
             buyPrice: number;
@@ -239,8 +246,13 @@ export class ShipmentsService {
             await this.productsService.getExistProductById(shipmentProduct.productId);
             await this.getExistShipmentById(shipmentProduct.shipmentId);
 
-            shipmentProduct.productId = new Types.ObjectId(shipmentProduct.productId);
-            const newShipmentProduct = await this.shipmentProductRepository.create(shipmentProduct, session);
+            const shipmentProductAdd = {
+                ...shipmentProduct,
+                saleQuantity: 0,
+                productId: new Types.ObjectId(shipmentProduct.productId)
+            }
+
+            const newShipmentProduct = await this.shipmentProductRepository.create(shipmentProductAdd, session);
             await session.commitTransaction();
             return newShipmentProduct;
         } catch (error) {

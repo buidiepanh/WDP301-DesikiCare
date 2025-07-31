@@ -155,4 +155,21 @@ export class GameController {
     };
   }
 
+  // Tham gia sự kiện game (trừ vé)
+  @Post('gameEvents/:gameEventId/join')
+  @Roles('customer')
+  @UseGuards(RolesGuard)
+  async joinGameEvent(
+    @Req() req,
+    @Param('gameEventId') gameEventId: Types.ObjectId,
+  ) {
+    const accountId = req.user._id;
+    await this.gameEventsService.joinGameEvent(accountId, gameEventId);
+    return {
+      message: "Joined game event successfully",
+    };
+  }
+
+
+
 }
