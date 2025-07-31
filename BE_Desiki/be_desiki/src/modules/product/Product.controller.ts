@@ -85,6 +85,7 @@ export class ProductController {
         description: string;
         volume: number;
         salePrice: number;
+        gameTicketReward: number;
         imageBase64: string;
       },
       skinTypeIds?: number[];
@@ -93,7 +94,8 @@ export class ProductController {
   ) {
     const product = await this.productsService.createProduct(body);
     return {
-      message: "Product created successfully"
+      message: "Product created successfully",
+      newProductId: product._id,
     };
   }
 
@@ -125,6 +127,7 @@ export class ProductController {
         description: string;
         volume: number;
         salePrice: number;
+        gameTicketReward: number;
         imageBase64?: string;
       },
       skinTypeIds?: number[];
@@ -244,7 +247,8 @@ export class ProductController {
     @Param('shipmentProductId') shipmentProductId: Types.ObjectId,
     @Body() body: {
       shipmentProduct: {
-        quantity: number;
+        // quantity: number;
+        importQuantity: number;
         manufacturingDate: Date;
         expiryDate: Date;
         buyPrice: number;
@@ -266,7 +270,8 @@ export class ProductController {
       shipmentProduct: {
         productId: Types.ObjectId;
         shipmentId: string;
-        quantity: number;
+        // quantity: number;
+        importQuantity: number;
         manufacturingDate: Date;
         expiryDate: Date;
         buyPrice: number;

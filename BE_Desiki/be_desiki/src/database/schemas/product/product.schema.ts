@@ -42,6 +42,9 @@ export class Product {
   @Prop({ required: true })
   salePrice: number;
 
+  @Prop({ required: true, default: 0 })
+  gameTicketReward: number;
+
   @Prop()
   volume: number;
 

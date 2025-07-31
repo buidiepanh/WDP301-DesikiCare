@@ -103,7 +103,7 @@ export class CartsService {
             const product = await this.productsService.getExistProductById(productId);
             const shipmentProducts = (await this.shipmentProductRepository.findByProductId(productId)).filter(sp => sp.isDeactivated === false && sp.shipmentId && (sp.shipmentId as any).isDeleted === false);
 
-            if (product.isDeactivated === true || shipmentProducts.length === 0 || shipmentProducts.reduce((acc, sp) => acc + sp.quantity, 0) < 1) {
+            if (product.isDeactivated === true || shipmentProducts.length === 0 || shipmentProducts.reduce((acc, sp) => acc + (sp.importQuantity - sp.saleQuantity), 0) < 1) {
                 throw new HttpException('Product is not available', HttpStatus.BAD_REQUEST);
             }
 
@@ -114,8 +114,8 @@ export class CartsService {
 
             if (existingCartItem) {
                 const quantity = existingCartItem.quantity + 1;
-                if (quantity > shipmentProducts.reduce((acc, sp) => acc + sp.quantity, 0)) {
-                    throw new HttpException('Not enough stock for product, available: ' + shipmentProducts.reduce((acc, sp) => acc + sp.quantity, 0), HttpStatus.BAD_REQUEST);
+                if (quantity > shipmentProducts.reduce((acc, sp) => acc + (sp.importQuantity - sp.saleQuantity), 0)) {
+                    throw new HttpException('Not enough stock for product, available: ' + shipmentProducts.reduce((acc, sp) => acc + (sp.importQuantity - sp.saleQuantity), 0), HttpStatus.BAD_REQUEST);
                 }
                 existingCartItem.quantity = quantity;
                 await this.cartItemRepository.update(existingCartItem._id, existingCartItem, session);
@@ -152,15 +152,15 @@ export class CartsService {
 
             const product = await this.productsService.getExistProductById(cartItem.productId);
             const shipmentProducts = (await this.shipmentProductRepository.findByProductId(cartItem.productId)).filter(sp => sp.isDeactivated === false && sp.shipmentId && (sp.shipmentId as any).isDeleted === false);
-            if (product.isDeactivated === true || shipmentProducts.length === 0 || shipmentProducts.reduce((acc, sp) => acc + sp.quantity, 0) < 1) {
+            if (product.isDeactivated === true || shipmentProducts.length === 0 || shipmentProducts.reduce((acc, sp) => acc + (sp.importQuantity - sp.saleQuantity), 0) < 1) {
                 throw new HttpException('Product is not available', HttpStatus.BAD_REQUEST);
             }
             if (quantity < 1) {
                 throw new HttpException('Quantity must be at least 1', HttpStatus.BAD_REQUEST);
             }
 
-            if (quantity > shipmentProducts.reduce((acc, sp) => acc + sp.quantity, 0)) {
-                throw new HttpException('Not enough stock for product, available: ' + shipmentProducts.reduce((acc, sp) => acc + sp.quantity, 0), HttpStatus.BAD_REQUEST);
+            if (quantity > shipmentProducts.reduce((acc, sp) => acc + (sp.importQuantity - sp.saleQuantity), 0)) {
+                throw new HttpException('Not enough stock for product, available: ' + shipmentProducts.reduce((acc, sp) => acc + (sp.importQuantity - sp.saleQuantity), 0), HttpStatus.BAD_REQUEST);
             }
 
             cartItem.quantity = quantity;

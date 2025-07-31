@@ -1,0 +1,2473 @@
+openapi: 3.0.0
+info:
+  title: Account API
+  version: 1.0.0
+tags:
+  - name: AccountController
+paths:
+
+###### AccountController
+  /api/Account/register:
+    post:
+      tags: [AccountController]
+      summary: Đăng ký tài khoản
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    password:
+                      type: string
+                    fullName:
+                      type: string
+                    phoneNumber:
+                      type: string
+                    gender:
+                      type: string
+                    dob:
+                      type: string
+                      format: date
+                    roleId:
+                      type: integer
+                    imageBase64:
+                      type: string
+      responses:
+        '200':
+          description: Đăng ký thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Account/login:
+    post:
+      tags: [AccountController]
+      summary: Đăng nhập
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                loginInfo:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    password:
+                      type: string
+      responses:
+        '200':
+          description: Đăng nhập thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+
+  /api/Account/me:
+    get:
+      tags: [AccountController]
+      summary: Lấy thông tin người dùng hiện tại
+      responses:
+        '200':
+          description: Thông tin người dùng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        format: objectId
+                      email:
+                        type: string
+                      fullName:
+                        type: string
+                      dob:
+                        type: string
+                        format: date
+                        nullable: true
+                      phoneNumber:
+                        type: string
+                      gender:
+                        type: string
+                      points:
+                        type: integer
+                      gameTicketCount:
+                        type: integer
+                      roleId:
+                        type: integer
+                      isDeactivated:
+                        type: boolean
+                      imageUrl:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                  deliveryAddress:
+                      $ref: '#/components/schemas/DeliveryAddress'
+            
+
+  /api/Account/accounts/{accountId}:
+    get:
+      tags: [AccountController]
+      summary: Lấy thông tin tài khoản theo ID
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Thông tin tài khoản
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        format: objectId
+                      email:
+                        type: string
+                      fullName:
+                        type: string
+                      dob:
+                        type: string
+                        format: date
+                        nullable: true
+                      phoneNumber:
+                        type: string
+                      gender:
+                        type: string
+                      points:
+                        type: integer
+                      gameTicketCount: 
+                        type: integer
+                      roleId:
+                        type: integer
+                      isDeactivated:
+                        type: boolean
+                      imageUrl:
+                        type: string
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                  deliveryAddress:
+                      $ref: '#/components/schemas/DeliveryAddress'
+
+
+    put:
+      tags: [AccountController]
+      summary: Cập nhật tài khoản
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                account:
+                  type: object
+                  properties:
+                    fullName:
+                      type: string
+                    phoneNumber:
+                      type: string
+                    gender:
+                      type: string
+                    dob:
+                      type: string
+                      format: date
+                    email:
+                      type: string
+                    password:
+                      type: string
+                    roleId:
+                      type: integer    
+                    imageBase64:
+                      type: string
+      responses:
+        '200':
+          description: Cập nhật thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Account/accounts/{accountId}/deactivate/{isDeactivate}:
+    put:
+      tags: [AccountController]
+      summary: Vô hiệu / kích hoạt tài khoản
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: isDeactivate
+          schema:
+            type: boolean
+          required: true
+      responses:
+        '200':
+          description: Cập nhật trạng thái tài khoản thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Account/accounts:
+    get:
+      tags: [AccountController]
+      summary: Danh sách tài khoản
+      responses:
+        '200':
+          description: Danh sách tài khoản
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accounts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        account:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                              format: objectId
+                            email:
+                              type: string
+                            fullName:
+                              type: string
+                            dob:
+                              type: string
+                              format: date
+                              nullable: true
+                            phoneNumber:
+                              type: string
+                            gender:
+                              type: string
+                            points:
+                              type: integer
+                            gameTicketCount:
+                              type: integer
+                            roleId:
+                              type: integer
+                            isDeactivated:
+                              type: boolean
+                            imageUrl:
+                              type: string
+                            createdAt:
+                              type: string
+                              format: date-time
+                            updatedAt:
+                              type: string
+                              format: date-time
+
+  /api/Account/roles:
+    get:
+      tags: [AccountController]
+      summary: Lấy danh sách vai trò
+      responses:
+        '200':
+          description: Danh sách vai trò
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  roles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        role:
+                          type: object
+                          properties:
+                            _id:
+                              type: integer
+                            name:
+                              type: string
+
+  /api/Account/accounts/{accountId}/deliveryAddresses:
+    get:
+      tags: [AccountController]
+      summary: Lấy danh sách địa chỉ của tài khoản
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Danh sách địa chỉ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deliveryAddresses:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        deliveryAddress:
+                          $ref: '#/components/schemas/DeliveryAddress'
+                  
+
+    post:
+      tags: [AccountController]
+      summary: Thêm địa chỉ cho tài khoản
+      parameters:
+        - in: path
+          name: accountId
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deliveryAddress:
+                  type: object
+                  properties:
+                    provinceCode:
+                      type: string
+                    districtCode:
+                      type: string
+                    wardCode:
+                      type: string
+                    addressDetailDescription:
+                      type: string
+                    receiverName:
+                      type: string
+                    receiverPhone:
+                      type: string
+                    isDefault:
+                      type: boolean
+      responses:
+        '200':
+          description: Thêm địa chỉ thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Account/deliveryAddresses/{deliveryAddressId}/set-default:
+    put:
+      tags: [AccountController]
+      summary: Đặt địa chỉ mặc định cho tài khoản
+      parameters:
+        - in: path
+          name: deliveryAddressId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Cập nhật địa chỉ mặc định thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Account/deliveryAddresses/{deliveryAddressId}:
+    delete:
+      tags: [AccountController]
+      summary: Xóa địa chỉ của tài khoản
+      parameters:
+        - in: path
+          name: deliveryAddressId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Xóa địa chỉ thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+
+###### ProductController
+
+  /api/Product/products:
+    get:
+      tags:
+        - ProductController
+      summary: Lấy danh sách sản phẩm
+      responses:
+        '200':
+          description: Danh sách sản phẩm
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        product:
+                          allOf:
+                            - $ref: '#/components/schemas/Product'
+                            - type: object
+                              properties:
+                                imageUrl:
+                                  type: string
+                        category:
+                          $ref: '#/components/schemas/Category'
+                        shipmentProducts:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              shipment:
+                                $ref: '#/components/schemas/Shipment'
+                              shipmentProduct:
+                                $ref: '#/components/schemas/ShipmentProduct'
+                            
+                        productSkinTypes:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/SkinType'
+                        productSkinStatuses:
+                          type: array
+                          items:
+                            $ref: '#/components/schemas/SkinStatus'
+    post:
+      tags:
+        - ProductController
+      summary: Thêm sản phẩm mới
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product:
+                  type: object
+                  properties:
+                    categoryId:
+                      type: integer
+                      nullable: true
+                    name:
+                      type: string
+                    description:
+                      type: string
+                      nullable: true
+                    volume:
+                      type: number
+                      format: float
+                      nullable: true
+                    salePrice:
+                      type: number
+                      format: double
+                    gameTicketReward:
+                      type: number
+                    imageBase64:
+                      type: string
+                skinTypeIds:
+                  type: array
+                  items:
+                    type: integer
+                skinStatusIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Sản phẩm được thêm thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Product/products/{productId}:
+    get:
+      tags:
+        - ProductController
+      summary: Lấy chi tiết sản phẩm
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chi tiết sản phẩm
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  product:
+                    allOf:
+                      - $ref: '#/components/schemas/Product'
+                      - type: object
+                        properties:
+                          imageUrl:
+                            type: string
+                  category:
+                          $ref: '#/components/schemas/Category'
+                  shipmentProducts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        shipment:
+                          $ref: '#/components/schemas/Shipment'
+                        shipmentProduct:
+                          $ref: '#/components/schemas/ShipmentProduct'                    
+                  productSkinTypes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SkinType'
+                  productSkinStatuses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SkinStatus'
+    put:
+      tags:
+        - ProductController
+      summary: Cập nhật sản phẩm
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product:
+                  type: object
+                  properties:
+                    categoryId:
+                      type: integer
+                      nullable: true
+                    name:
+                      type: string
+                    description:
+                      type: string
+                      nullable: true
+                    volume:
+                      type: number
+                      format: float
+                      nullable: true
+                    salePrice:
+                      type: number
+                      format: double
+                    gameTicketReward:
+                      type: number
+                    imageBase64:
+                      type: string
+                skinTypeIds:
+                  type: array
+                  items:
+                    type: integer
+                skinStatusIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Cập nhật sản phẩm thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Product/products/{productId}/deactivate/{isDeactivate}:
+    put:
+      tags:
+        - ProductController
+      summary: Vô hiệu/kích hoạt sản phẩm
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: isDeactivate
+          in: path
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Đổi trạng thái sản phẩm thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Product/shipments:
+    get:
+      tags:
+        - ProductController
+      summary: Lấy danh sách lô hàng
+      responses:
+        '200':
+          description: Danh sách lô hàng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shipments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        shipment:
+                          $ref: '#/components/schemas/Shipment'
+                        shipmentProducts:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              shipmentProduct:
+                                $ref: '#/components/schemas/ShipmentProduct' 
+                              product:
+                                allOf:
+                                  - $ref: '#/components/schemas/Product'
+                                  - type: object
+                                    properties:
+                                      imageUrl:
+                                        type: string
+                              category:
+                                $ref: '#/components/schemas/Category'
+
+    post:
+      tags:
+        - ProductController
+      summary: Thêm lô hàng
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shipment:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    shipmentDate:
+                      type: string
+                      format: date
+
+      responses:
+        '200':
+          description: Lô hàng được thêm thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Product/shipments/{shipmentId}:
+    get:
+      tags:
+        - ProductController
+      summary: Lấy chi tiết lô hàng
+      parameters:
+        - name: shipmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chi tiết lô hàng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shipment:
+                    $ref: '#/components/schemas/Shipment'
+                  shipmentProducts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        shipmentProduct:
+                          $ref: '#/components/schemas/ShipmentProduct' 
+                        product:
+                          allOf:
+                            - $ref: '#/components/schemas/Product'
+                            - type: object
+                              properties:
+                                imageUrl:
+                                  type: string
+                        category:
+                          $ref: '#/components/schemas/Category'
+    put:
+      tags:
+        - ProductController
+      summary: Cập nhật lô hàng
+      parameters:
+        - name: shipmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shipment:
+                  type: object
+                  properties:
+                    shipmentDate:
+                      type: string
+                      format: date
+      responses:
+        '200':
+          description: Chi tiết lô hàng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shipment:
+                    $ref: '#/components/schemas/Shipment'
+                  shipmentProducts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        shipmentProduct:
+                          $ref: '#/components/schemas/ShipmentProduct' 
+                        product:
+                          allOf:
+                            - $ref: '#/components/schemas/Product'
+                            - type: object
+                              properties:
+                                imageUrl:
+                                  type: string
+                        category:
+                          $ref: '#/components/schemas/Category'
+      
+    delete:
+      tags:
+        - ProductController
+      summary: Xóa lô hàng
+      parameters:
+        - name: shipmentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Xóa lô hàng thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Product/shipmentProducts/{shipmentProductId}:
+    get:
+      tags:
+        - ProductController
+      summary: Lấy chi tiết shipmentProduct
+      parameters:
+        - name: shipmentProductId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chi tiết shipmentProduct
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  shipmentProduct:
+                    $ref: '#/components/schemas/ShipmentProduct' 
+                  shipment:
+                          $ref: '#/components/schemas/Shipment'
+                  product:
+                    allOf:
+                      - $ref: '#/components/schemas/Product'
+                      - type: object
+                        properties:
+                          imageUrl:
+                            type: string
+    put:
+      tags:
+        - ProductController
+      summary: Cập nhật shipmentProduct
+      parameters:
+        - name: shipmentProductId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shipmentProduct:
+                  type: object
+                  properties:
+                    importQuantity:
+                      type: integer
+                    manufacturingDate:
+                      type: string
+                      format: date
+                      nullable: true
+                    expiryDate:
+                      type: string
+                      format: date
+                      nullable: true
+                    buyPrice:
+                      type: number
+                      format: double
+                      nullable: true
+      responses:
+        '200':
+          description: Cập nhật shipmentProduct thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Product/shipmentProducts:
+    post:
+      tags:
+        - ProductController
+      summary: Đăng ký shipmentProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shipmentProduct:
+                  type: object
+                  properties:
+                    productId:
+                      type: string
+                      format: objectId
+                    shipmentId:
+                      type: string
+                    importQuantity:
+                      type: integer
+                    manufacturingDate:
+                      type: string
+                      format: date
+                      nullable: true
+                    expiryDate:
+                      type: string
+                      format: date
+                      nullable: true
+                    buyPrice:
+                      type: number
+                      format: double
+                      nullable: true
+      responses:
+        '200':
+          description: Đăng ký shipmentProduct thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Product/shipmentProducts/{shipmentProductId}/deactivate/{isDeactivate}:
+    put:
+      tags:
+        - ProductController
+      summary: Vô hiệu/kích hoạt shipmentProduct
+      parameters:
+        - name: shipmentProductId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: isDeactivate
+          in: path
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Đổi trạng thái shipmentProduct thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Product/skinTypes:
+    get:
+      tags:
+        - ProductController
+      summary: Danh sách skin types
+      responses:
+        '200':
+          description: Danh sách skin types
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  skinTypes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SkinType'
+
+  /api/Product/skinStatuses:
+    get:
+      tags:
+        - ProductController
+      summary: Danh sách skin status
+      responses:
+        '200':
+          description: Danh sách skin status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  skinStatuses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SkinStatus'
+
+  /api/Product/categories:
+    get:
+      tags:
+        - ProductController
+      summary: Danh sách categories
+      responses:
+        '200':
+          description: Danh sách category
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items:
+                      $ref:  '#/components/schemas/Category'
+
+
+##### OrderController
+
+  /api/Order/carts/me:
+    get:
+      tags:
+        - OrderController
+      summary: Lấy giỏ hàng của người dùng hiện tại
+      responses:
+        200:
+          description: Giỏ hàng hiện tại
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cart:
+                    $ref: '#/components/schemas/Cart'
+                  cartItems:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        cartItem:
+                          $ref: '#/components/schemas/CartItem'
+                        product:
+                          allOf:
+                            - $ref: '#/components/schemas/Product'
+                            - type: object
+                              properties:
+                                imageUrl:
+                                  type: string
+                          
+
+
+
+  /api/Order/cartItems:
+    post:
+      tags:
+        - OrderController
+      summary: Thêm sản phẩm vào giỏ, quantity mặc định là 1 (lúc trong cart chưa có product đó)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: string
+                  format: objectId
+      responses:
+        200:
+          description: Kết quả thêm sản phẩm vào giỏ
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Order/cartItems/{cartItemId}:
+    put:
+      tags:
+        - OrderController
+      summary: Cập nhật số lượng sản phẩm trong giỏ
+      parameters:
+        - name: cartItemId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+              required:
+                - quantity
+      responses:
+        200:
+          description: Kết quả cập nhật số lượng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+    delete:
+      tags:
+        - OrderController
+      summary: Xóa sản phẩm khỏi giỏ
+      parameters:
+        - name: cartItemId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Kết quả xóa sản phẩm
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Order/orders:
+    get:
+      tags:
+        - OrderController
+      summary: Danh sách đơn hàng (tuỳ role sẽ trả list khác nhau)
+      responses:
+        200:
+          description: Danh sách đơn hàng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        order:
+                          $ref: '#/components/schemas/Order'
+                        orderStatus:
+                          $ref: '#/components/schemas/OrderStatus'
+                        orderItems:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              orderItem:
+                                $ref: '#/components/schemas/OrderItem'
+                              shipmentProduct:
+                                $ref: '#/components/schemas/ShipmentProduct'
+                              product:
+                                allOf:
+                                  - $ref: '#/components/schemas/Product'
+                                  - type: object
+                                    properties:
+                                      imageUrl:
+                                        type: string
+    post:
+      tags:
+        - OrderController
+      summary: Tạo đơn hàng từ giỏ hàng của account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order:
+                  type: object
+                  properties:
+                    newOrderId:
+                      type: string
+                    pointUsed:
+                      type: integer
+                      nullable: true
+                    deliveryAddressId:
+                      type: string
+              required:
+                - deliveryAddressId
+      responses:
+        200:
+          description: Kết quả tạo đơn hàng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  newOrderId:
+                    type: string
+
+  /api/Order/revenueDashboard:
+    get:
+      tags:
+        - OrderController
+      summary: Danh sách đơn hàng (Dashboard)
+      parameters:
+        - name: startDate
+          in: query
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: Danh sách đơn hàng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        order:
+                          $ref: '#/components/schemas/Order'
+                        orderStatus:
+                          $ref: '#/components/schemas/OrderStatus'
+                        orderItems:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              orderItem:
+                                $ref: '#/components/schemas/OrderItem'
+                              shipmentProduct:
+                                $ref: '#/components/schemas/ShipmentProduct'
+                              product:
+                                allOf:
+                                  - $ref: '#/components/schemas/Product'
+                                  - type: object
+                                    properties:
+                                      imageUrl:
+                                        type: string
+  /api/Order/orders/{orderId}:
+    get:
+      tags:
+        - OrderController
+      summary: Chi tiết đơn hàng (bao gồm orderItems)
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Chi tiết đơn hàng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    $ref: '#/components/schemas/Order'
+                  orderStatus:
+                    $ref: '#/components/schemas/OrderStatus'
+                  orderItems:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        orderItem:
+                          $ref: '#/components/schemas/OrderItem'
+                        shipmentProduct:
+                          $ref: '#/components/schemas/ShipmentProduct'
+                        product:
+                          allOf:
+                            - $ref: '#/components/schemas/Product'
+                            - type: object
+                              properties:
+                                imageUrl:
+                                  type: string
+
+  /api/Order/orders/{orderId}/orderStatuses/{orderStatusId}:
+    put:
+      tags:
+        - OrderController
+      summary: Cập nhật trạng thái đơn hàng
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: orderStatusId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Kết quả cập nhật trạng thái đơn hàng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Order/orderStatuses:
+    get:
+      tags:
+        - OrderController
+      summary: Danh sách trạng thái đơn hàng
+      responses:
+        200:
+          description: Danh sách trạng thái
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orderStatuses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrderStatus'
+
+  /api/Order/orers/{orderId}/getPaymentLink:
+    post:
+      tags:
+        - OrderController
+      summary: Lấy liên kết thanh toán cho order có sẵn 
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cancelUrl:
+                  type: string
+                returnUrl:
+                  type: string
+      responses:
+        200:
+          description: Liên kết thanh toán
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentLink:
+                    type: string
+
+  /api/Order/carts/getPaymentLink:
+    post:
+      tags:
+        - OrderController
+      summary: Lấy liên kết thanh toán cho cart đang active
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order:
+                  type: object
+                  properties:
+                    pointUsed:
+                      type: integer
+                    deliveryAddressId:
+                      type: string
+                metaData:
+                  type: object
+                  properties:
+                    cancelUrl:
+                      type: string
+                    returnUrl:
+                      type: string
+      responses:
+        200:
+          description: Liên kết thanh toán
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentLink:
+                    type: string
+
+  /api/Order/confirmPayment:
+    post:
+      tags:
+        - OrderController
+      summary: Xác nhận thanh toán
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                desc:
+                  type: string
+                success:
+                  type: boolean
+                  example: true
+                data:
+                  type: object
+                  properties:
+                    orderCode:
+                      type: integer
+                    amount:
+                      type: number
+                    description:
+                      type: string
+                    accountNumber:
+                      type: string
+                    reference:
+                      type: string
+                    transactionDateTime:
+                      type: string
+                    currency:
+                      type: string
+                    paymentLinkId:
+                      type: string
+                    code:
+                      type: string
+                    desc:
+                      type: string
+                    counterAccountBankId:
+                      type: string
+                    counterAccountBankName:
+                      type: string
+                    counterAccountName:
+                      type: string
+                    counterAccountNumber:
+                      type: string
+                    virtualAccountName:
+                      type: string
+                    virtualAccountNumber:
+                      type: string
+                signature:
+                  type: string
+      responses:
+        200:
+          description: Kết quả xác nhận thanh toán
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+##### GameController
+  /api/Game/gameEvents:
+    get:
+      tags:
+        - GameController
+      summary: Lấy danh sách sự kiện game
+      responses:
+        '200':
+          description: Danh sách sự kiện game
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameEvents:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        gameEvent:
+                          allOf:
+                            - $ref: '#/components/schemas/GameEvent'
+                            - type: object
+                              properties:
+                                imageUrl:
+                                  type: string
+                                  format: uri
+                        gameTypeImageUrls:
+                          type: array
+                          items: 
+                            type: object
+                            properties:
+                              id: 
+                                type: integer
+                              imageUrl:
+                                type: string
+                        gameEventRewardResults:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              gameEventRewardResult:
+                                $ref: '#/components/schemas/GameEventRewardResult'
+    post:
+      tags:
+        - GameController
+      summary: Thêm sự kiện game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameEvent:
+                  type: object
+                  properties:
+                    eventName:
+                      type: string
+                    description:
+                      type: string
+                      nullable: true
+                    gameName:
+                      type: string
+                    gameTypeId:
+                      type: integer
+                    configJson:
+                      type: object
+                    startDate:
+                      type: string
+                      format: date
+                      nullable: true
+                    endDate:
+                      type: string
+                      format: date
+                      nullable: true
+                    balancePoints:
+                      type: integer
+                      nullable: true
+                    imageBase64:
+                        type: string
+                        format: byte
+                gameTypeImageBase64s:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      imageBase64:
+                        type: string
+      responses:
+        '200':
+          description: Sự kiện game đã được thêm thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/Game/gameEvents/{gameEventId}:
+    get:
+      tags:
+        - GameController
+      summary: Lấy chi tiết sự kiện game
+      parameters:
+        - name: gameEventId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chi tiết sự kiện game
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameEvent:
+                    allOf:
+                      - $ref: '#/components/schemas/GameEvent'
+                      - type: object
+                        properties:
+                          imageUrl:
+                            type: string
+                            format: uri
+                  gameTypeImageUrls:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        id: 
+                          type: integer
+                        imageUrl:
+                          type: string
+                  gameEventRewardResults:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              gameEventRewardResult:
+                                $ref: '#/components/schemas/GameEventRewardResult'
+    put:
+      tags:
+        - GameController
+      summary: Cập nhật sự kiện game
+      parameters:
+        - name: gameEventId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameEvent:
+                  type: object
+                  properties:
+                    eventName:
+                      type: string
+                    description:
+                      type: string
+                      nullable: true
+                    gameName:
+                      type: string
+                    gameTypeId:
+                      type: integer
+                    configJson:
+                      type: object
+                    startDate:
+                      type: string
+                      format: date
+                      nullable: true
+                    endDate:
+                      type: string
+                      format: date
+                      nullable: true
+                    balancePoints:
+                      type: integer
+                      nullable: true
+                    imageBase64:
+                        type: string
+                        format: byte
+                gameTypeImageUrls:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      imageBase64:
+                        type: string
+      responses:
+        '200':
+          description: Sự kiện game đã được cập nhật thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/Game/gameEvents/{gameEventId}/deactivate/{isDeactivate}:
+    put:
+      tags:
+        - GameController
+      summary: Vô hiệu hóa hoặc kích hoạt sự kiện game
+      parameters:
+        - name: gameEventId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: isDeactivate
+          in: path
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Trạng thái sự kiện game đã được cập nhật
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/Game/gameTypes:
+    get:
+      tags:
+        - GameController
+      summary: Lấy danh sách loại game
+      responses:
+        '200':
+          description: Danh sách loại game
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameTypes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GameType'
+
+
+  /api/Game/gameEventsRewards/me:
+    get:
+      tags:
+        - GameController
+      summary: Lấy lịch sử nhận thưởng từ sự kiện game của tài khoản
+      responses:
+        '200':
+          description: Lịch sử nhận thưởng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameEventRewardResults:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        gameEventRewardResult:
+                          $ref: '#/components/schemas/GameEventRewardResult'
+                        gameEvent:
+                          allOf:
+                          - $ref: '#/components/schemas/GameEvent'
+                          - type: object
+                            properties:
+                              imageUrl:
+                                type: string
+                                format: uri
+
+  /api/Game/gameEventsRewards:
+    get:
+      tags:
+        - GameController
+      summary: Lấy lịch sử nhận thưởng từ sự kiện game của hệ thống
+      responses:
+        '200':
+          description: Lịch sử nhận thưởng
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  gameEventRewardResults:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        gameEventRewardResult:
+                          $ref: '#/components/schemas/GameEventRewardResult'
+                        gameEvent:
+                          allOf:
+                          - $ref: '#/components/schemas/GameEvent'
+                          - type: object
+                            properties:
+                              imageUrl:
+                                type: string
+                                format: uri
+    post:
+      tags:
+        - GameController
+      summary: Thêm phần thưởng sự kiện game cho tài khoản
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameEventReward:
+                  type: object
+                  properties:
+                    gameEventId:
+                      type: string
+                      format: objectId
+                    points:
+                      type: integer
+                  required:
+                    - gameEventId
+                    - points
+      responses:
+        '200':
+          description: Phần thưởng đã được thêm thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+##### ChatbotController
+
+  /api/Chatbot/chatbotConfigs:
+    get:
+      tags:
+        - ChatbotController
+      summary: Lấy danh sách cấu hình chatbot
+      responses:
+        '200':
+          description: Danh sách cấu hình chatbot
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chatbotConfigs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChatbotConfig'
+    post:
+      tags:
+        - ChatbotController
+      summary: Thêm cấu hình chatbot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chatbotConfig:
+                  type: object
+                  properties:
+                    template:
+                      type: string
+                    initPrompt:
+                      type: string
+      responses:
+        '200':
+          description: Cấu hình chatbot đã được thêm thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /api/Chatbot/chatbotConfigs/{chatbotConfigId}:
+    put:
+      tags:
+        - ChatbotController
+      summary: Cập nhật cấu hình chatbot
+      parameters:
+        - name: chatbotConfigId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chatbotConfig:
+                  type: object
+                  properties:
+                    template:
+                      type: string
+                    initPrompt:
+                      type: string
+      responses:
+        '200':
+          description: Cấu hình chatbot đã được cập nhật thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/Chatbot/chatbotConfigs/{chatbotConfigId}/deactivate/{isDeactivate}:
+    put:
+      tags:
+        - ChatbotController
+      summary: Vô hiệu hóa hoặc kích hoạt chat bot
+      parameters:
+        - name: gameEventId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: isDeactivate
+          in: path
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Trạng thái sự kiện game đã được cập nhật
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        email:
+          type: string
+        password:
+          type: string
+        fullName:
+          type: string
+        dob:
+          type: string
+          format: date
+          nullable: true
+        phoneNumber:
+          type: string
+        gender:
+          type: string
+        points:
+          type: integer
+        gameTicketCount:
+          type: integer
+        roleId:
+          type: integer
+        isDeactivated:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Role:
+      type: object
+      properties:
+        _id:
+          type: integer
+        name:
+          type: string
+
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        accountId:
+          type: string
+          format: objectId
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CartItem:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        cartId:
+          type: string
+          format: objectId
+        productId:
+          type: string
+          format: objectId
+        quantity:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Shipment:
+      type: object
+      properties:
+        _id:
+          type: string
+        shipmentDate:
+          type: string
+          format: date
+        isDeleted:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ShipmentProduct:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        productId:
+          type: string
+          format: objectId
+        shipmentId:
+          type: string
+        importQuantity:
+          type: integer
+        saleQuantity:
+          type: integer
+        manufacturingDate:
+          type: string
+          format: date
+          nullable: true
+        expiryDate:
+          type: string
+          format: date
+          nullable: true
+        buyPrice:
+          type: number
+          format: double
+          nullable: true
+        isDeactivated:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        categoryId:
+          type: integer
+          nullable: true
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        volume:
+          type: number
+          format: float
+          nullable: true
+        salePrice:
+          type: number
+          format: double
+        gameTicketReward:
+          type: number
+        isDeactivated:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ProductSkinType:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        productId:
+          type: string
+          format: objectId
+        skinTypeId:
+          type: integer
+
+    ProductSkinStatus:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        productId:
+          type: string
+          format: objectId
+        skinStatusId:
+          type: integer
+
+    Category:
+      type: object
+      properties:
+        _id:
+          type: integer
+        name:
+          type: string
+
+    SkinType:
+      type: object
+      properties:
+        _id:
+          type: integer
+        name:
+          type: string
+
+    SkinStatus:
+      type: object
+      properties:
+        _id:
+          type: integer
+        name:
+          type: string
+
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        accountId:
+          type: string
+          format: objectId
+        deliveryAddressId:
+          type: string
+          format: objectId
+        pointUsed:
+          type: integer
+          nullable: true
+        totalPrice:
+          type: number
+          format: double
+        orderStatusId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OrderStatus:
+      type: object
+      properties:
+        _id:
+          type: integer
+        name:
+          type: string
+
+    OrderItem:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        orderId:
+          type: string
+          format: objectId
+        shipmentProductId:
+          type: string
+          format: objectId
+        quantity:
+          type: integer
+        unitPrice:
+          type: number
+          format: double
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    DeliveryAddress:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        accountId:
+          type: string
+          format: objectId
+        provinceCode:
+          type: string
+        districtCode:
+          type: string
+        wardCode:
+          type: string
+        addressDetailDescription:
+          type: string
+        receiverName:
+          type: string
+        receiverPhone:
+          type: string
+        isDefault:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    GameEvent:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        eventName:
+          type: string
+        description:
+          type: string
+          nullable: true
+        gameName:
+          type: string
+        gameTypeId:
+          type: integer
+        configJson:
+          type: object
+        startDate:
+          type: string
+          format: date
+          nullable: true
+        endDate:
+          type: string
+          format: date
+          nullable: true
+        balancePoints:
+          type: integer
+          nullable: true
+        isDeactivated:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    GameType:
+      type: object
+      properties:
+        _id:
+          type: integer
+        name:
+          type: string
+
+    GameEventRewardResult:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        gameEventId:
+          type: string
+          format: objectId
+        accountId:
+          type: string
+          format: objectId
+        points:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PaymentStatus:
+      type: object
+      properties:
+        _id:
+          type: integer
+        name:
+          type: string
+
+    Payment:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        accountId:
+          type: string
+          format: objectId
+        orderId:
+          type: string
+          format: objectId
+        amount:
+          type: number
+          format: double
+        paymentStatusId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ChatbotConfig:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+        template:
+          type: string
+        initPrompt:
+          type: string
+        isDeactivated:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OrderPriceBaseGameTicketReward:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "60e8c29e3f1fc4001c3a3f84"
+        orderPriceThreshold:
+          type: number
+          format: double
+        ticketCount:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-07-29T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-07-29T10:10:00Z"
+      required: [_id, orderPriceThreshold, ticketCount, createdAt, updatedAt]
+
+    QuizQuestion:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "60e8c29e3f1fc4001c3a3f84"
+        content:
+          type: string
+      required: [_id, content]
+
+    QuizOption:
+      type: object
+      properties:
+        _id:
+          type: string
+        content:
+          type: string
+        quizQuestionId:
+          type: string
+      required: [_id, content, quizQuestionId]
+
+    QuizOptionSkinType:
+      type: object
+      properties:
+        _id:
+          type: string
+        quizOptionId:
+          type: string
+        skinTypeId:
+          type: integer
+          format: int32
+      required: [_id, quizOptionId, skinTypeId]
+
+    QuizOptionSkinStatus:
+      type: object
+      properties:
+        _id:
+          type: string
+        quizOptionId:
+          type: string
+        skinStatusId:
+          type: integer
+          format: int32
+      required: [_id, quizOptionId, skinStatusId]
+
+          
+
+
+
+
+
+
+
+

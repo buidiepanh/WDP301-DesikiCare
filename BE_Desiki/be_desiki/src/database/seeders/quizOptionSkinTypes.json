@@ -1,0 +1,282 @@
+[
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8c1"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8c1"},
+    "skinTypeId": 3,
+    "createdAt": "2024-12-05T10:00:00.000Z",
+    "updatedAt": "2024-12-05T10:00:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8c2"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8c2"},
+    "skinTypeId": 2,
+    "createdAt": "2024-12-05T10:00:00.000Z",
+    "updatedAt": "2024-12-05T10:00:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8c3"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8c3"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:00:00.000Z",
+    "updatedAt": "2024-12-05T10:00:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8c4"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8c4"},
+    "skinTypeId": 5,
+    "createdAt": "2024-12-05T10:00:00.000Z",
+    "updatedAt": "2024-12-05T10:00:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8c5"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8c5"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:05:00.000Z",
+    "updatedAt": "2024-12-05T10:05:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8c6"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8c6"},
+    "skinTypeId": 5,
+    "createdAt": "2024-12-05T10:05:00.000Z",
+    "updatedAt": "2024-12-05T10:05:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8c7"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8c7"},
+    "skinTypeId": 3,
+    "createdAt": "2024-12-05T10:05:00.000Z",
+    "updatedAt": "2024-12-05T10:05:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8c8"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8c8"},
+    "skinTypeId": 2,
+    "createdAt": "2024-12-05T10:05:00.000Z",
+    "updatedAt": "2024-12-05T10:05:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8c9"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8c9"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:10:00.000Z",
+    "updatedAt": "2024-12-05T10:10:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8ca"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8ca"},
+    "skinTypeId": 3,
+    "createdAt": "2024-12-05T10:10:00.000Z",
+    "updatedAt": "2024-12-05T10:10:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8cb"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8cb"},
+    "skinTypeId": 2,
+    "createdAt": "2024-12-05T10:10:00.000Z",
+    "updatedAt": "2024-12-05T10:10:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8cc"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8cc"},
+    "skinTypeId": 5,
+    "createdAt": "2024-12-05T10:10:00.000Z",
+    "updatedAt": "2024-12-05T10:10:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8cd"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8cd"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:15:00.000Z",
+    "updatedAt": "2024-12-05T10:15:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8ce"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8ce"},
+    "skinTypeId": 3,
+    "createdAt": "2024-12-05T10:15:00.000Z",
+    "updatedAt": "2024-12-05T10:15:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8cf"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8cf"},
+    "skinTypeId": 2,
+    "createdAt": "2024-12-05T10:15:00.000Z",
+    "updatedAt": "2024-12-05T10:15:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8d0"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8d0"},
+    "skinTypeId": 4,
+    "createdAt": "2024-12-05T10:15:00.000Z",
+    "updatedAt": "2024-12-05T10:15:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8d1"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8d1"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:20:00.000Z",
+    "updatedAt": "2024-12-05T10:20:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8d2"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8d2"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:20:00.000Z",
+    "updatedAt": "2024-12-05T10:20:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8d3"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8d3"},
+    "skinTypeId": 2,
+    "createdAt": "2024-12-05T10:20:00.000Z",
+    "updatedAt": "2024-12-05T10:20:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8d4"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8d4"},
+    "skinTypeId": 4,
+    "createdAt": "2024-12-05T10:20:00.000Z",
+    "updatedAt": "2024-12-05T10:20:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8d5"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8d5"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:25:00.000Z",
+    "updatedAt": "2024-12-05T10:25:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8d6"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8d6"},
+    "skinTypeId": 3,
+    "createdAt": "2024-12-05T10:25:00.000Z",
+    "updatedAt": "2024-12-05T10:25:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8d7"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8d7"},
+    "skinTypeId": 4,
+    "createdAt": "2024-12-05T10:25:00.000Z",
+    "updatedAt": "2024-12-05T10:25:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8d8"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8d8"},
+    "skinTypeId": 4,
+    "createdAt": "2024-12-05T10:25:00.000Z",
+    "updatedAt": "2024-12-05T10:25:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8d9"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8d9"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:30:00.000Z",
+    "updatedAt": "2024-12-05T10:30:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8da"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8da"},
+    "skinTypeId": 3,
+    "createdAt": "2024-12-05T10:30:00.000Z",
+    "updatedAt": "2024-12-05T10:30:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8db"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8db"},
+    "skinTypeId": 2,
+    "createdAt": "2024-12-05T10:30:00.000Z",
+    "updatedAt": "2024-12-05T10:30:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8dc"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8dc"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:30:00.000Z",
+    "updatedAt": "2024-12-05T10:30:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8dd"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8dd"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:35:00.000Z",
+    "updatedAt": "2024-12-05T10:35:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8de"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8de"},
+    "skinTypeId": 2,
+    "createdAt": "2024-12-05T10:35:00.000Z",
+    "updatedAt": "2024-12-05T10:35:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8df"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8df"},
+    "skinTypeId": 3,
+    "createdAt": "2024-12-05T10:35:00.000Z",
+    "updatedAt": "2024-12-05T10:35:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8e0"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8e0"},
+    "skinTypeId": 2,
+    "createdAt": "2024-12-05T10:35:00.000Z",
+    "updatedAt": "2024-12-05T10:35:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8e1"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8e1"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:40:00.000Z",
+    "updatedAt": "2024-12-05T10:40:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8e2"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8e2"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:40:00.000Z",
+    "updatedAt": "2024-12-05T10:40:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8e3"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8e3"},
+    "skinTypeId": 4,
+    "createdAt": "2024-12-05T10:40:00.000Z",
+    "updatedAt": "2024-12-05T10:40:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8e4"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8e4"},
+    "skinTypeId": 3,
+    "createdAt": "2024-12-05T10:40:00.000Z",
+    "updatedAt": "2024-12-05T10:40:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8e5"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8e5"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:45:00.000Z",
+    "updatedAt": "2024-12-05T10:45:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8e6"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8e6"},
+    "skinTypeId": 1,
+    "createdAt": "2024-12-05T10:45:00.000Z",
+    "updatedAt": "2024-12-05T10:45:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8e7"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8e7"},
+    "skinTypeId": 3,
+    "createdAt": "2024-12-05T10:45:00.000Z",
+    "updatedAt": "2024-12-05T10:45:00.000Z"
+  },
+  {
+    "_id": {"$oid": "675130a1b2c3d4e5f6a7b8e8"},
+    "quizOptionId": {"$oid": "675120a1b2c3d4e5f6a7b8e8"},
+    "skinTypeId": 3,
+    "createdAt": "2024-12-05T10:45:00.000Z",
+    "updatedAt": "2024-12-05T10:45:00.000Z"
+  }
+]

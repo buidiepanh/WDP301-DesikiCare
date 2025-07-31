@@ -20,8 +20,11 @@ export class ShipmentProduct {
   @Prop({ type: String, ref: Shipment.name, required: true })
   shipmentId: string;
 
-  @Prop({ required: true })
-  quantity: number;
+  @Prop({ required: true, default: 0 })
+  importQuantity: number;
+
+  @Prop({ required: true, default: 0 })
+  saleQuantity: number;
 
   @Prop()
   manufacturingDate: Date;

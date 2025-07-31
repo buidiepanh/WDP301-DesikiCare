@@ -91,6 +91,7 @@ export class ProductsService {
             description: string;
             volume: number;
             salePrice: number;
+            gameTicketReward: number;
             imageBase64: string;
         },
         skinTypeIds?: number[];
@@ -166,6 +167,7 @@ export class ProductsService {
                 description: string;
                 volume: number;
                 salePrice: number;
+                gameTicketReward: number;
                 imageBase64?: string;
             },
             skinTypeIds?: number[];

@@ -300,4 +300,34 @@ export class GameEventsService {
             session.endSession();
         }
     }
+
+    async joinGameEvent(accountId: Types.ObjectId, gameEventId: Types.ObjectId): Promise<any> {
+        const session = await this.connection.startSession();
+        session.startTransaction();
+        try {
+            const account = await this.accountsService.getExistAccountById(accountId);
+            if (account.isDeactivated == true) {
+                throw new HttpException('account is deactivated', HttpStatus.BAD_REQUEST);
+            }
+
+            if (account.gameTicketCount <= 0) {
+                throw new HttpException('You do not have enough game tickets to join this event', HttpStatus.BAD_REQUEST);
+            }
+
+            const gameEvent = await this.getExistGameEventById(gameEventId);
+            if (gameEvent.isDeactivated === true) {
+                throw new HttpException('Game event is deactivated', HttpStatus.BAD_REQUEST);
+            }
+
+            account.gameTicketCount -= 1;
+            await this.accountRepository.update(accountId, account, session);
+
+            await session.commitTransaction();
+        } catch (error) {
+            await session.abortTransaction();
+            throw new HttpException('Join game event failed: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            session.endSession();
+        }
+    }
 }
