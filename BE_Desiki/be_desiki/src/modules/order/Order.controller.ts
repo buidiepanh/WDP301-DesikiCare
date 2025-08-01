@@ -137,7 +137,7 @@ export class OrderController {
     const user = req.user;
     const newOrder = await this.ordersService.createOrderFromActiveCart(user._id, body.order);
     return {
-      message: 'Order created successfully',
+      message: newOrder.newOrderId ? 'Order created successfully' : 'Order creation failed',
       newOrderId: newOrder.newOrderId,
       refundPoints: newOrder.refundPoints,
       gameTicketReward: newOrder.gameTicketReward,
