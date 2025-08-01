@@ -103,27 +103,26 @@ export class OrdersService {
                 //     return new Date(aShipment.shipmentDate).getTime() - new Date(bShipment.shipmentDate).getTime();
                 // })
 
-                // Sort ra các shipmentProducts theo ngày expiryDate gần nhất (loại bỏ các shipmentProduct đã hết hạn), expiryDate có dạng 2026-05-05T00:00:00.000+00:00
+                // Lọc các shipmentProducts có ngày hết hạn phải cách ít nhất 1 tháng từ hiện tại và sắp xếp tăng dần
                 const sortedShipmentProducts = shipmentProducts
                     .filter(sp => {
                         if (!sp.expiryDate) return false;
-                        return isFutureDate(sp.expiryDate); // Loại bỏ các shipmentProduct đã hết hạn
+
+                        const expiryDate = new Date(sp.expiryDate);
+                        const currentDate = new Date();
+
+                        // Tính ngày ít nhất 1 tháng từ hiện tại
+                        const oneMonthFromNow = new Date();
+                        oneMonthFromNow.setMonth(currentDate.getMonth() + 1);
+
+                        // Chỉ chấp nhận sản phẩm có ngày hết hạn ít nhất 1 tháng từ bây giờ
+                        return expiryDate >= oneMonthFromNow;
                     })
                     .sort((a, b) => {
                         const aExpiryDate = new Date(a.expiryDate);
                         const bExpiryDate = new Date(b.expiryDate);
 
-                        // Ưu tiên sản phẩm gần hết hạn (trong vòng 1 tháng) lên đầu
-                        const aIsNearExpiry = isNearExpiry(aExpiryDate, 1, 'month');
-                        const bIsNearExpiry = isNearExpiry(bExpiryDate, 1, 'month');
-
-                        if (aIsNearExpiry && !bIsNearExpiry) {
-                            return -1;
-                        }
-                        if (!aIsNearExpiry && bIsNearExpiry) {
-                            return 1;
-                        }
-
+                        // Sắp xếp tăng dần theo ngày hết hạn (gần nhất trước)
                         return aExpiryDate.getTime() - bExpiryDate.getTime();
                     });
 
@@ -135,14 +134,12 @@ export class OrdersService {
                     // sumQuantity += shipmentProduct.quantity;
                     sumQuantity += availableQuantity;
                     if (sumQuantity >= cartItemData.cartItem.quantity) {
-                        console.log(`subtract quantity:cartItem.quantity: ${cartItemData.cartItem.quantity} - preSumQuantity: ${preSumQuantity} = ${cartItemData.cartItem.quantity - preSumQuantity}`);
                         returnShipmentProductIds.push({
                             shipmentProductId: shipmentProduct._id,
                             quantity: cartItemData.cartItem.quantity - preSumQuantity
                         });
                         break;
                     } else {
-                        console.log(`full quantity:shipmentProduct.quantity: ${availableQuantity} - preSumQuantity: ${preSumQuantity} = ${availableQuantity - preSumQuantity}`);
                         returnShipmentProductIds.push({
                             shipmentProductId: shipmentProduct._id,
                             quantity: availableQuantity
@@ -254,23 +251,26 @@ export class OrdersService {
             const inValidCartProducts = [];
             // lập qua các cartItems lấy product kiểm 
             for (const cartItem of activeCart.cartItems) {
-                console.log(cartItem)
                 const validatedCartProduct = await this.getValidateCartProducts(cartItem);
                 if (validatedCartProduct.message) {
                     inValidCartProducts.push(validatedCartProduct);
                 }
                 validShipmentProduct.push(validatedCartProduct.returnShipmentProductIds);
             }
-            console.log("validShipmentProduct: ", validShipmentProduct)
-            if (inValidCartProducts.length > 0) {
+            
+            if (inValidCartProducts.length > 0 || validShipmentProduct.length === 0) {
                 // nếu đã thanh toán rồi thì refund point = existPayment.amount + order.pointUsed
-                var refundPoints = order.pointUsed;
+                var refundPoints = 0;
+
                 if (existPayment && existPayment.paymentStatusId === 2) {
-                    refundPoints = existPayment.amount;
+                    refundPoints = existPayment.amount + order.pointUsed;
                     account.points += refundPoints;
                     await this.accountRepository.update(account._id, account, session);
+                    // xoá payment
+                    await this.paymentRepository.delete(existPayment._id);
                     await session.commitTransaction();
                 }
+
                 return {
                     newOrderId: null,
                     refundPoints: refundPoints,
@@ -292,7 +292,6 @@ export class OrdersService {
             for (const shipmentProductIds of validShipmentProduct) {
                 for (const returnShipmentProductId of shipmentProductIds) {
                     const shipmentProduct = await this.shipmentProductRepository.findById(returnShipmentProductId.shipmentProductId);
-
                     // Validation thời gian thực trong transaction để tránh race condition
                     const currentAvailableQuantity = shipmentProduct.importQuantity - shipmentProduct.saleQuantity;
                     if (currentAvailableQuantity < returnShipmentProductId.quantity) {
@@ -304,27 +303,44 @@ export class OrdersService {
                     if (shipmentProduct.saleQuantity > shipmentProduct.importQuantity) {
                         throw new HttpException(`Stock calculation error for product id ${shipmentProduct._id}`, HttpStatus.INTERNAL_SERVER_ERROR);
                     }
-                    shipmentProduct.productId = (shipmentProduct.productId as any)._id;
-                    await this.shipmentProductRepository.update(shipmentProduct._id, shipmentProduct, session);
+
+
                     const orderItem: OrderItem = {
                         orderId: newObjectId,
                         quantity: returnShipmentProductId.quantity,
                         shipmentProductId: returnShipmentProductId.shipmentProductId,
-                        unitPrice: activeCart.cartItems.find(item => item.product._id.equals(shipmentProduct.productId))?.product.salePrice,
+                        unitPrice: activeCart.cartItems.find(item => item.product._id.equals((shipmentProduct.productId as any)._id))?.product.salePrice,
                     };
-                    // console.log("111111111111", orderItem)
 
                     totalPrice += orderItem.unitPrice * orderItem.quantity;
                     await this.orderItemRepository.create(orderItem, session);
 
                     totalRewardTickets += (shipmentProduct.productId as any).gameTicketReward;
 
+                    shipmentProduct.productId = (shipmentProduct.productId as any)._id; // Chuyển đổi productId về ObjectId
+                    await this.shipmentProductRepository.update(shipmentProduct._id, shipmentProduct, session);
+
+
+
                 }
             }
+            if (order.pointUsed > totalPrice) {
+                throw new HttpException(`Point used ${order.pointUsed} exceeds total price ${totalPrice}`, HttpStatus.BAD_REQUEST);
+            }
             totalPrice -= order.pointUsed;
+
             totalRewardTickets += await this.orderPriceBaseGameTicketRewardRepository.getGameTicketRewardByPrice(totalPrice);
 
+            var isPaid = false;
+            if (existPayment && existPayment.paymentStatusId === 2) {
+                isPaid = true;
+            } else if (totalPrice <= 0) {
+                isPaid = true;
+            }
 
+            if (isPaid == false && totalPrice < 10000) {
+                throw new HttpException(`Order total price is invalid (< 10.000đ): ${totalPrice}`, HttpStatus.BAD_REQUEST);
+            }
 
             await this.orderRepository.create({
                 _id: newObjectId,
@@ -333,7 +349,7 @@ export class OrdersService {
                 pointUsed: order.pointUsed,
                 deliveryAddressId: new Types.ObjectId(order.deliveryAddressId),
                 totalPrice: totalPrice,
-                isPaid: existPayment && existPayment.paymentStatusId === 2 ? true : false,
+                isPaid: isPaid,
             }, session);
 
             account.points -= order.pointUsed;
@@ -394,12 +410,10 @@ export class OrdersService {
             }
             // Nếu không có cả hai => lấy tất cả orders với status = 3
 
-            console.log('Date range:', { start, end });
 
             // Sử dụng repository method đã tối ưu
             const orders = await this.orderRepository.findOrdersForRevenueDashboard(start, end);
 
-            console.log(`Found ${orders.length} orders matching criteria`);
 
             // Process orders
             const result = [];
@@ -458,8 +472,7 @@ export class OrdersService {
         for (const shipmentProductIds of validShipmentProduct) {
             for (const returnShipmentProductId of shipmentProductIds) {
                 const shipmentProduct = await this.shipmentProductRepository.findById(returnShipmentProductId.shipmentProductId);
-                // console.log("111111111111",shipmentProduct)
-                // console.log("111111111111",activeCart.cartItems.find(item => item.product._id.equals(shipmentProduct.productId)))
+                
                 const orderItem = {
                     quantity: returnShipmentProductId.quantity,
                     unitPrice: activeCart.cartItems.find(item => item.product._id.equals(shipmentProduct.productId._id))?.product.salePrice,
@@ -514,8 +527,13 @@ export class OrdersService {
         try {
             const order = await this.getExistOrderById(orderId);
             const orderStatus = await this.getExistOrderStatusById(orderStatusId);
-            order.orderStatusId = orderStatus._id;
 
+            if (order.orderStatusId == 4) {
+                throw new HttpException(`Cannot update order status on cancelled order`, HttpStatus.BAD_REQUEST);
+            }
+
+            order.orderStatusId = orderStatus._id;
+            
             const updatedOrder = await this.orderRepository.update(order._id, order, session);
 
             if (orderStatusId == 4) { // huỷ đơn hoàn trả số lượng về stock trong shipmentProduct
@@ -528,12 +546,16 @@ export class OrdersService {
                     if (shipmentProduct.saleQuantity < 0) {
                         throw new HttpException(`Sale quantity for shipment product id ${shipmentProduct._id} cannot be negative`, HttpStatus.BAD_REQUEST);
                     }
+                    shipmentProduct.productId = (shipmentProduct.productId as any)._id;
                     await this.shipmentProductRepository.update(shipmentProduct._id, shipmentProduct, session);
                 }
                 // hoàn point về tài khoản = order.totalPrice + order.pointUsed
-                const account = await this.accountsService.getExistAccountById(order.accountId);
-                account.points += order.totalPrice + order.pointUsed;
-                await this.accountRepository.update(account._id, account, session);
+                if (order.isPaid === true) {
+                    const account = await this.accountsService.getExistAccountById(order.accountId);
+                    account.points += order.totalPrice + order.pointUsed;
+                    await this.accountRepository.update(account._id, account, session);
+                }
+
             }
 
             await session.commitTransaction();
@@ -558,6 +580,9 @@ export class OrdersService {
             if (order.accountId.toString() !== accountId.toString()) {
                 throw new HttpException(`Order id ${orderId} does not belong to account id ${accountId}`, HttpStatus.FORBIDDEN);
             }
+            if ((order.orderStatusId as any)._id == 4) {
+                throw new HttpException(`Order id ${orderId} has already been cancelled`, HttpStatus.BAD_REQUEST);
+            }
 
             order.orderStatusId = 4;
             await this.orderRepository.update(order._id, order, session);
@@ -571,12 +596,15 @@ export class OrdersService {
                 if (shipmentProduct.saleQuantity < 0) {
                     throw new HttpException(`Sale quantity for shipment product id ${shipmentProduct._id} cannot be negative`, HttpStatus.BAD_REQUEST);
                 }
+                shipmentProduct.productId = (shipmentProduct.productId as any)._id;
                 await this.shipmentProductRepository.update(shipmentProduct._id, shipmentProduct, session);
             }
             // hoàn point về tài khoản = order.totalPrice
-            const account = await this.accountsService.getExistAccountById(order.accountId);
-            account.points += order.totalPrice;
-            await this.accountRepository.update(account._id, account, session);
+            if (order.isPaid === true && order.totalPrice > 0) {
+                const account = await this.accountsService.getExistAccountById(order.accountId);
+                account.points += order.totalPrice;
+                await this.accountRepository.update(account._id, account, session);
+            }
 
             await session.commitTransaction();
             return order;

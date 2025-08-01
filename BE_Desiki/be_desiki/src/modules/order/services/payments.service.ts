@@ -115,6 +115,9 @@ export class PaymentsService {
         session.startTransaction();
         try {
             const newOrder = await this.ordersService.calculateOrderTotalPriceAndId(accountId, order.pointUsed);
+            if(newOrder.totalPrice < 10000){
+                throw new HttpException(`Order total price is invalid (< 10.000đ): ${newOrder.totalPrice}`, HttpStatus.BAD_REQUEST);
+            }
             console.log("newOrder: ", newOrder);
             const payOS = new PayOS(
                 PayosConfig.CLIENT_ID,
@@ -146,7 +149,7 @@ export class PaymentsService {
         } catch (error) {
             await session.abortTransaction();
             console.error("Error creating payment link for active cart: ", error);
-            throw new HttpException('Failed to create payment link for active cart', HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException('Failed to create payment link for active cart: ' + error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             session.endSession();
         }
