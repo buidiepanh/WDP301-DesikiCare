@@ -187,10 +187,17 @@ export class OrdersService {
 
             const result = [];
             for (const order of orders) {
-                const { orderItems, orderStatusId: orderStatus, ...orderBase } = order;
+                const { orderItems, orderStatusId: orderStatus, accountId: account, ...orderBase } = order;
                 result.push({
                     order: orderBase,
                     orderStatus: orderStatus,
+                    account: {
+                        _id: (account as any)._id,
+                        email: (account as any).email,
+                        fullName: (account as any).fullName,
+                        phoneNumber: (account as any).phoneNumber,
+                        gender: (account as any).gender,
+                    },
                     orderItems: await Promise.all(orderItems.map(async (item) => {
                         const { shipmentProductId: shipmentProduct, ...orderItemBase } = item;
                         const { productId: product, ...shipmentProductBase } = shipmentProduct as any;

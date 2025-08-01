@@ -30,6 +30,7 @@ export class OrderRepository {
   async findAllByAccountId(accountId: Types.ObjectId): Promise<OrderDocument[]> {
     return this.orderModel.find({ accountId: accountId })
       .populate('orderStatusId')
+      .populate('accountId')
       .populate({
         path: 'orderItems',
         populate: {
@@ -48,6 +49,7 @@ export class OrderRepository {
   async findAll(): Promise<OrderDocument[]> {
     return this.orderModel.find()
       .populate('orderStatusId')
+      .populate('accountId')
       .populate({
         path: 'orderItems',
         populate: {
