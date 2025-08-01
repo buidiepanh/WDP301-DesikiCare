@@ -39,6 +39,9 @@ export class Order {
 
   @Prop({ required: true, default: false })
   isPaid?: boolean;
+
+  @Prop({ required: true, default: 0 })
+  gameTicketReward: number;
 }
 
 type OrderModel = Model<OrderDocument> & IOrder_Statics;
