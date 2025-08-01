@@ -24,8 +24,8 @@ export const ShipmentProductEditPopup: React.FC<Props> = ({
   onSubmit,
 }) => {
   // STATES
-  const [newQuantity, setNewQuantity] = useState(
-    shipmentProduct.shipmentProduct.quantity
+  const [newImportQuantity, setNewImportQuantity] = useState(
+    shipmentProduct.shipmentProduct.importQuantity
   );
   const [newManufactureDate, setNewManufactureDate] = useState(
     shipmentProduct.shipmentProduct.manufacturingDate.split("T")[0]
@@ -41,7 +41,7 @@ export const ShipmentProductEditPopup: React.FC<Props> = ({
   const handleSubmit = () => {
     const data = {
       shipmentProduct: {
-        quantity: newQuantity,
+        importQuantity: newImportQuantity,
         manufacturingDate: newManufactureDate + "T00:00:00.000Z",
         expiryDate: newExpireDate + "T00:00:00.000Z",
         buyPrice: newBuyPrice,
@@ -60,8 +60,8 @@ export const ShipmentProductEditPopup: React.FC<Props> = ({
             <p className="font-semibold text-gray-700 mb-2">Số lượng nhập</p>
             <TextField
               type="number"
-              value={newQuantity}
-              onChange={(e) => setNewQuantity(Number(e.target.value))}
+              value={newImportQuantity}
+              onChange={(e) => setNewImportQuantity(Number(e.target.value))}
             />
           </div>
 
