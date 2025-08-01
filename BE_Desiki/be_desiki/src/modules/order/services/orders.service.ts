@@ -257,7 +257,7 @@ export class OrdersService {
                 }
                 validShipmentProduct.push(validatedCartProduct.returnShipmentProductIds);
             }
-            
+
             if (inValidCartProducts.length > 0 || validShipmentProduct.length === 0) {
                 // nếu đã thanh toán rồi thì refund point = existPayment.amount + order.pointUsed
                 var refundPoints = 0;
@@ -289,6 +289,8 @@ export class OrdersService {
 
             var totalPrice = 0;
             var totalRewardTickets = 0;
+            var processedProductIds = new Set<string>(); // Track processed product IDs to avoid duplicate rewards
+
             for (const shipmentProductIds of validShipmentProduct) {
                 for (const returnShipmentProductId of shipmentProductIds) {
                     const shipmentProduct = await this.shipmentProductRepository.findById(returnShipmentProductId.shipmentProductId);
@@ -315,7 +317,12 @@ export class OrdersService {
                     totalPrice += orderItem.unitPrice * orderItem.quantity;
                     await this.orderItemRepository.create(orderItem, session);
 
-                    totalRewardTickets += (shipmentProduct.productId as any).gameTicketReward;
+                    // Chỉ cộng gameTicketReward một lần cho mỗi product duy nhất
+                    const productIdString = (shipmentProduct.productId as any)._id.toString();
+                    if (!processedProductIds.has(productIdString)) {
+                        totalRewardTickets += (shipmentProduct.productId as any).gameTicketReward || 0;
+                        processedProductIds.add(productIdString);
+                    }
 
                     shipmentProduct.productId = (shipmentProduct.productId as any)._id; // Chuyển đổi productId về ObjectId
                     await this.shipmentProductRepository.update(shipmentProduct._id, shipmentProduct, session);
@@ -350,10 +357,11 @@ export class OrdersService {
                 deliveryAddressId: new Types.ObjectId(order.deliveryAddressId),
                 totalPrice: totalPrice,
                 isPaid: isPaid,
+                gameTicketReward: totalRewardTickets,
             }, session);
 
             account.points -= order.pointUsed;
-            account.gameTicketCount += totalRewardTickets;
+            // account.gameTicketCount += isPaid == true ? totalRewardTickets : 0; // Chỉ cộng game ticket nếu đã thanh toán
             await this.accountRepository.update(account._id, account, session);
 
             await this.cartRepository.active(activeCart.cart._id, false, session);
@@ -472,7 +480,7 @@ export class OrdersService {
         for (const shipmentProductIds of validShipmentProduct) {
             for (const returnShipmentProductId of shipmentProductIds) {
                 const shipmentProduct = await this.shipmentProductRepository.findById(returnShipmentProductId.shipmentProductId);
-                
+
                 const orderItem = {
                     quantity: returnShipmentProductId.quantity,
                     unitPrice: activeCart.cartItems.find(item => item.product._id.equals(shipmentProduct.productId._id))?.product.salePrice,
@@ -528,12 +536,12 @@ export class OrdersService {
             const order = await this.getExistOrderById(orderId);
             const orderStatus = await this.getExistOrderStatusById(orderStatusId);
 
-            if (order.orderStatusId == 4) {
-                throw new HttpException(`Cannot update order status on cancelled order`, HttpStatus.BAD_REQUEST);
+            if ((order.orderStatusId as any)._id !== 1 && (order.orderStatusId as any)._id !== 2) {
+                throw new HttpException(`Cannot update order status at this stage`, HttpStatus.BAD_REQUEST);
             }
 
             order.orderStatusId = orderStatus._id;
-            
+
             const updatedOrder = await this.orderRepository.update(order._id, order, session);
 
             if (orderStatusId == 4) { // huỷ đơn hoàn trả số lượng về stock trong shipmentProduct
@@ -556,6 +564,11 @@ export class OrdersService {
                     await this.accountRepository.update(account._id, account, session);
                 }
 
+            } else if (orderStatusId == 3) { // giao hàng hoàn thành
+                
+                const account = await this.accountsService.getExistAccountById(order.accountId);
+                account.gameTicketCount += order.gameTicketReward; // Chỉ cộng game ticket nếu đã thanh toán
+                await this.accountRepository.update(account._id, account, session);
             }
 
             await session.commitTransaction();
@@ -580,8 +593,8 @@ export class OrdersService {
             if (order.accountId.toString() !== accountId.toString()) {
                 throw new HttpException(`Order id ${orderId} does not belong to account id ${accountId}`, HttpStatus.FORBIDDEN);
             }
-            if ((order.orderStatusId as any)._id == 4) {
-                throw new HttpException(`Order id ${orderId} has already been cancelled`, HttpStatus.BAD_REQUEST);
+            if ((order.orderStatusId as any)._id !== 1 && (order.orderStatusId as any)._id !== 2) {
+                throw new HttpException(`Order id ${orderId} cannot be cancelled at this stage`, HttpStatus.BAD_REQUEST);
             }
 
             order.orderStatusId = 4;

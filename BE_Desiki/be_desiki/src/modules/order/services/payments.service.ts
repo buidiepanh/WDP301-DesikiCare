@@ -13,6 +13,9 @@ import { PayosConfig } from 'src/config/payos.config';
 import { OrdersService } from './orders.service';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Payment } from 'src/database/schemas/payment/payment.schema';
+import { OrderPriceBaseGameTicketRewardRepository } from 'src/database/schemas/orderPriceBaseGameTicketReward/orderPriceBaseGameTicketReward.repository';
+import { AccountsService } from 'src/modules/account/services/accounts.service';
+import { AccountRepository } from 'src/database/schemas/account/account.repository';
 
 const PayOS = require('@payos/node');
 
@@ -23,8 +26,11 @@ export class PaymentsService {
         private readonly paymentRepository: PaymentRepository,
         private readonly paymentStatusRepository: PaymentStatusRepository,
         private readonly orderRepository: OrderRepository,
+        private readonly orderPriceBaseGameTicketRewardRepository: OrderPriceBaseGameTicketRewardRepository,
+        private readonly accountRepository: AccountRepository,
 
         private readonly ordersService: OrdersService,
+        private readonly accountsService: AccountsService,
 
         @InjectConnection() private readonly connection: Connection,
 
@@ -115,7 +121,7 @@ export class PaymentsService {
         session.startTransaction();
         try {
             const newOrder = await this.ordersService.calculateOrderTotalPriceAndId(accountId, order.pointUsed);
-            if(newOrder.totalPrice < 10000){
+            if (newOrder.totalPrice < 10000) {
                 throw new HttpException(`Order total price is invalid (< 10.000đ): ${newOrder.totalPrice}`, HttpStatus.BAD_REQUEST);
             }
             console.log("newOrder: ", newOrder);
@@ -172,23 +178,28 @@ export class PaymentsService {
             console.log("webhookData: ", webhookData);
             if (webhookData.code === '00') {
                 payment.paymentStatusId = 2;
-                // if (!order) {
-                //     const deliveryAddressId = new Types.ObjectId((webhookData.data.description as string).split(' ')[2]);
-                //     const accountId = new Types.ObjectId((webhookData.data.description as string).split(' ')[3]);
-                //     const pointUsed = parseInt((webhookData.data.description as string).split(' ')[4], 10);
-                //     await this.ordersService.createOrderFromActiveCart(accountId, {
-                //         newOrderId: orderId,
-                //         pointUsed: pointUsed,
-                //         deliveryAddressId: deliveryAddressId,
-                //         isPaid: true,
-                //     });
-                // } else {
-                //     order.isPaid = true;
-                //     await this.orderRepository.update(orderId, order, session);
-                // }
                 if (order) {
                     order.isPaid = true;
                     await this.orderRepository.update(orderId, order, session);
+
+                    // lặp qua các order items và tính toán lượng vé thưởng theo gameTicketReward của product trong shipment product trong order item , đảm bảo cộng dồn không bị trùng lặp product (mỗi product chỉ cộng 1 lần mặc dù nằm trong nhiều order item)
+                    var totalRewardTickets = 0;
+                    var processedProductIds = new Set<string>();
+                    for (const orderItem of order.orderItems) {
+                        var product = ((orderItem.shipmentProductId as any).productId as any);
+                        console.log("product: ", product);
+
+                        const productId = product._id.toString();
+                        if (!processedProductIds.has(productId)) {
+                            totalRewardTickets += product.gameTicketReward || 0;
+                            processedProductIds.add(productId);
+
+                        }
+                    }
+                    totalRewardTickets += await this.orderPriceBaseGameTicketRewardRepository.getGameTicketRewardByPrice(order.totalPrice);
+                    const account = await this.accountsService.getExistAccountById(payment.accountId);
+                    account.gameTicketCount += totalRewardTickets; // Chỉ cộng game ticket nếu đã thanh toán
+                    await this.accountRepository.update(account._id, account, session);
                 }
             } else {
                 payment.paymentStatusId = 3;
@@ -205,7 +216,6 @@ export class PaymentsService {
         } finally {
             session.endSession();
         }
+
     }
-
-
 }
