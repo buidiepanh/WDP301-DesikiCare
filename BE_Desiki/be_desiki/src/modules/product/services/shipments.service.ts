@@ -214,7 +214,7 @@ export class ShipmentsService {
 
             const shipmentProductUpdate = {
                 ...shipmentProductData,
-                saleQuantity: shipmentProductData.importQuantity,
+                saleQuantity: 0,
                 productId: new Types.ObjectId((shipmentProduct.productId as any)._id),
                 shipmentId: shipmentProduct.shipmentId,
             }
