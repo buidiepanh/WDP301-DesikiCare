@@ -81,6 +81,7 @@ export class GameEventsService {
 
                 });
             }
+            
             return result
 
         } catch (error) {

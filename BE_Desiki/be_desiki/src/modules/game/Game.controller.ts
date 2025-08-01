@@ -22,6 +22,7 @@ export class GameController {
 
   // Lấy danh sách sự kiện game
   @Get('gameEvents')
+  @UseGuards(LoginJwtGuard)
   async getGameEvents(
     @Req() req
   ) {
@@ -160,7 +161,7 @@ export class GameController {
   @Roles('customer')
   @UseGuards(RolesGuard)
   async joinGameEvent(
-    @Req() req,
+    @Req() req, 
     @Param('gameEventId') gameEventId: Types.ObjectId,
   ) {
     const accountId = req.user._id;
