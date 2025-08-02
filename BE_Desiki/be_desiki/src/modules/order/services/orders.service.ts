@@ -240,6 +240,10 @@ export class OrdersService {
         session.startTransaction();
         try {
             const newObjectId = order.newOrderId ? new Types.ObjectId(order.newOrderId) : new Types.ObjectId();
+            // kiểm tra orderId đã tồn tại trong DB chưa
+            if (await this.orderRepository.findById(newObjectId)) {
+                throw new HttpException(`Order id ${newObjectId} already exists`, HttpStatus.BAD_REQUEST);
+            }
             const existPayment = await this.paymentRepository.findByOrderId(new Types.ObjectId(newObjectId));
 
             const existDeliveryAddresses = (await this.accountsService.getExistDeliveryAddressesByAccountId(accountId)).some(address => address._id.equals(order.deliveryAddressId));
@@ -274,7 +278,7 @@ export class OrdersService {
                     account.points += refundPoints;
                     await this.accountRepository.update(account._id, account, session);
                     // xoá payment
-                    await this.paymentRepository.delete(existPayment._id);
+                    await this.paymentRepository.delete(existPayment._id, session);
                     await session.commitTransaction();
                 }
 

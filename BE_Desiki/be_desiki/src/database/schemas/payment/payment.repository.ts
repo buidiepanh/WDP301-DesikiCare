@@ -32,7 +32,7 @@ export class PaymentRepository {
     return this.paymentModel.findByIdAndUpdate(id, payment, { new: true, session }).exec();
   }
 
-  async delete(id: any): Promise<Payment | null> {
-    return this.paymentModel.findByIdAndDelete(id).exec();
+  async delete(id: any, session: ClientSession): Promise<Payment | null> {
+    return this.paymentModel.findByIdAndDelete(id, { session }).exec();
   }
 }
