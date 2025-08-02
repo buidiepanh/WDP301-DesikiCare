@@ -73,13 +73,16 @@ export class CartsService {
                 const { cartItems, ...cartBase } = cart;
                 return {
                     cart: cartBase,
-                    cartItems: cartItems.map(item => {
+                    cartItems: await Promise.all(cartItems.map(async item => {
                         const { productId: product, ...cartItemBase } = item;
                         return {
                             cartItem: cartItemBase,
-                            product: product
+                            product: {
+                                ...product,
+                                imageUrl: await this.fileService.getImageUrl(this.configService.get<string>('imagePathConfig.PRODUCT_IMAGE_PATH'), product._id, "main")
+                            }
                         }
-                    })
+                    }))
                 }
             }
         } catch (error) {
