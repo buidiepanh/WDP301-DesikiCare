@@ -29,7 +29,8 @@ export class GameController {
     var gameEvents = await this.gameEventsService.getGameEvents();
     if (!req.user || (req.user && req.user.role._id === 3)) {
       // products = products.filter(product => product.product.isDeactivated === false);
-      gameEvents = gameEvents.filter(event => event.gameEvent.isDeactivated === false && event.gameEventRewardResults.filter(reward => reward.accountId.toString() === req.user._id.toString()).length === 0);
+      // gameEvents = gameEvents.filter(event => event.gameEvent.isDeactivated === false && event.gameEventRewardResults.filter(reward => reward.accountId.toString() === req.user._id.toString()).length === 0);
+      gameEvents = gameEvents.filter(event => event.gameEvent.isDeactivated === false);
     }
     return {
       gameEvents: gameEvents,
@@ -121,13 +122,13 @@ export class GameController {
       gameEventRewardResults: gameEventRewardResults,
     };
   }
-  
+
   // Lấy lịch sử nhận thưởng từ sự kiện game của hệ thống
   @Get('gameEventsRewards')
   @Roles("admin", "manager")
   @UseGuards(RolesGuard)
   async getGameEventsRewards(
-    
+
   ) {
     const gameEventRewardResults = await this.gameEventsService.getGameEventsRewards();
     return {
@@ -161,7 +162,7 @@ export class GameController {
   @Roles('customer')
   @UseGuards(RolesGuard)
   async joinGameEvent(
-    @Req() req, 
+    @Req() req,
     @Param('gameEventId') gameEventId: Types.ObjectId,
   ) {
     const accountId = req.user._id;
