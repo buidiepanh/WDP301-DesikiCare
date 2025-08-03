@@ -69,7 +69,6 @@ export class GameEventsService {
                         });
                     }
                     gameTypeImageIndex++;
-
                 }
                 result.push({
                     gameEvent: {
@@ -271,9 +270,9 @@ export class GameEventsService {
                 throw new HttpException('Game event is deactivated', HttpStatus.BAD_REQUEST);
             }
 
-            if(gameEvent.gameEventRewardResults.filter(reward => reward.accountId.toString() === accountId.toString()).length > 0){
-                throw new HttpException('You have already received reward for this game event', HttpStatus.BAD_REQUEST);
-            }
+            // if(gameEvent.gameEventRewardResults.filter(reward => reward.accountId.toString() === accountId.toString()).length > 0){
+            //     throw new HttpException('You have already received reward for this game event', HttpStatus.BAD_REQUEST);
+            // }
 
             const existGameEventRewardResult = await this.gameEventRewardResultRepository.findByGameEventId(gameEventReward.gameEventId);
             const existPointSum = existGameEventRewardResult.reduce((sum, reward) => sum + reward.points, 0);
