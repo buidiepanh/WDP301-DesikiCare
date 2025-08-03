@@ -334,6 +334,7 @@ export class QuizService {
 
                 // Lấy skin types liên quan đến option này (đã populate)
                 const skinTypes = await this.quizOptionSkinTypeRepository.findByQuizOptionId(optionId);
+                console.log("Skin types for option", optionId, skinTypes);
                 for (const skinTypeRelation of skinTypes) {
                     const key = skinTypeRelation.skinTypeId;
                     const existing = skinTypeMap.get(key);
@@ -342,13 +343,15 @@ export class QuizService {
                     } else {
                         skinTypeMap.set(key, {
                             count: 1,
-                            skinType: skinTypeRelation.skinTypeId // skinTypeId là populated object
+                            // skinType: skinTypeRelation.skinTypeId // skinTypeId là populated object
+                            skinType: skinTypeRelation.skinType
                         });
                     }
                 }
 
                 // Lấy skin status liên quan đến option này (đã populate)
                 const skinStatuses = await this.quizOptionSkinStatusRepository.findByQuizOptionId(optionId);
+                console.log("Skin statuses for option", optionId, skinStatuses);
                 for (const skinStatusRelation of skinStatuses) {
                     const key = skinStatusRelation.skinStatusId;
                     const existing = skinStatusMap.get(key);
@@ -357,7 +360,8 @@ export class QuizService {
                     } else {
                         skinStatusMap.set(key, {
                             count: 1,
-                            skinStatus: skinStatusRelation.skinStatusId // skinStatusId là populated object
+                            // skinStatus: skinStatusRelation.skinStatusId // skinStatusId là populated object
+                            skinStatus: skinStatusRelation.skinStatus
                         });
                     }
                 }
@@ -374,6 +378,8 @@ export class QuizService {
                 .sort((a, b) => b.count - a.count)
                 .slice(0, 2)
                 .map(item => item.skinStatus);
+            
+            
 
             // Get recommended products based on skin types and statuses
             const dominantSkinTypeIds = topSkinTypes.map(st => st._id || st);
