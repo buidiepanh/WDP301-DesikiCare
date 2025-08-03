@@ -194,7 +194,7 @@ const GlassSelect = ({
 // ShipmentProductCard Component
 type ShipmentProductInput = {
   productId: string;
-  quantity: number;
+  importQuantity: number;
   manufacturingDate: string;
   expiryDate: string;
   buyPrice: number;
@@ -251,9 +251,9 @@ const ShipmentProductCard: React.FC<ShipmentProductCardProps> = ({
           {!isEditing ? (
             <div className="grid grid-cols-2 gap-4 text-white/80">
               <div>
-                <span className="text-white/60">Số lượng:</span>
+                <span className="text-white/60">Số lượng nhập:</span>
                 <span className="ml-2 font-medium">
-                  {shipmentProduct.quantity}
+                  {shipmentProduct.importQuantity}
                 </span>
               </div>
               <div>
@@ -280,9 +280,9 @@ const ShipmentProductCard: React.FC<ShipmentProductCardProps> = ({
               <GlassInput
                 label="Số lượng"
                 type="number"
-                value={editedData.quantity}
+                value={editedData.importQuantity}
                 onChange={(e) =>
-                  handleChange("quantity", Number(e.target.value))
+                  handleChange("importQuantity", Number(e.target.value))
                 }
               />
               <GlassInput
@@ -397,7 +397,10 @@ const CreateShipment = () => {
         url: `/api/Product/products`,
       });
       if (response && response.status === 200) {
-        setProducts(response.data.products);
+        const activeProducts = response.data.products.filter(
+          (p: ProductAPI) => !p.product.isDeactivated
+        );
+        setProducts(activeProducts);
       } else {
         Swal.fire("Lỗi", "Lỗi khi lấy danh sách sản phẩm", "error");
       }
@@ -453,7 +456,7 @@ const CreateShipment = () => {
 
     const item: ShipmentProductInput = {
       productId: id,
-      quantity,
+      importQuantity: quantity,
       manufacturingDate: mfgDate + "T00:00:00.000Z",
       expiryDate: expDate + "T00:00:00.000Z",
       buyPrice,

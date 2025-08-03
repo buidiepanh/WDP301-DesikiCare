@@ -6,9 +6,6 @@ import { AgGridReact } from "ag-grid-react";
 import type { ColDef } from "ag-grid-community";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "@/styles/ag-grid-glassmophorism.css";
-import { Edit, Visibility } from "@mui/icons-material";
-import BlockIcon from "@mui/icons-material/Block";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { ProductDetailPopup } from "./ProductDetailPopup";
 import {
   categoriesData,
@@ -171,18 +168,49 @@ const Products = () => {
       },
     },
     {
-      headerName: "Số lượng",
+      headerName: "Số lượng hiện có",
       field: "shipmentProducts",
-      valueGetter: (params: any) =>
-        params.data.shipmentProducts.reduce(
-          (sum: number, sp: any) => sum + sp.shipmentProduct.quantity,
+      valueGetter: (params: any) => {
+        if (
+          !params.data.shipmentProducts ||
+          params.data.shipmentProducts.length === 0
+        ) {
+          return 0;
+        }
+
+        return params.data.shipmentProducts.reduce(
+          (totalQuantity: number, sp: any) => {
+            // Chỉ tính những shipmentProduct không bị deactivated và shipment không bị deleted
+            if (sp.shipmentProduct.isDeactivated || sp.shipment.isDeleted) {
+              return totalQuantity;
+            }
+
+            const availableQuantity =
+              (sp.shipmentProduct.importQuantity || 0) -
+              (sp.shipmentProduct.saleQuantity || 0);
+            return totalQuantity + Math.max(0, availableQuantity); // Đảm bảo không âm
+          },
           0
-        ),
+        );
+      },
       sortable: true,
-      cellStyle: {
-        color: "rgba(255, 255, 255, 0.9)",
-        fontWeight: "500",
-        background: "transparent !important",
+      filter: "agNumberColumnFilter",
+      valueFormatter: (params: any) => {
+        const quantity = params.value;
+        return quantity === 0 ? "Hết hàng" : `${quantity.toLocaleString()}`;
+      },
+      cellStyle: (params: any) => {
+        const quantity = params.value;
+        return {
+          color:
+            quantity === 0
+              ? "rgba(239, 68, 68, 0.9)"
+              : quantity < 10
+              ? "rgba(251, 191, 36, 0.9)"
+              : "rgba(34, 197, 94, 0.9)",
+          fontWeight: "600",
+          background: "transparent !important",
+        };
       },
     },
     {
@@ -240,35 +268,33 @@ const Products = () => {
         <div className="flex items-center gap-2 h-full">
           <button
             onClick={() => handleViewDetail(params.data.product._id)}
-            className="p-2 rounded-lg bg-blue-500/20 border border-blue-400/40 text-blue-200 hover:bg-blue-500/30 transition-all duration-200 backdrop-blur-sm shadow-lg"
+            className="px-3 py-1 text-xs rounded-lg bg-blue-500/20 border border-blue-400/40 text-blue-200 hover:bg-blue-500/30 transition-all duration-200 backdrop-blur-sm shadow-lg font-medium"
           >
-            <Visibility fontSize="small" />
+            Details
           </button>
           <button
             onClick={() => handleEdit(params.data.product._id)}
-            className="p-2 rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-200 hover:bg-amber-500/30 transition-all duration-200 backdrop-blur-sm shadow-lg"
+            className="px-3 py-1 text-xs rounded-lg bg-amber-500/20 border border-amber-400/40 text-amber-200 hover:bg-amber-500/30 transition-all duration-200 backdrop-blur-sm shadow-lg font-medium"
           >
-            <Edit fontSize="small" />
+            Edit
           </button>
-          {params.data.product.isDeactivated ? (
-            <button
-              onClick={() => handleToggleActivate(params.data.product._id)}
-              className="p-2 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 hover:bg-emerald-500/30 transition-all duration-200 backdrop-blur-sm shadow-lg"
-            >
-              <CheckBoxIcon fontSize="small" />
-            </button>
-          ) : (
-            <button
-              onClick={() => handleToggleActivate(params.data.product._id)}
-              className="p-2 rounded-lg bg-red-500/20 border border-red-400/40 text-red-200 hover:bg-red-500/30 transition-all duration-200 backdrop-blur-sm shadow-lg"
-            >
-              <BlockIcon fontSize="small" />
-            </button>
-          )}
+          <button
+            onClick={() => handleToggleActivate(params.data.product._id)}
+            className={`px-3 py-1 text-xs rounded-lg transition-all duration-200 backdrop-blur-sm shadow-lg font-medium ${
+              params.data.product.isDeactivated
+                ? "bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 hover:bg-emerald-500/30"
+                : "bg-red-500/20 border border-red-400/40 text-red-200 hover:bg-red-500/30"
+            }`}
+          >
+            {params.data.product.isDeactivated ? "Active" : "Deactive"}
+          </button>
         </div>
       ),
       cellStyle: {
         background: "transparent !important",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       },
     },
   ];
@@ -419,6 +445,13 @@ const Products = () => {
               animateRows={true}
               pagination={true}
               paginationPageSize={4}
+              enableCellTextSelection={true}
+              ensureDomOrder={true}
+              suppressCopyRowsToClipboard={false}
+              enableRangeSelection={true}
+              enableRangeHandle={true}
+              enableFillHandle={true}
+              copyHeadersToClipboard={true}
             />
           )}
         </div>
