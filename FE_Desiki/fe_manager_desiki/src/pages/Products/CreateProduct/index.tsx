@@ -1,6 +1,6 @@
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, Upload, X, Plus, Check, ImageIcon } from "lucide-react";
 import {
   skinTypesData,
@@ -9,11 +9,22 @@ import {
 } from "../../../data/mockData";
 import { useNavigate } from "react-router-dom";
 import { callAPIManager } from "../../../api/axiosInstace";
+import { nextAPI } from "../../../api/nextAPI";
 import Swal from "sweetalert2";
-
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { toast } from "react-toastify";
 type Option = {
   _id: number;
   name: string;
+};
+
+type Brand = {
+  _id: string;
+  name: string;
+  imageUrl: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 // Custom Glassmorphism Components
@@ -114,6 +125,86 @@ const GlassSelect = ({
                 {option.name}
               </button>
             ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const BrandSelect = ({
+  brands,
+  value,
+  onChange,
+  label,
+  placeholder,
+  isLoading = false,
+}: {
+  brands: Brand[];
+  value: string;
+  onChange: (brandId: string) => void;
+  label?: string;
+  placeholder?: string;
+  isLoading?: boolean;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const selectedBrand = brands.find((brand) => brand._id === value);
+
+  return (
+    <div className="relative flex flex-col gap-2">
+      {label && (
+        <label className="text-white/90 text-sm font-medium">{label}</label>
+      )}
+      <div className="relative">
+        <button
+          onClick={() => !isLoading && setIsOpen(!isOpen)}
+          disabled={isLoading}
+          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white text-left backdrop-blur-sm transition-all duration-200 flex items-center justify-between hover:border-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ backdropFilter: "blur(8px)" }}
+        >
+          <span className={selectedBrand ? "text-white" : "text-white/50"}>
+            {isLoading
+              ? "Đang tải brands..."
+              : selectedBrand
+              ? selectedBrand.name
+              : placeholder || "Chọn brand..."}
+          </span>
+          <ChevronDown
+            className={`h-4 w-4 transition-transform ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+
+        {isOpen && !isLoading && (
+          <div className="absolute top-full left-0 right-0 mt-1 backdrop-blur-xl bg-black/40 border border-white/20 rounded-lg shadow-2xl z-50 max-h-60 overflow-y-auto">
+            {brands.length === 0 ? (
+              <div className="px-4 py-3 text-white/50 text-center">
+                Không có brands nào
+              </div>
+            ) : (
+              brands.map((brand) => (
+                <button
+                  key={brand._id}
+                  onClick={() => {
+                    onChange(brand._id);
+                    setIsOpen(false);
+                  }}
+                  className="w-full px-4 py-3 text-left text-white hover:bg-white/10 transition-colors duration-200 border-b border-white/5 last:border-b-0 flex items-center gap-3"
+                >
+                  {/* Brand Image */}
+                  {brand.imageUrl && (
+                    <img
+                      src={brand.imageUrl}
+                      alt={brand.name}
+                      className="w-8 h-8 object-cover rounded-full border border-white/20"
+                    />
+                  )}
+                  <span>{brand.name}</span>
+                </button>
+              ))
+            )}
           </div>
         )}
       </div>
@@ -276,9 +367,33 @@ const ImageUpload = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    console.log("📸 Image selected:", {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    });
+
+    // Kiểm tra kích thước file (giới hạn 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Kích thước ảnh quá lớn! Vui lòng chọn ảnh nhỏ hơn 5MB.");
+      return;
+    }
+
+    // Kiểm tra định dạng file
+    if (!file.type.startsWith("image/")) {
+      toast.error("Vui lòng chọn file ảnh hợp lệ!");
+      return;
+    }
+
     const reader = new FileReader();
     reader.onloadend = () => {
-      onChange(reader.result?.toString() || "");
+      const result = reader.result?.toString() || "";
+      console.log("📸 Image converted to base64, length:", result.length);
+      onChange(result);
+    };
+    reader.onerror = () => {
+      console.error("❌ Error reading file");
+      toast.error("Lỗi khi đọc file ảnh!");
     };
     reader.readAsDataURL(file);
   };
@@ -296,9 +411,16 @@ const ImageUpload = ({
             src={value || "/placeholder.svg"}
             alt="preview"
             className="w-40 h-40 object-cover rounded-lg border border-white/20 shadow-lg"
+            onError={() => {
+              console.error("❌ Error loading image preview");
+              toast.error("Lỗi hiển thị ảnh preview!");
+            }}
           />
           <button
-            onClick={() => onChange("")}
+            onClick={() => {
+              console.log("🗑️ Removing image");
+              onChange("");
+            }}
             className="absolute -top-2 -right-2 p-1 bg-red-500/20 border border-red-400/40 text-red-200 hover:bg-red-500/30 transition-all duration-200 backdrop-blur-sm rounded-full"
           >
             <X className="h-4 w-4" />
@@ -343,12 +465,63 @@ const CreateProduct = () => {
     imageBase64: "",
     skinTypeIds: [] as number[],
     skinStatusIds: [] as number[],
+    brandId: "", // Add brandId to form
   });
+
+  const [htmlContent, setHtmlContent] = useState("");
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
+  const [isLoadingBrands, setIsLoadingBrands] = useState(false);
 
   // HOOKS
   const navigate = useNavigate();
+  useEffect(() => {
+    fetchBrands();
+  }, []);
 
   // FUNCTIONS
+  const fetchBrands = async () => {
+    setIsLoadingBrands(true);
+    try {
+      console.log("🔍 Fetching brands from /api/brands (via nextAPI proxy)");
+
+      // Use nextAPI without baseURL to leverage Vite proxy
+      const response = await nextAPI.get("/api/brands");
+
+      console.log("📨 Brands API Response:", {
+        status: response?.status,
+        data: response?.data,
+        headers: response?.headers,
+      });
+
+      if (response && response.data && response.data.brands) {
+        setBrands(response.data.brands);
+        console.log("✅ Brands loaded:", response.data.brands.length, "brands");
+        console.log(
+          "📋 Brands list:",
+          response.data.brands.map((b: Brand) => ({ id: b._id, name: b.name }))
+        );
+      } else {
+        setBrands([]);
+        console.log("⚠️ No brands found in response:", response?.data);
+      }
+    } catch (error: any) {
+      console.error("❌ Error fetching brands:", {
+        message: error?.message,
+        response: error?.response?.data,
+        status: error?.response?.status,
+        url: error?.config?.url,
+      });
+      setBrands([]);
+      toast.error(
+        `Không thể tải danh sách brands: ${
+          error?.response?.data?.message || error?.message
+        }`
+      );
+    } finally {
+      setIsLoadingBrands(false);
+    }
+  };
   const handleChange = (field: string, value: any) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
@@ -363,39 +536,157 @@ const CreateProduct = () => {
       imageBase64: "",
       skinTypeIds: [] as number[],
       skinStatusIds: [] as number[],
+      brandId: "", // Add brandId to reset function
     });
   };
 
   const handleSubmit = async () => {
-    const payload = {
+    // Kiểm tra dữ liệu trước khi gửi
+    console.log("📋 Form data validation:");
+    console.log("- Name:", form.name);
+    console.log("- CategoryId:", form.categoryId);
+    console.log("- Volume:", form.volume);
+    console.log("- SalePrice:", form.salePrice);
+    console.log("- Image Base64 length:", form.imageBase64.length);
+    console.log("- BrandId:", form.brandId);
+    console.log("- HTML Content length:", htmlContent.length);
+
+    // Kiểm tra các trường bắt buộc
+    if (!form.name || !form.categoryId || !form.volume || !form.salePrice) {
+      Swal.fire("Lỗi", "Vui lòng điền đầy đủ thông tin bắt buộc!", "error");
+      return;
+    }
+
+    // Kiểm tra ảnh
+    if (!form.imageBase64) {
+      Swal.fire("Lỗi", "Vui lòng chọn ảnh sản phẩm!", "error");
+      return;
+    }
+
+    // Payload cho API chính (không bao gồm brandId)
+    const mainPayload = {
       product: {
         categoryId: Number(form.categoryId),
         name: form.name,
         description: form.description,
         volume: Number(form.volume),
         salePrice: Number(form.salePrice),
+        gameTicketReward: 0,
         imageBase64: form.imageBase64,
       },
       skinTypeIds: form.skinTypeIds,
       skinStatusIds: form.skinStatusIds,
     };
 
+    console.log("📤 Main API Payload:", {
+      ...mainPayload,
+      product: {
+        ...mainPayload.product,
+        imageBase64: `[Base64 image - ${form.imageBase64.length} chars]`,
+      },
+    });
+
     try {
+      // Bước 1: Tạo sản phẩm với API chính
+      console.log("🔄 Creating product with main API...");
       const response = await callAPIManager({
         method: "POST",
         url: "/api/Product/products",
-        data: payload,
+        data: mainPayload,
       });
-      if (response && response.status === 201) {
+
+      console.log("📨 Main API Response:", {
+        status: response?.status,
+        data: response?.data,
+        headers: response?.headers,
+      });
+
+      if (response && response.status === 201 && response.data?.newProductId) {
+        const newProductId = response.data.newProductId;
+        console.log("✅ Product created successfully, ID:", newProductId);
+
+        // Bước 2: Gửi thông tin bổ sung qua API phụ (Next.js)
+        if (form.brandId || htmlContent) {
+          try {
+            console.log("🔄 Sending additional data to Next.js API...");
+
+            // Tìm brand name từ brandId
+            const selectedBrand = brands.find(
+              (brand) => brand._id === form.brandId
+            );
+            const brandName = selectedBrand ? selectedBrand.name : "";
+
+            const additionalPayload = {
+              id: newProductId,
+              brandId: form.brandId || null,
+              brandName: brandName || null,
+              htmlContent: htmlContent || null,
+            };
+
+            console.log("📤 Next.js API Payload:", additionalPayload);
+
+            const nextResponse = await nextAPI.post(
+              "/api/products",
+              additionalPayload
+            );
+
+            console.log("📨 Next.js API Response:", {
+              status: nextResponse?.status,
+              data: nextResponse?.data,
+              headers: nextResponse?.headers,
+            });
+
+            if (nextResponse && nextResponse.status === 200) {
+              console.log("✅ Additional data sent successfully");
+            } else {
+              console.warn(
+                "⚠️ Warning: Additional data sending failed, but product was created",
+                nextResponse
+              );
+            }
+          } catch (nextErr: any) {
+            console.error("❌ Error sending additional data:", {
+              message: nextErr?.message,
+              response: nextErr?.response?.data,
+              status: nextErr?.response?.status,
+              url: nextErr?.config?.url,
+            });
+            // Không block quá trình vì sản phẩm đã tạo thành công
+            toast.error(
+              `Sản phẩm đã tạo thành công nhưng có lỗi khi cập nhật thông tin bổ sung: ${
+                nextErr?.response?.data?.message || nextErr?.message
+              }`
+            );
+          }
+        } else {
+          console.log(
+            "ℹ️ No additional data to send (no brandId or htmlContent)"
+          );
+        }
+
+        // Reset form và thông báo thành công
+        reset();
+        setHtmlContent("");
         Swal.fire("Thành công", "Đã tạo thành công sản phẩm", "success");
         navigate("/Products");
       } else {
+        console.error("❌ Invalid response from main API:", response);
         Swal.fire("Lỗi", "Lỗi khi tạo sản phẩm, vui lòng thử lại", "error");
-        reset();
       }
-    } catch (err) {
-      console.error("❌ Lỗi khi tạo sản phẩm:", err);
-      Swal.fire("Lỗi", "Tạo sản phẩm thất bại!", "error");
+    } catch (err: any) {
+      console.error("❌ Lỗi khi tạo sản phẩm:", {
+        message: err?.message,
+        response: err?.response?.data,
+        status: err?.response?.status,
+        url: err?.config?.url,
+      });
+      Swal.fire(
+        "Lỗi",
+        `Tạo sản phẩm thất bại: ${
+          err?.response?.data?.message || err?.message
+        }`,
+        "error"
+      );
     }
   };
 
@@ -452,6 +743,15 @@ const CreateProduct = () => {
               value={form.categoryId}
               onChange={(value) => handleChange("categoryId", value)}
             />
+
+            <BrandSelect
+              label="Brand"
+              placeholder="Chọn brand cho sản phẩm..."
+              brands={brands}
+              value={form.brandId}
+              onChange={(brandId) => handleChange("brandId", brandId)}
+              isLoading={isLoadingBrands}
+            />
           </div>
 
           {/* Advanced Options & Image */}
@@ -478,6 +778,11 @@ const CreateProduct = () => {
               onChange={(base64) => handleChange("imageBase64", base64)}
             />
           </div>
+        </div>
+        {/* Description Editor */}
+        <div className="text-white mt-8">
+          <h2 className="text-xl font-semibold mb-4">Mô tả chi tiết</h2>
+          <ReactQuill value={htmlContent} onChange={setHtmlContent} />
         </div>
 
         {/* Submit Button */}

@@ -57,6 +57,17 @@ const Orders = () => {
   const [showOrderDetailsPopup, setShowOrderDetailsPopup] = useState(false);
   const [showEditStatusPopup, setShowEditStatusPopup] = useState(false);
 
+  // HELPER FUNCTIONS
+  const formatDateTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${hours}:${minutes} - ${day}/${month}/${year}`;
+  };
+
   // HOOKS
   useEffect(() => {
     fetch();
@@ -103,50 +114,56 @@ const Orders = () => {
 
   const columnDefs = [
     {
-      headerName: "Mã Đơn Hàng",
-      field: "order._id",
-      autoHeight: true,
-      cellStyle: {
-        whiteSpace: "normal",
-        wordBreak: "break-all",
-        lineHeight: "1.25rem",
-        color: "rgba(255, 255, 255, 0.9)",
-        background: "transparent !important",
-        fontFamily: "monospace",
-      },
-      minWidth: 180,
-    },
-    {
-      headerName: "ID Khách hàng",
-      field: "order.accountId",
+      headerName: "Khách hàng",
+      // fake column for later API
+      field: "account.fullName",
       cellStyle: {
         color: "rgba(255, 255, 255, 0.9)",
         background: "transparent !important",
         fontFamily: "monospace",
       },
+      cellRenderer: (params: any) => {
+        return (
+          <div className="flex items-center h-full">
+            <p>{params.value}</p>
+          </div>
+        );
+      },
     },
     {
-      headerName: "Số điểm dùng",
-      field: "order.pointUsed",
+      headerName: "Ngày Ra Đơn",
+      field: "order.createdAt",
       sortable: true,
-      cellRenderer: (params: any) =>
-        params.value === 0
-          ? "Không dùng điểm"
-          : params.value.toLocaleString("vi-VN"),
-      cellStyle: {
-        color: "rgba(255, 255, 255, 0.8)",
-        background: "transparent !important",
+      cellRenderer: (params: any) => {
+        return (
+          <div className="flex items-center justify-end h-full">
+            <p>{formatDateTime(params.value)}</p>
+          </div>
+        );
       },
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.9)",
+        background: "transparent !important",
+        fontWeight: "500",
+      },
+      minWidth: 160,
     },
     {
-      headerName: "Tiền gốc",
+      headerName: "Tiền Gốc",
       valueGetter: (params: any) =>
         params.data.order.pointUsed + params.data.order.totalPrice,
-      valueFormatter: (params: any) =>
-        params.value.toLocaleString("vi-VN", {
-          style: "currency",
-          currency: "VND",
-        }),
+      cellRenderer: (params: any) => {
+        return (
+          <div className="flex items-center justify-end h-full">
+            <p className="text-red-400">
+              {params.value.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </p>
+          </div>
+        );
+      },
       sortable: true,
       cellStyle: {
         color: "rgba(255, 255, 255, 0.9)",
@@ -155,7 +172,37 @@ const Orders = () => {
       },
     },
     {
-      headerName: "Tiền phải trả",
+      headerName: "Số điểm dùng",
+      field: "order.pointUsed",
+      sortable: true,
+      cellRenderer: (params: any) => {
+        if (params.value === 0) {
+          return (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-white">Không dùng điểm</p>
+            </div>
+          );
+        } else {
+          return (
+            <div className="flex items-center h-full">
+              <p className="text-[#C4DAE6]">
+                {params.value.toLocaleString("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                })}
+              </p>
+            </div>
+          );
+        }
+      },
+
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.8)",
+        background: "transparent !important",
+      },
+    },
+    {
+      headerName: "Tiền Sau Áp Dụng Điểm",
       field: "order.totalPrice",
       valueFormatter: (params: any) =>
         params.value.toLocaleString("vi-VN", {
@@ -164,9 +211,21 @@ const Orders = () => {
         }),
       sortable: true,
       cellStyle: {
-        color: "rgba(255, 255, 255, 0.9)",
+        color: "#C4DAE6",
         background: "transparent !important",
         fontWeight: "600",
+      },
+      cellRenderer: (params: any) => {
+        return (
+          <div className="flex items-center justify-end h-full">
+            <p className="text-green-400">
+              {params.value.toLocaleString("vi-VN", {
+                style: "currency",
+                currency: "VND",
+              })}
+            </p>
+          </div>
+        );
       },
     },
     {
@@ -195,7 +254,7 @@ const Orders = () => {
         }
 
         return (
-          <div className="flex items-center h-full">
+          <div className="w-full flex items-center justify-center h-full">
             <GlassChip label={name} variant={variant} />
           </div>
         );
@@ -207,13 +266,64 @@ const Orders = () => {
       },
     },
     {
-      headerName: "Số sản phẩm",
-      valueGetter: (params: any) => params.data.orderItems.length,
+      headerName: "Trạng Thái Thanh Toán",
+      field: "order.isPaid",
+      filter: "agSetColumnFilter",
+      cellRenderer: (params: any) => {
+        const isPaid = params.value;
+        const variant = isPaid ? "success" : "error";
+        const label = isPaid ? "Đã thanh toán" : "Chưa thanh toán";
+
+        return (
+          <div className="w-full flex items-center justify-center h-full">
+            <GlassChip label={label} variant={variant} />
+          </div>
+        );
+      },
+      cellStyle: {
+        background: "transparent !important",
+        display: "flex",
+        alignItems: "center",
+      },
+    },
+    {
+      headerName: "Số sản phẩm trong đơn",
+      // valueGetter: (params: any) => params.data.orderItems.length,
+      cellRenderer: (params: any) => {
+        return (
+          <div className="w-full flex items-center justify-end h-full">
+            {params.data.orderItems.length} sản phẩm
+          </div>
+        );
+      },
       sortable: true,
       cellStyle: {
         color: "rgba(255, 255, 255, 0.9)",
         background: "transparent !important",
         fontWeight: "500",
+      },
+    },
+    {
+      headerName: "Mã Đơn Hàng",
+      field: "order._id",
+      autoHeight: true,
+      cellStyle: {
+        whiteSpace: "normal",
+        wordBreak: "break-all",
+        lineHeight: "1.25rem",
+        color: "rgba(255, 255, 255, 0.9)",
+        background: "transparent !important",
+        fontFamily: "monospace",
+      },
+      minWidth: 180,
+    },
+    {
+      headerName: "ID Khách hàng",
+      field: "account._id",
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.9)",
+        background: "transparent !important",
+        fontFamily: "monospace",
       },
     },
     {
@@ -350,6 +460,7 @@ const Orders = () => {
           open={showEditStatusPopup}
           orderStatuses={orderStatuses}
           currentStatusId={selectedOrder.orderStatus._id}
+          isPaid={selectedOrder.order.isPaid}
           onClose={onCloseEditStatusPopup}
           onSubmit={onSubmitEditStatus}
         />

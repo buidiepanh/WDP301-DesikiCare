@@ -17,6 +17,8 @@ import GameConfigLoader from "./GameConfigLoader";
 import type { CreateGame } from "../../data/types";
 import { callAPIAdmin } from "../../api/axiosInstace";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface CreateGameProps {
   isOpen: boolean;
@@ -68,7 +70,7 @@ export const CreateGameModal: React.FC<CreateGameProps> = ({
 
   const [isLoading, setIsLoading] = useState(true);
   const [gameTypes, setGameTypes] = useState(gameTypesData);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (isOpen) reset();
   }, [isOpen]);
@@ -140,8 +142,11 @@ export const CreateGameModal: React.FC<CreateGameProps> = ({
         data: newGame,
       });
       if (response?.status === 201) {
-        Swal.fire("Thành công", "Tạo Game Events Thành công", "success");
+        toast.success(
+          "Tạo game thành công! Vui lòng Kích hoạt game để bật sự kiện"
+        );
         onClose();
+        navigate(0);
       } else {
         Swal.fire("Lỗi", "Lỗi trong quá trình tạo game", "error");
       }

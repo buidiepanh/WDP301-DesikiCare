@@ -9,6 +9,9 @@ import {
   MessageCircle,
   Package,
   LogOut,
+  Tag,
+  HelpCircle,
+  Settings,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -41,10 +44,15 @@ const adminNavItems: NavItem[] = [
     icon: <Gamepad2 className="h-5 w-5" />,
   },
   {
-    label: "Chatbot Config",
-    path: "/Chatbot",
-    icon: <MessageCircle className="h-5 w-5" />,
+    label: "Quiz Management",
+    path: "/quiz",
+    icon: <HelpCircle className="h-5 w-5" />,
   },
+  // {
+  //   label: "Chatbot Config",
+  //   path: "/Chatbot",
+  //   icon: <MessageCircle className="h-5 w-5" />,
+  // },
 ];
 
 const managerNavItems: NavItem[] = [
@@ -67,6 +75,16 @@ const managerNavItems: NavItem[] = [
     label: "Shipments",
     path: "/Shipments",
     icon: <Package className="h-5 w-5" />,
+  },
+  {
+    label: "Brands",
+    path: "/Brands",
+    icon: <Tag className="h-5 w-5" />,
+  },
+  {
+    label: "Game Rules",
+    path: "/game-rules",
+    icon: <Settings className="h-5 w-5" />,
   },
 ];
 
