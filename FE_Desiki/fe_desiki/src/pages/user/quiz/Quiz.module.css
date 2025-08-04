@@ -1,0 +1,280 @@
+/* Quiz Container */
+.quizContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.quizLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+/* Quiz Header */
+.quizHeader {
+  text-align: center;
+  margin-bottom: 40px;
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.quizSubtitle {
+  color: #666;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+/* Progress Bar */
+.quizProgress {
+  margin-bottom: 32px;
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.progressBar {
+  margin-bottom: 12px;
+}
+
+.progressText {
+  display: block;
+  text-align: center;
+  color: #666;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Question Card */
+.questionCard {
+  margin-bottom: 24px;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+  border: none;
+  overflow: hidden;
+}
+
+.questionTitle {
+  color: #1a1a1a;
+  margin-bottom: 32px;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.4;
+}
+
+/* Radio Options */
+.optionsContainer {
+  margin-bottom: 32px;
+}
+
+.radioOption {
+  display: block !important;
+  margin-bottom: 16px;
+  padding: 20px;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background: #fafafa;
+}
+
+.radioOption:hover {
+  border-color: #1890ff;
+  background: #f0f8ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.15);
+}
+
+.radioOption.ant-radio-wrapper-checked {
+  border-color: #1890ff;
+  background: #e6f7ff;
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.2);
+}
+
+.optionText {
+  font-size: 16px;
+  color: #333;
+  line-height: 1.6;
+  margin-left: 12px;
+  font-weight: 500;
+}
+
+/* Card Navigation */
+.cardNavigation {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 32px;
+}
+
+.navigationButtons {
+  display: flex;
+  gap: 12px;
+}
+
+/* Reset Section */
+.resetSection {
+  text-align: center;
+  margin-top: 24px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Results */
+.quizResults {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.resultsHeader {
+  text-align: center;
+  margin-bottom: 40px;
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+}
+
+.successIcon {
+  font-size: 64px;
+  color: #52c41a;
+  margin-bottom: 20px;
+  display: block;
+  animation: bounce 1s ease-in-out;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.resultsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.resultCard {
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+  border: none;
+  overflow: hidden;
+}
+
+.skinTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.skinTag {
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  border: none;
+}
+
+.recommendedProducts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.resultsActions {
+  text-align: center;
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .quizContainer,
+  .quizResults {
+    padding: 20px 16px;
+  }
+
+  .quizHeader,
+  .resultsHeader {
+    padding: 24px 20px;
+  }
+
+  .navigationButtons {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .cardNavigation {
+    justify-content: center;
+  }
+
+  .optionText {
+    font-size: 15px;
+  }
+
+  .recommendedProducts {
+    grid-template-columns: 1fr;
+  }
+
+  .quizProgress {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .quizContainer,
+  .quizResults {
+    padding: 16px 12px;
+  }
+
+  .quizHeader,
+  .resultsHeader {
+    padding: 20px 16px;
+  }
+
+  .questionCard {
+    margin-bottom: 20px;
+  }
+
+  .radioOption {
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .questionTitle {
+    font-size: 20px;
+    margin-bottom: 24px;
+  }
+
+  .optionText {
+    font-size: 14px;
+  }
+}

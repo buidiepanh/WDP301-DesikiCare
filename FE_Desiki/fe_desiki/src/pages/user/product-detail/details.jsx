@@ -89,9 +89,10 @@ function Details() {
   } = productData;
 
   const totalQuantity = shipmentProducts.reduce(
-    (sum, item) => sum + (item.shipmentProduct.quantity || 0),
+    (sum, item) => sum + (item.shipmentProduct.importQuantity || 0),
     0
   );
+  console.log(productData);
 
   return (
     <div className="product-detail-container">
