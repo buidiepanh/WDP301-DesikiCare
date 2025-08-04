@@ -250,9 +250,7 @@ const GamePlayPage = () => {
                 originalPoint={
                   gameDetails.gameEvent.configJson?.originalPoint || 100
                 }
-                minusPoint={
-                  gameDetails.gameEvent.configJson?.minusPoint || 10
-                }
+                minusPoint={gameDetails.gameEvent.configJson?.minusPoint || 10}
                 gameEventId={gameId}
                 onComplete={handleFinishGame}
               />
