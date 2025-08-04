@@ -194,12 +194,8 @@ export const getPaymentUrlForCart = async (point, address) => {
         deliveryAddressId: address,
       },
       metaData: {
-        cancelUrl: `${
-          import.meta.env.VITE_WEB_APP_URL
-        }/payment-return?status=CANCEL`,
-        returnUrl: `${
-          import.meta.env.VITE_WEB_APP_URL
-        }/payment-return?status=PAID`,
+        cancelUrl: `${import.meta.env.VITE_WEB_APP_URL}/payment-return`,
+        returnUrl: `${import.meta.env.VITE_WEB_APP_URL}/payment-return`,
       },
     });
     return result.data;
