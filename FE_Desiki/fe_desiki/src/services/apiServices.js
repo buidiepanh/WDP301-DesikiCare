@@ -152,11 +152,11 @@ export const getAllOrders = async () => {
   return res.data.orders;
 };
 
-export const addNewOrder = async (orderId, point, address) => {
+export const addNewOrder = async (point, address, newOrderId) => {
   try {
     const result = await axios.post("/Order/orders", {
       order: {
-        newOrderId: orderId,
+        newOrderId: newOrderId,
         pointUsed: point,
         deliveryAddressId: address,
       },
@@ -185,8 +185,9 @@ export const getPaymentUrlForCart = async (point, address) => {
         deliveryAddressId: address,
       },
       metaData: {
-        cancelUrl: `http://localhost:5173/cart`,
-        returnUrl: "http://localhost:5173/payment-return",
+        cancelUrl: `${import.meta.env.VITE_WEB_APP_URL}/payment-return?status=CANCEL`,
+        returnUrl: `${import.meta.env.VITE_WEB_APP_URL}/payment-return?stat
+us=PAID`,
       },
     });
     return result.data;
@@ -332,3 +333,36 @@ export const submitQuiz = async (quizOptionIds) => {
     console.log(error);
   }
 };
+
+export const checkProductQuantity = async (productId) => {
+  let totalQuantity = 0;
+  try {
+    const response = await axios.get(`/Product/products/${productId}`);
+    if (!response || !response.data) {
+      return 0;
+    }
+    const { shipmentProducts } = response.data;
+    if (!shipmentProducts || !Array.isArray(shipmentProducts)) {
+      return 0;
+    }
+    // Tính tổng quantity từ tất cả shipmentProducts
+    totalQuantity = shipmentProducts.reduce((total, item) => {
+      // Truy cập vào shipmentProduct object trong mỗi item
+      const shipmentProduct = item.shipmentProduct;
+      if (
+        shipmentProduct &&
+        typeof shipmentProduct.importQuantity === "number" &&
+        typeof shipmentProduct.saleQuantity === "number"
+      ) {
+        const availableQuantity =
+          shipmentProduct.importQuantity - shipmentProduct.saleQuantity;
+        return total + Math.max(0, availableQuantity); // Đảm bảo không âm
+      }
+      return total;
+    }, 0);
+    return totalQuantity;
+  } catch (error) {
+    console.log("Error checking product quantity:", error);
+    return 0; // Trả về 0 thay vì undefined khi có lỗi
+  }
+}
