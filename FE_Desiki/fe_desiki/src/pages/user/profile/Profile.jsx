@@ -234,8 +234,8 @@ const Profile = () => {
   const handleCancelOrder = async (orderId) => {
     try {
       const response = await cancelOrder(orderId);
-      if (response.success) {
-        toast.success(response.message);
+      if (response) {
+        toast.success("Hủy đơn thành công");
         fetchOrders();
       } else {
         toast.error(
