@@ -267,7 +267,7 @@ const MiniGameManagement = () => {
       } as any,
     },
     {
-      headerName: "Điểm còn lại",
+      headerName: "Điểm dự trù",
       field: "gameEvent.balancePoints",
       valueFormatter: (params: any) => params.value.toLocaleString("vi-VN"),
       cellStyle: {
@@ -277,10 +277,10 @@ const MiniGameManagement = () => {
       } as any,
     },
     {
-      headerName: "Người tham gia",
+      headerName: "Lượt tham gia",
       valueGetter: (params: any) =>
         params.data?.gameEventRewardResults?.length || 0,
-      valueFormatter: (params: any) => `${params.value} người`,
+      valueFormatter: (params: any) => `${params.value} lượt`,
       cellStyle: {
         color: "rgba(255, 255, 255, 0.9)",
         background: "transparent !important",
