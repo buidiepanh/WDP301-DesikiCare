@@ -5,16 +5,17 @@ import { CircularProgress } from "@mui/material";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "@/styles/ag-grid-glassmophorism.css";
-import { Plus, Eye, Edit, Ban, Play, Square } from "lucide-react";
+import { Plus, Eye, Edit, Ban, Play, Square, CheckCircle } from "lucide-react";
 import type { GameEvent, GameType } from "../../data/types";
 import { CreateGameModal } from "./CreateGameModal";
 import { callAPIAdmin } from "../../api/axiosInstace";
 // import { ca } from "zod/v4/locales";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 import { GetAllGames } from "@/services/Game/get-games";
 import { GetAllGameTypes } from "@/services/Game/get-game-types";
 import Swal from "sweetalert2";
+import HasikiLoader from "@/components/loader";
 
 // Custom Glassmorphism Components
 const GlassButton = ({
@@ -174,21 +175,27 @@ const MiniGameManagement = () => {
 
   const handleDeactivate = async (id: string) => {
     const game = gameEvents?.filter((g) => g.gameEvent._id === id)[0];
-    const mode = game?.gameEvent.isDeactivated;
+    const isCurrentlyDeactivated = game?.gameEvent.isDeactivated;
 
     try {
       const response = await callAPIAdmin({
         method: "PUT",
-        url: `/api/Game/gameEvents/${id}/deactivate/${!mode}`,
+        url: `/api/Game/gameEvents/${id}/deactivate/${!isCurrentlyDeactivated}`,
       });
       if (response && response.status === 200) {
-        toast.success("Vô hiệu hóa game thành công!");
+        toast.success(
+          isCurrentlyDeactivated
+            ? "Kích hoạt game thành công!"
+            : "Vô hiệu hóa game thành công!"
+        );
+
+        setIsLoading(true);
         await fetch();
       } else {
         toast.error("Lỗi, vui lòng thử lại sau!");
       }
     } catch (error) {
-      console.log("Lỗi khi deactivate game: ", error);
+      console.log("Lỗi khi thay đổi trạng thái game: ", error);
     }
   };
 
@@ -260,7 +267,7 @@ const MiniGameManagement = () => {
       } as any,
     },
     {
-      headerName: "Điểm còn lại",
+      headerName: "Điểm dự trù",
       field: "gameEvent.balancePoints",
       valueFormatter: (params: any) => params.value.toLocaleString("vi-VN"),
       cellStyle: {
@@ -270,10 +277,10 @@ const MiniGameManagement = () => {
       } as any,
     },
     {
-      headerName: "Người tham gia",
+      headerName: "Lượt tham gia",
       valueGetter: (params: any) =>
         params.data?.gameEventRewardResults?.length || 0,
-      valueFormatter: (params: any) => `${params.value} người`,
+      valueFormatter: (params: any) => `${params.value} lượt`,
       cellStyle: {
         color: "rgba(255, 255, 255, 0.9)",
         background: "transparent !important",
@@ -303,6 +310,8 @@ const MiniGameManagement = () => {
       headerName: "Thao tác",
       cellRenderer: (params: any) => {
         const id = params.data.gameEvent._id;
+        const isDeactivated = params.data.gameEvent.isDeactivated;
+
         return (
           <div className="flex gap-2 justify-center items-center h-full">
             <button
@@ -321,10 +330,18 @@ const MiniGameManagement = () => {
             </button>
             <button
               onClick={() => handleDeactivate(id)}
-              className="p-2 bg-red-500/20 border border-red-400/40 text-red-200 hover:bg-red-500/30 transition-all duration-200 backdrop-blur-sm rounded-lg"
-              title="Vô hiệu hóa"
+              className={`p-2 ${
+                isDeactivated
+                  ? "bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 hover:bg-emerald-500/30"
+                  : "bg-red-500/20 border border-red-400/40 text-red-200 hover:bg-red-500/30"
+              } transition-all duration-200 backdrop-blur-sm rounded-lg`}
+              title={isDeactivated ? "Kích hoạt" : "Vô hiệu hóa"}
             >
-              <Ban className="h-4 w-4" />
+              {isDeactivated ? (
+                <CheckCircle className="h-4 w-4" />
+              ) : (
+                <Ban className="h-4 w-4" />
+              )}
             </button>
           </div>
         );
@@ -359,11 +376,8 @@ const MiniGameManagement = () => {
       {/* Content */}
       {isLoading ? (
         <div className="w-full flex justify-center py-20">
-          <div className="backdrop-blur-xl bg-black/20 border border-white/20 rounded-2xl p-8">
-            <CircularProgress sx={{ color: "rgba(255, 255, 255, 0.8)" }} />
-            <p className="text-white/80 mt-4 text-center">
-              Đang tải dữ liệu...
-            </p>
+          <div className="flex flex-col items-center justify-center">
+            <HasikiLoader />
           </div>
         </div>
       ) : (

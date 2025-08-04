@@ -1,0 +1,180 @@
+.spin-wheel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  min-height: 100vh;
+  background: white;
+}
+
+.game-content {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.wheel-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  flex: 1;
+}
+
+.spin-wheel {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  position: relative;
+  border: 3px solid #374151;
+  transform-origin: center;
+  transition: transform 3s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wheel-sector {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  transform-origin: 100% 100%;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sector-label {
+  position: absolute;
+  font-weight: bold;
+  font-size: 11px;
+  white-space: nowrap;
+  text-align: center;
+  transform-origin: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 16px solid #000000;
+  z-index: 10;
+}
+
+.spin-button {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 16px;
+}
+
+.spin-button:hover:not(:disabled) {
+  background: #4338ca;
+}
+
+.spin-button:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.results-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  min-width: 300px;
+  max-width: 350px;
+  flex: 1;
+}
+
+.result-item {
+  padding: 8px 12px;
+  margin: 4px 0;
+  border-radius: 6px;
+  background: #f9fafb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 3px solid #4f46e5;
+  font-size: 14px;
+}
+
+.total-points {
+  font-size: 18px;
+  font-weight: 600;
+  color: #059669;
+  text-align: center;
+  padding: 12px;
+  background: #f0fdf4;
+  border-radius: 8px;
+  margin-top: 12px;
+  border: 1px solid #bbf7d0;
+}
+
+.game-info {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #374151;
+}
+
+.spins-info {
+  background: #f9fafb;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin: 12px 0;
+  text-align: center;
+  font-size: 14px;
+}
+
+.spinning-indicator {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-align: center;
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .game-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .results-panel {
+    max-width: none;
+    width: 100%;
+  }
+
+  .spin-wheel-container {
+    padding: 16px;
+  }
+}

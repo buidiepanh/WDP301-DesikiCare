@@ -1,4 +1,3 @@
-
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import DefaultLayout from "../layouts/DefaultLayout";
 import AuthLayout from "../layouts/AuthLayout";
@@ -15,6 +14,8 @@ import Register from "../pages/Auth/Register";
 import Shipment from "../pages/Shipment";
 import CreateProduct from "../pages/Products/CreateProduct";
 import CreateShipment from "../pages/Shipment/CreateShipment";
+import QuizManagement from "../pages/QuizManagement";
+import TicketRuleManagement from "../pages/TicketRuleManagement";
 
 import { ProtectedRoute } from "./ProtectedRoute";
 
@@ -51,6 +52,7 @@ const router = createBrowserRouter([
           { path: "/Products", element: <Products /> },
           { path: "/Products/create", element: <CreateProduct /> },
           { path: "/Orders", element: <Orders /> },
+          { path: "/game-rules", element: <TicketRuleManagement /> },
         ],
       },
     ],
@@ -69,6 +71,7 @@ const router = createBrowserRouter([
           { path: "/Points", element: <PointManagement /> },
           { path: "/MiniGames", element: <MiniGames /> },
           { path: "/Chatbot", element: <Chatbot /> },
+          { path: "/quiz", element: <QuizManagement /> },
         ],
       },
     ],

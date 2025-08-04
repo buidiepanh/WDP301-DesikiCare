@@ -1,6 +1,6 @@
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, Upload, X, Plus, Check, ImageIcon } from "lucide-react";
 import {
   skinTypesData,
@@ -10,7 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { callAPIManager } from "../../../api/axiosInstace";
 import Swal from "sweetalert2";
-
+import { toast } from "react-toastify";
 type Option = {
   _id: number;
   name: string;
@@ -276,9 +276,33 @@ const ImageUpload = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    console.log("📸 Image selected:", {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+    });
+
+    // Kiểm tra kích thước file (giới hạn 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Kích thước ảnh quá lớn! Vui lòng chọn ảnh nhỏ hơn 5MB.");
+      return;
+    }
+
+    // Kiểm tra định dạng file
+    if (!file.type.startsWith("image/")) {
+      toast.error("Vui lòng chọn file ảnh hợp lệ!");
+      return;
+    }
+
     const reader = new FileReader();
     reader.onloadend = () => {
-      onChange(reader.result?.toString() || "");
+      const result = reader.result?.toString() || "";
+      console.log("📸 Image converted to base64, length:", result.length);
+      onChange(result);
+    };
+    reader.onerror = () => {
+      console.error("❌ Error reading file");
+      toast.error("Lỗi khi đọc file ảnh!");
     };
     reader.readAsDataURL(file);
   };
@@ -296,9 +320,16 @@ const ImageUpload = ({
             src={value || "/placeholder.svg"}
             alt="preview"
             className="w-40 h-40 object-cover rounded-lg border border-white/20 shadow-lg"
+            onError={() => {
+              console.error("❌ Error loading image preview");
+              toast.error("Lỗi hiển thị ảnh preview!");
+            }}
           />
           <button
-            onClick={() => onChange("")}
+            onClick={() => {
+              console.log("🗑️ Removing image");
+              onChange("");
+            }}
             className="absolute -top-2 -right-2 p-1 bg-red-500/20 border border-red-400/40 text-red-200 hover:bg-red-500/30 transition-all duration-200 backdrop-blur-sm rounded-full"
           >
             <X className="h-4 w-4" />
@@ -367,35 +398,85 @@ const CreateProduct = () => {
   };
 
   const handleSubmit = async () => {
-    const payload = {
+    // Kiểm tra dữ liệu trước khi gửi
+    console.log("📋 Form data validation:");
+    console.log("- Name:", form.name);
+    console.log("- CategoryId:", form.categoryId);
+    console.log("- Volume:", form.volume);
+    console.log("- SalePrice:", form.salePrice);
+    console.log("- Image Base64 length:", form.imageBase64.length);
+
+    // Kiểm tra các trường bắt buộc
+    if (!form.name || !form.categoryId || !form.volume || !form.salePrice) {
+      Swal.fire("Lỗi", "Vui lòng điền đầy đủ thông tin bắt buộc!", "error");
+      return;
+    }
+
+    // Kiểm tra ảnh
+    if (!form.imageBase64) {
+      Swal.fire("Lỗi", "Vui lòng chọn ảnh sản phẩm!", "error");
+      return;
+    }
+
+    // Payload cho API chính
+    const mainPayload = {
       product: {
         categoryId: Number(form.categoryId),
         name: form.name,
         description: form.description,
         volume: Number(form.volume),
         salePrice: Number(form.salePrice),
+        gameTicketReward: 0,
         imageBase64: form.imageBase64,
       },
       skinTypeIds: form.skinTypeIds,
       skinStatusIds: form.skinStatusIds,
     };
 
+    console.log("📤 API Payload:", {
+      ...mainPayload,
+      product: {
+        ...mainPayload.product,
+        imageBase64: `[Base64 image - ${form.imageBase64.length} chars]`,
+      },
+    });
+
     try {
+      console.log("🔄 Creating product...");
       const response = await callAPIManager({
         method: "POST",
         url: "/api/Product/products",
-        data: payload,
+        data: mainPayload,
       });
+
+      console.log("📨 API Response:", {
+        status: response?.status,
+        data: response?.data,
+        headers: response?.headers,
+      });
+
       if (response && response.status === 201) {
+        reset();
         Swal.fire("Thành công", "Đã tạo thành công sản phẩm", "success");
         navigate("/Products");
       } else {
+        console.error("❌ Invalid response:", response);
         Swal.fire("Lỗi", "Lỗi khi tạo sản phẩm, vui lòng thử lại", "error");
-        reset();
       }
-    } catch (err) {
-      console.error("❌ Lỗi khi tạo sản phẩm:", err);
-      Swal.fire("Lỗi", "Tạo sản phẩm thất bại!", "error");
+    } catch (err: any) {
+      console.error("❌ Lỗi khi tạo sản phẩm:", {
+        message: err?.message,
+        response: err?.response?.data,
+        status: err?.response?.status,
+        url: err?.config?.url,
+      });
+      Swal.fire(
+        "Lỗi",
+        `Tạo sản phẩm thất bại: ${
+          err?.response?.data?.message || err?.message
+        }`,
+        "error"
+      );
     }
   };
 

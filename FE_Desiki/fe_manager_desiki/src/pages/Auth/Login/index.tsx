@@ -39,6 +39,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
   const [show, setShow] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const form = useForm<LoginFormValues>({
@@ -50,6 +51,7 @@ const Login = () => {
   });
 
   const login = async (values: LoginFormValues) => {
+    setIsLoading(true);
     try {
       const response = await callAPIUnAuth({
         method: "POST",
@@ -64,6 +66,7 @@ const Login = () => {
           const roleId = decoded?.role?._id;
 
           if (roleId === 1 || roleId === 2) {
+            setIsLoading(false);
             localStorage.setItem("accessToken", token);
             toast.success("Đăng nhập thành công!");
             setTimeout(() => navigate("/"), 800);
@@ -152,14 +155,24 @@ const Login = () => {
                     </FormItem>
                   )}
                 />
-
-                <Button
-                  type="submit"
-                  className="cursor-pointer w-full mt-6 bg-black hover:bg-gray-900 text-white font-medium py-2.5 transition-all duration-200 shadow-lg hover:shadow-xl"
-                  size="lg"
-                >
-                  ĐĂNG NHẬP
-                </Button>
+                {isLoading ? (
+                  <Button
+                    disabled
+                    type="submit"
+                    className="cursor-pointer w-full mt-6 bg-black hover:bg-gray-900 text-white font-medium py-2.5 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    size="lg"
+                  >
+                    VUI LÒNG CHỜ...
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    className="cursor-pointer w-full mt-6 bg-black hover:bg-gray-900 text-white font-medium py-2.5 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    size="lg"
+                  >
+                    ĐĂNG NHẬP
+                  </Button>
+                )}
               </form>
             </Form>
           </CardContent>
