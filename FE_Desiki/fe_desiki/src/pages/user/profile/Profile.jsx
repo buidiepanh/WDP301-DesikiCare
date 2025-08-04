@@ -274,9 +274,11 @@ const Profile = () => {
         return "Không xác định";
     }
   };
+
   const getPaymentStatusColor = (isPaid) => {
     return isPaid ? "green" : "red";
   };
+
   const pointHistoryColumns = [
     {
       title: "Thời gian nhận",
@@ -309,12 +311,14 @@ const Profile = () => {
       ),
     },
   ];
+
   useEffect(() => {
     fetchProfile();
     fetchOrders();
     fetchPointsHistory();
     fetchProvince();
   }, []);
+
   return (
     <Layout className="profile-container">
       <Content className="profile-content">
@@ -600,24 +604,24 @@ const Profile = () => {
               dataSource={
                 Array.isArray(orders)
                   ? orders
-                    .filter((item) => {
-                      if (
-                        statusFilter !== null &&
-                        item.orderStatus._id !== statusFilter
+                      .filter((item) => {
+                        if (
+                          statusFilter !== null &&
+                          item.orderStatus._id !== statusFilter
+                        )
+                          return false;
+                        if (
+                          paymentFilter !== null &&
+                          item.order.isPaid !== paymentFilter
+                        )
+                          return false;
+                        return true;
+                      })
+                      .sort(
+                        (a, b) =>
+                          new Date(b.order.createdAt) -
+                          new Date(a.order.createdAt)
                       )
-                        return false;
-                      if (
-                        paymentFilter !== null &&
-                        item.order.isPaid !== paymentFilter
-                      )
-                        return false;
-                      return true;
-                    })
-                    .sort(
-                      (a, b) =>
-                        new Date(b.order.createdAt) -
-                        new Date(a.order.createdAt)
-                    )
                   : []
               }
               rowKey={(record) => record.order._id}
@@ -784,8 +788,9 @@ hủy do khách sẽ bị mất đi số điểm thưởng đã dùng cho đơn 
               ]}
             />
             <Modal
-              title={`Chi tiết đơn hàng ${orderDetail?.order?.order?._id?.slice(-8) || ""
-                }`}
+              title={`Chi tiết đơn hàng ${
+                orderDetail?.order?.order?._id?.slice(-8) || ""
+              }`}
               open={modalVisible}
               onCancel={() => setModalVisible(false)}
               footer={[
