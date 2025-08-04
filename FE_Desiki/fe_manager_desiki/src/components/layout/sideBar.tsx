@@ -77,11 +77,6 @@ const managerNavItems: NavItem[] = [
     icon: <Package className="h-5 w-5" />,
   },
   {
-    label: "Brands",
-    path: "/Brands",
-    icon: <Tag className="h-5 w-5" />,
-  },
-  {
     label: "Game Rules",
     path: "/game-rules",
     icon: <Settings className="h-5 w-5" />,
