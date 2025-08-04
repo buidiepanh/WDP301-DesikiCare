@@ -152,11 +152,11 @@ export const getAllOrders = async () => {
   return res.data.orders;
 };
 
-export const addNewOrder = async (orderId, point, address) => {
+export const addNewOrder = async (point, address, newOrderId) => {
   try {
     const result = await axios.post("/Order/orders", {
       order: {
-        newOrderId: orderId,
+        newOrderId: newOrderId,
         pointUsed: point,
         deliveryAddressId: address,
       },
@@ -172,6 +172,16 @@ export const getOrderDetail = async (orderId) => {
   return res.data;
 };
 
+export const cancelOrder = async (orderId) => {
+  try {
+    const res = await axios.put(`/Order/orders/${orderId}/cancel`);
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getChatbotConfig = async () => {
   const res = await axios.get("/Chatbot/chatbotConfigs");
   return res.data;
@@ -185,8 +195,8 @@ export const getPaymentUrlForCart = async (point, address) => {
         deliveryAddressId: address,
       },
       metaData: {
-        cancelUrl: `https://desiki-care.vercel.app/cart`,
-        returnUrl: "https://desiki-care.vercel.app/payment-return",
+        cancelUrl: `${import.meta.env.VITE_WEB_APP_URL}/payment-return`,
+        returnUrl: `${import.meta.env.VITE_WEB_APP_URL}/payment-return`,
       },
     });
     return result.data;
@@ -198,8 +208,8 @@ export const getPaymentUrlForCart = async (point, address) => {
 export const getPaymentUrlForOrder = async (orderId) => {
   try {
     const res = await axios.post(`/Order/orders/${orderId}/getPaymentLink`, {
-      cancelUrl: "https://desiki-care.vercel.app/profile",
-      returnUrl: "https://desiki-care.vercel.app/payment-return",
+      cancelUrl: "http://localhost:5173/profile",
+      returnUrl: "http://localhost:5173/payment-return",
     });
     return res.data;
   } catch (error) {
@@ -219,9 +229,57 @@ export const getAllMiniGames = async () => {
 export const getGamesEvent = async () => {
   try {
     const result = await axios.get("/Game/gameEvents");
-    return result.data;
+    if (result && result.status === 200) {
+      return result.data.gameEvents;
+    } else {
+      return [];
+    }
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const joinTheGameEvent = async (gameEventId) => {
+  try {
+    const result = await axios.post(`/Game/gameEvents/${gameEventId}/join`);
+    if (result && (result.status === 200 || result.status === 201)) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log("Error joining game event:", error);
+  }
+};
+
+export const getGameEventDetails = async (gameEventId) => {
+  try {
+    const result = await axios.get(`/Game/gameEvents/${gameEventId}`);
+    if (result && result.status === 200) {
+      return result.data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log("Error fetching game event details:", error);
+  }
+};
+
+export const finishGameEvent = async (gameEventId, points) => {
+  try {
+    const result = await axios.post(`/Game/gameEventsRewards`, {
+      gameEventReward: {
+        gameEventId: gameEventId,
+        points: points,
+      },
+    });
+    if (result && (result.status === 200 || result.status === 201)) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log("Error finishing game event:", error);
   }
 };
 
@@ -262,5 +320,58 @@ export const getProvince = async () => {
     return res.data;
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const getQuiz = async () => {
+  try {
+    const res = await axios.get("/Quiz");
+    return res.data.quizQuestions;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const submitQuiz = async (quizOptionIds) => {
+  try {
+    const res = await axios.post("/Quiz/result", {
+      quizOptionIds: quizOptionIds,
+    });
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const checkProductQuantity = async (productId) => {
+  let totalQuantity = 0;
+  try {
+    const response = await axios.get(`/Product/products/${productId}`);
+    if (!response || !response.data) {
+      return 0;
+    }
+    const { shipmentProducts } = response.data;
+    if (!shipmentProducts || !Array.isArray(shipmentProducts)) {
+      return 0;
+    }
+    // Tính tổng quantity từ tất cả shipmentProducts
+    totalQuantity = shipmentProducts.reduce((total, item) => {
+      // Truy cập vào shipmentProduct object trong mỗi item
+      const shipmentProduct = item.shipmentProduct;
+      if (
+        shipmentProduct &&
+        typeof shipmentProduct.importQuantity === "number" &&
+        typeof shipmentProduct.saleQuantity === "number"
+      ) {
+        const availableQuantity =
+          shipmentProduct.importQuantity - shipmentProduct.saleQuantity;
+        return total + Math.max(0, availableQuantity); // Đảm bảo không âm
+      }
+      return total;
+    }, 0);
+    return totalQuantity;
+  } catch (error) {
+    console.log("Error checking product quantity:", error);
+    return 0; // Trả về 0 thay vì undefined khi có lỗi
   }
 };
