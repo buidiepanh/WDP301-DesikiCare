@@ -194,9 +194,20 @@ const Shipment = () => {
         url: `/api/Product/shipments`,
       });
       if (response && response.status === 200) {
-        console.log("Shipments: ", response.data.shipments);
-        setShipments(response.data.shipments);
-        setFilterShipments(response.data.shipments);
+        const isNotDeletedShipments = response.data.shipments.filter(
+          (shipment: any) => !shipment.shipment.isDeleted
+        );
+
+        // Sort by newest date first (mới nhất trước)
+        const sortedShipments = isNotDeletedShipments.sort(
+          (a: any, b: any) =>
+            new Date(b.shipment.shipmentDate).getTime() -
+            new Date(a.shipment.shipmentDate).getTime()
+        );
+
+        console.log("Shipments (sorted by newest first): ", sortedShipments);
+        setShipments(sortedShipments);
+        setFilterShipments(sortedShipments);
         setIsLoading(false);
       }
     } catch (error) {
@@ -265,8 +276,37 @@ const Shipment = () => {
   };
 
   const handleDeleteShipment = async (id: string) => {
-    // Implementation for handleDeleteShipment
-    console.log("Delete shipment with ID:", id);
+    // Confirmation dialog before deletion
+    Swal.fire({
+      title: "Xác nhận xóa lô hàng",
+      text: "Bạn có chắc chắn muốn xóa lô hàng này? Hành động này không thể hoàn tác!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Xóa",
+      cancelButtonText: "Hủy",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        // Proceed with deletion
+        console.log("Delete shipment with ID:", id);
+        try {
+          const response = await callAPIManager({
+            method: "DELETE",
+            url: `/api/Product/shipments/${id}`,
+          });
+          if (response && response.status === 200) {
+            Swal.fire("Thành công", "Xóa lô hàng thành công", "success");
+            fetchShipments();
+          } else {
+            Swal.fire("Lỗi", "Không thể xóa lô hàng", "error");
+          }
+        } catch (error) {
+          console.error("Lỗi khi xóa lô hàng:", error);
+          Swal.fire("Lỗi", "Có lỗi xảy ra khi xóa lô hàng", "error");
+        }
+      }
+    });
   };
 
   const handleEditShipment = async (id: string) => {
@@ -376,24 +416,6 @@ const Shipment = () => {
 
   const getShipmentProductColumnDefs = () => [
     {
-      headerName: "ID",
-      field: "shipmentProduct._id",
-      cellStyle: {
-        color: "rgba(255, 255, 255, 0.9)",
-        background: "transparent !important",
-        fontFamily: "monospace",
-      },
-    },
-    {
-      headerName: "Mã SP",
-      field: "product._id",
-      cellStyle: {
-        color: "rgba(255, 255, 255, 0.9)",
-        background: "transparent !important",
-        fontFamily: "monospace",
-      },
-    },
-    {
       headerName: "Mã Lô",
       field: "shipmentProduct.shipmentId",
       cellStyle: {
@@ -402,8 +424,17 @@ const Shipment = () => {
       },
     },
     {
-      headerName: "SL Nhập",
-      field: "shipmentProduct.quantity",
+      headerName: "Tên Sản Phẩm",
+      field: "product.name",
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.9)",
+        background: "transparent !important",
+        fontFamily: "monospace",
+      },
+    },
+    {
+      headerName: "Số lượng đã nhập",
+      field: "shipmentProduct.importQuantity",
       cellStyle: {
         color: "rgba(255, 255, 255, 0.9)",
         background: "transparent !important",
@@ -411,7 +442,16 @@ const Shipment = () => {
       },
     },
     {
-      headerName: "Manufacturing",
+      headerName: "Số lượng đã bán",
+      field: "shipmentProduct.saleQuantity",
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.9)",
+        background: "transparent !important",
+        fontWeight: "500",
+      },
+    },
+    {
+      headerName: "Ngày sản xuất",
       field: "shipmentProduct.manufacturingDate",
       valueFormatter: (p: any) => new Date(p.value).toLocaleDateString("vi-VN"),
       cellStyle: {
@@ -420,7 +460,7 @@ const Shipment = () => {
       },
     },
     {
-      headerName: "Expire Date",
+      headerName: "Ngày hết hạn",
       field: "shipmentProduct.expiryDate",
       valueFormatter: (p: any) => new Date(p.value).toLocaleDateString("vi-VN"),
       cellStyle: {
@@ -444,6 +484,30 @@ const Shipment = () => {
       },
     },
     {
+      headerName: "Giá Nhập (VND)",
+      field: "shipmentProduct.buyPrice",
+      valueFormatter: (p: any) =>
+        new Intl.NumberFormat("vi-VN").format(p.value),
+    },
+    {
+      headerName: "ID",
+      field: "shipmentProduct._id",
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.9)",
+        background: "transparent !important",
+        fontFamily: "monospace",
+      },
+    },
+    {
+      headerName: "Mã SP",
+      field: "product._id",
+      cellStyle: {
+        color: "rgba(255, 255, 255, 0.9)",
+        background: "transparent !important",
+        fontFamily: "monospace",
+      },
+    },
+    {
       headerName: "Thao tác",
       cellRenderer: (params: any) => (
         <div className="flex h-full gap-2 items-center">
@@ -453,7 +517,7 @@ const Shipment = () => {
             }
             className="px-2 py-1 bg-blue-500/20 border border-blue-400/40 text-blue-200 hover:bg-blue-500/30 transition-all duration-200 backdrop-blur-sm rounded text-xs font-medium"
           >
-            Edit
+            Sửa
           </button>
           <button
             onClick={() =>
@@ -589,7 +653,7 @@ const Shipment = () => {
               className="ag-theme-alpine w-full mb-4"
               style={
                 {
-                  height: "250px",
+                  height: "300px",
                   "--ag-background-color": "transparent",
                   "--ag-foreground-color": "rgba(255, 255, 255, 0.9)",
                   "--ag-border-color": "rgba(255, 255, 255, 0.1)",
@@ -603,6 +667,13 @@ const Shipment = () => {
                 rowHeight={40}
                 paginationPageSize={5}
                 domLayout="autoHeight"
+                enableCellTextSelection={true}
+                ensureDomOrder={true}
+                suppressCopyRowsToClipboard={false}
+                enableRangeSelection={true}
+                enableRangeHandle={true}
+                enableFillHandle={true}
+                copyHeadersToClipboard={true}
               />
             </div>
 
@@ -612,14 +683,14 @@ const Shipment = () => {
                 onClick={() => handleDeleteShipment(item.shipment._id)}
                 variant={item.shipment.isDeleted ? "success" : "warning"}
               >
-                {item.shipment.isDeleted ? "Kích hoạt" : "Vô hiệu hóa"}
+                Xóa Lô Hàng
               </GlassButton>
-              <GlassButton
+              {/* <GlassButton
                 onClick={() => handleEditShipment(item.shipment._id)}
                 variant="secondary"
               >
-                Sửa lô hàng
-              </GlassButton>
+                Sửa gói hàng
+              </GlassButton> */}
             </div>
           </GlassAccordion>
         ))
