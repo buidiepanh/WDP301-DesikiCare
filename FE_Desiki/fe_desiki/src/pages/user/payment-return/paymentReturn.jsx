@@ -24,6 +24,7 @@ function PaymentReturn() {
         const newOrderId = searchParams.get("newOrderId");
         const pointUsed = parseInt(searchParams.get("pointUsed")) || 0;
         const deliveryAddressId = searchParams.get("deliveryAddressId");
+        console.log(newOrderId);
 
         if (!newOrderId || !deliveryAddressId) {
           setError("Thiếu thông tin đơn hàng. Vui lòng thử lại!");
@@ -35,7 +36,11 @@ function PaymentReturn() {
           return;
         }
 
-        const orderResult = await addNewOrder(pointUsed, deliveryAddressId, newOrderId);
+        const orderResult = await addNewOrder(
+          pointUsed,
+          deliveryAddressId,
+          newOrderId
+        );
         if (orderResult) {
           setResult(orderResult);
         } else {
@@ -96,11 +101,19 @@ function PaymentReturn() {
         <Card style={{ width: "100%", maxWidth: "600px" }}>
           <div style={{ textAlign: "center" }}>
             <CloseCircleOutlined
-              style={{ fontSize: "64px", color: "#ff4d4f", marginBottom: "20px" }}
+              style={{
+                fontSize: "64px",
+                color: "#ff4d4f",
+                marginBottom: "20px",
+              }}
             />
             <h2 style={{ color: "#ff4d4f" }}>Thanh toán thất bại</h2>
             <p style={{ fontSize: "16px", marginBottom: "30px" }}>{error}</p>
-            <Button type="primary" size="large" onClick={handleContinueShopping}>
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleContinueShopping}
+            >
               Quay lại trang chủ
             </Button>
           </div>
@@ -128,7 +141,11 @@ function PaymentReturn() {
         <Card style={{ width: "100%", maxWidth: "800px" }}>
           <div style={{ textAlign: "center", marginBottom: "30px" }}>
             <WarningOutlined
-              style={{ fontSize: "64px", color: "#faad14", marginBottom: "20px" }}
+              style={{
+                fontSize: "64px",
+                color: "#faad14",
+                marginBottom: "20px",
+              }}
             />
             <h2 style={{ color: "#faad14" }}>Một số sản phẩm đã hết hàng</h2>
           </div>
@@ -138,12 +155,14 @@ function PaymentReturn() {
               <div>
                 {result.outOfStockProducts.map((item, index) => (
                   <div key={index} style={{ marginBottom: "10px" }}>
-                    <strong>{item.product.name}</strong> - Bạn đặt: {item.requestedQuantity}, Còn lại: {item.availableQuantity}
+                    <strong>{item.product.name}</strong> - Bạn đặt:{" "}
+                    {item.requestedQuantity}, Còn lại: {item.availableQuantity}
                   </div>
                 ))}
                 <div style={{ marginTop: "15px" }}>
                   <strong>
-                    Chúng tôi đã hoàn lại cho bạn {result.refundPoints} điểm để tiếp tục mua sắm cho các lần sau.
+                    Chúng tôi đã hoàn lại cho bạn {result.refundPoints} điểm để
+                    tiếp tục mua sắm cho các lần sau.
                   </strong>
                   <br />
                   Chân thành xin lỗi vì sự bất tiện này!
@@ -155,7 +174,11 @@ function PaymentReturn() {
             style={{ marginBottom: "30px" }}
           />
           <div style={{ textAlign: "center" }}>
-            <Button type="primary" size="large" onClick={handleContinueShopping}>
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleContinueShopping}
+            >
               Tiếp tục mua sắm
             </Button>
           </div>
@@ -178,14 +201,24 @@ function PaymentReturn() {
         <Card style={{ width: "100%", maxWidth: "600px" }}>
           <div style={{ textAlign: "center" }}>
             <CheckCircleOutlined
-              style={{ fontSize: "64px", color: "#52c41a", marginBottom: "20px" }}
+              style={{
+                fontSize: "64px",
+                color: "#52c41a",
+                marginBottom: "20px",
+              }}
             />
             <h2 style={{ color: "#52c41a" }}>Đặt hàng thành công!</h2>
             <p style={{ fontSize: "16px", marginBottom: "20px" }}>
               Đơn hàng của bạn đã được tạo thành công.
             </p>
             {result.gameTicketReward > 0 && (
-              <p style={{ fontSize: "14px", color: "#1890ff", marginBottom: "20px" }}>
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "#1890ff",
+                  marginBottom: "20px",
+                }}
+              >
                 🎉 Bạn đã nhận được {result.gameTicketReward} lượt chơi game!
               </p>
             )}

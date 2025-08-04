@@ -172,6 +172,15 @@ export const getOrderDetail = async (orderId) => {
   return res.data;
 };
 
+export const cancelOrder = async (orderId) => {
+  try {
+    const res = await axios.put(`/Order/orders/${orderId}/cancel`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const getChatbotConfig = async () => {
   const res = await axios.get("/Chatbot/chatbotConfigs");
   return res.data;
@@ -185,9 +194,12 @@ export const getPaymentUrlForCart = async (point, address) => {
         deliveryAddressId: address,
       },
       metaData: {
-        cancelUrl: `${import.meta.env.VITE_WEB_APP_URL}/payment-return?status=CANCEL`,
-        returnUrl: `${import.meta.env.VITE_WEB_APP_URL}/payment-return?stat
-us=PAID`,
+        cancelUrl: `${
+          import.meta.env.VITE_WEB_APP_URL
+        }/payment-return?status=CANCEL`,
+        returnUrl: `${
+          import.meta.env.VITE_WEB_APP_URL
+        }/payment-return?status=PAID`,
       },
     });
     return result.data;
@@ -365,4 +377,4 @@ export const checkProductQuantity = async (productId) => {
     console.log("Error checking product quantity:", error);
     return 0; // Trả về 0 thay vì undefined khi có lỗi
   }
-}
+};
