@@ -6,7 +6,6 @@ import {
   getGameEventDetails,
   getMe,
   joinTheGameEvent,
-  getAllOrders,
 } from "../../../../services/apiServices";
 import SpinWheelUI from "./components/SpinWheel";
 import MemoryCatchingUI from "./components/MemoryCatching";
@@ -17,7 +16,6 @@ const { Title, Text } = Typography;
 const GamePlayPage = () => {
   const [searchParams] = useSearchParams();
   const [user, setUser] = useState(null);
-  const [totalTickets, setTotalTickets] = useState(0);
   const navigate = useNavigate();
   const [gameTypeId, setGameTypeId] = useState(null);
   const [gameId, setGameId] = useState(null);
@@ -38,7 +36,6 @@ const GamePlayPage = () => {
     setGameTypeId(parseInt(typeId));
     setGameId(id);
     getUserInfo();
-    fetchTotalTickets();
   }, [searchParams, navigate]);
 
   const getUserInfo = async () => {
@@ -56,24 +53,8 @@ const GamePlayPage = () => {
     }
   };
 
-  const fetchTotalTickets = async () => {
-    try {
-      const orders = await getAllOrders();
-      const paidOrders = orders.filter(
-        (o) => o.order?.isPaid && o.order?.gameTicketReward
-      );
-      const ticketSum = paidOrders.reduce(
-        (acc, cur) => acc + (cur.order.gameTicketReward || 0),
-        0
-      );
-      setTotalTickets(ticketSum);
-    } catch (error) {
-      console.error("Lỗi khi lấy số vé:", error);
-    }
-  };
-
   const handleJoinGame = async () => {
-    if (totalTickets <= 0) {
+    if (!user?.account?.gameTicketCount || user.account.gameTicketCount <= 0) {
       toast.error(
         "Bạn không có vé chơi game. Vui lòng tích lũy vé để tham gia!"
       );
@@ -123,7 +104,6 @@ const GamePlayPage = () => {
         setIsFinished(true);
         setIsPlaying(false);
         toast.success(`Chúc mừng! Bạn đã nhận được ${points} điểm!`);
-        fetchTotalTickets(); // cập nhật lại vé sau khi chơi
       } else {
         throw new Error("Failed to finish the game event");
       }
@@ -171,7 +151,7 @@ const GamePlayPage = () => {
               >
                 Bạn hiện có:{" "}
                 <strong style={{ color: "#1890ff" }}>
-                  {totalTickets} vé chơi game
+                  {user?.account?.gameTicketCount || 0} vé chơi game
                 </strong>
               </Text>
               <Alert
@@ -185,22 +165,20 @@ const GamePlayPage = () => {
             <div
               style={{ display: "flex", gap: "16px", justifyContent: "center" }}
             >
-              <Button
-                size="large"
-                onClick={handleBackToGames}
-                style={{ minWidth: "120px" }}
-              >
+              <Button size="large" onClick={handleBackToGames}>
                 Hủy bỏ
               </Button>
               <Button
                 type="primary"
                 size="large"
                 onClick={handleJoinGame}
-                disabled={totalTickets <= 0}
+                disabled={
+                  !user?.account?.gameTicketCount ||
+                  user.account.gameTicketCount <= 0
+                }
                 style={{
                   backgroundColor: "#ec407a",
                   borderColor: "#ec407a",
-                  minWidth: "120px",
                 }}
               >
                 Xác nhận chơi
@@ -250,9 +228,7 @@ const GamePlayPage = () => {
                 originalPoint={
                   gameDetails.gameEvent.configJson?.originalPoint || 100
                 }
-                minusPoint={
-                  gameDetails.gameEvent.configJson?.minusPoint || 10
-                }
+                minusPoint={gameDetails.gameEvent.configJson?.minusPoint || 10}
                 gameEventId={gameId}
                 onComplete={handleFinishGame}
               />
