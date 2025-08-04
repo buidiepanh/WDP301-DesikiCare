@@ -313,7 +313,6 @@ export const getProvince = async () => {
   }
 };
 
-// COMMIT - DIEP ANH
 export const getQuiz = async () => {
   try {
     const res = await axios.get("/Quiz");
@@ -323,7 +322,6 @@ export const getQuiz = async () => {
   }
 };
 
-// COMMIT - DIEP ANH
 export const submitQuiz = async (quizOptionIds) => {
   try {
     const res = await axios.post("/Quiz/result", {

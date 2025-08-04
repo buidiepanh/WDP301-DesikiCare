@@ -67,7 +67,7 @@ function UserRouter() {
           <Route path="/blog-grid" element={<BlogGrid />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/payment-return" element={<PaymentReturn />} />
-          <Route path="/game-type/:id" element={<GameTypePage />} />
+          {/* <Route path="/game-type/:id" element={<GameTypePage />} /> */}
           <Route path="/game-event/:id" element={<GamePlayPage />} />
           <Route path="/quiz" element={<QuizPage />} />
         </Routes>
