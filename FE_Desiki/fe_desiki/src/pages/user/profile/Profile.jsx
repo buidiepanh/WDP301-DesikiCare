@@ -857,27 +857,6 @@ hủy do khách sẽ bị mất đi số điểm thưởng đã dùng cho đơn 
                     >
                       <strong>Điểm sử dụng:</strong>{" "}
                       {orderDetail.order.order.pointUsed} điểm
-                      {orderDetail.order.order.pointUsed === 0 && (
-                        <Popconfirm
-                          title="Bạn có chắc muốn sử dụng điểm cho đơn hàng này?"
-                          okText="Đồng ý"
-                          cancelText="Hủy"
-                        >
-                          <Button
-                            size="small"
-                            type="dashed"
-                            style={{
-                              marginLeft: 8,
-                              padding: "0 6px",
-                              fontSize: 11,
-                              height: 22,
-                              lineHeight: "20px",
-                            }}
-                          >
-                            Sử dụng điểm
-                          </Button>
-                        </Popconfirm>
-                      )}
                     </p>
                   </div>
                   <Divider />
