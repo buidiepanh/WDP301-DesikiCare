@@ -1,1 +1,1 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"17ad80b7089244759bdcdcc2ffe14d28","collectionName":"chatbotConfigs","type":"collection"}
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"d21249f33e5649d7a07152f373c641a0","collectionName":"chatbotConfigs","type":"collection"}
