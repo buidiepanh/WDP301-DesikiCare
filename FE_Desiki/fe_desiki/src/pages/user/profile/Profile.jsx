@@ -840,18 +840,6 @@ hủy do khách sẽ bị mất đi số điểm thưởng đã dùng cho đơn 
                         {orderDetail.order.orderStatus?.name}
                       </Tag>
                     </p>
-                    {/* <p>
- <strong>Thanh toán:</strong>{" "}
- <Tag
- color={getPaymentStatusColor(
- orderDetail.order.order.isPaid
- )}
- >
- {orderDetail.order.order.isPaid
- ? "Đã thanh toán"
- : "Chưa thanh toán"}
- </Tag>
- </p> */}
                     <p
                       style={{ display: "flex", alignItems: "center", gap: 8 }}
                     >
