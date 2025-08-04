@@ -55,7 +55,7 @@ const Cart = () => {
         productId: item.product._id,
         name: item.product.name,
         quantity: item.cartItem.quantity,
-        image: item.product.image,
+        image: item.product.imageUrl,
         price: item.product.salePrice,
         volume: item.product.volume,
       }));
