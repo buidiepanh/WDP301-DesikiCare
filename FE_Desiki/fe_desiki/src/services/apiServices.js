@@ -185,8 +185,8 @@ export const getPaymentUrlForCart = async (point, address) => {
         deliveryAddressId: address,
       },
       metaData: {
-        cancelUrl: `https://desiki-care.vercel.app/cart`,
-        returnUrl: "https://desiki-care.vercel.app/payment-return",
+        cancelUrl: `http://localhost:5173/cart`,
+        returnUrl: "http://localhost:5173/payment-return",
       },
     });
     return result.data;
@@ -198,8 +198,8 @@ export const getPaymentUrlForCart = async (point, address) => {
 export const getPaymentUrlForOrder = async (orderId) => {
   try {
     const res = await axios.post(`/Order/orders/${orderId}/getPaymentLink`, {
-      cancelUrl: "https://desiki-care.vercel.app/profile",
-      returnUrl: "https://desiki-care.vercel.app/payment-return",
+      cancelUrl: "http://localhost:5173/profile",
+      returnUrl: "http://localhost:5173/payment-return",
     });
     return res.data;
   } catch (error) {
