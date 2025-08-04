@@ -15,7 +15,9 @@ export default function Home() {
   };
   return (
     <div className="w-full h-screen flex flex-col gap-10 items-center justify-center">
-      <p className="font-bold text-5xl text-cyan-900">Hello, Developer!</p>
+      <p className="font-bold text-5xl text-cyan-900">
+        Hello, This is Developer!
+      </p>
       <Button className="font-instrument" onClick={handleClick}>
         Click me
       </Button>
