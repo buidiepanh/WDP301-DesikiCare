@@ -1,1 +1,1 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"3375f5995c9441f391eed2c21dccc67f","collectionName":"quizOptionSkinStatuses","type":"collection"}
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"2e0f5134e82944ef96adfd6a2e9bf688","collectionName":"quizOptionSkinStatuses","type":"collection"}

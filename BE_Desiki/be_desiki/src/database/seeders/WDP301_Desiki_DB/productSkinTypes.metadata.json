@@ -1,1 +1,1 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"1822636fee1b4a1eacd94d80fe051dcc","collectionName":"productSkinTypes","type":"collection"}
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"60ab296c10d444e6b01387381c13a5de","collectionName":"productSkinTypes","type":"collection"}
