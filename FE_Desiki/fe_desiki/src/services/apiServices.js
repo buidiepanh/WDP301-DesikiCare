@@ -219,9 +219,57 @@ export const getAllMiniGames = async () => {
 export const getGamesEvent = async () => {
   try {
     const result = await axios.get("/Game/gameEvents");
-    return result.data;
+    if (result && result.status === 200) {
+      return result.data.gameEvents;
+    } else {
+      return [];
+    }
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const joinTheGameEvent = async (gameEventId) => {
+  try {
+    const result = await axios.post(`/Game/gameEvents/${gameEventId}/join`);
+    if (result && (result.status === 200 || result.status === 201)) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log("Error joining game event:", error);
+  }
+};
+
+export const getGameEventDetails = async (gameEventId) => {
+  try {
+    const result = await axios.get(`/Game/gameEvents/${gameEventId}`);
+    if (result && result.status === 200) {
+      return result.data;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log("Error fetching game event details:", error);
+  }
+};
+
+export const finishGameEvent = async (gameEventId, points) => {
+  try {
+    const result = await axios.post(`/Game/gameEventsRewards`, {
+      gameEventReward: {
+        gameEventId: gameEventId,
+        points: points,
+      },
+    });
+    if (result && (result.status === 200 || result.status === 201)) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log("Error finishing game event:", error);
   }
 };
 

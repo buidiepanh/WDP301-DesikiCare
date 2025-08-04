@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import styles from "./CategoryBar.module.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
   getAllCategories,
@@ -21,18 +21,23 @@ import {
 } from "../../../services/apiServices";
 
 const CategoryBar = () => {
-  const location = useLocation();
-  const isHome = location.pathname === "/";
-
   const navigate = useNavigate();
   const [openDanhMuc, setOpenDanhMuc] = useState(false);
   const [anchorDanhMuc, setAnchorDanhMuc] = useState(null);
+  const token = sessionStorage.getItem("accessToken");
 
   const [openSanPham, setOpenSanPham] = useState(false);
   const [anchorSanPham, setAnchorSanPham] = useState(null);
   const [categories, setCategories] = useState([]);
   const [skinTypes, setSkinTypes] = useState([]);
   const [skinStatuses, setSkinStatuses] = useState([]);
+  const [openGameModal, setOpenGameModal] = useState(false);
+  const [gameNames, setGameNames] = useState([]);
+
+  const handleOpenGameModal = () => {
+    navigate("/mini-games");
+  };
+  const handleCloseGameModal = () => setOpenGameModal(false);
 
   const handleBanner = () => navigate("/hot-deal");
   const handleDeals = () => navigate("/products-page");
@@ -112,12 +117,7 @@ const CategoryBar = () => {
   ];
 
   return (
-    <Box
-      className={styles.categoryContainer}
-      style={{
-        marginTop: isHome ? "20px" : "100px",
-      }}
-    >
+    <Box className={styles.categoryContainer}>
       <Box className={styles.leftMenu}>
         <Box
           display="flex"
@@ -146,6 +146,12 @@ const CategoryBar = () => {
         </Typography>
         <Typography className={styles.categoryItem} onClick={handleBlog}>
           Tạp Chí Làm Đẹp
+        </Typography>
+        <Typography
+          className={styles.categoryItem}
+          onClick={handleOpenGameModal}
+        >
+          Mini Game
         </Typography>
       </Box>
 
@@ -251,6 +257,34 @@ const CategoryBar = () => {
           </Paper>
         </ClickAwayListener>
       </Popper>
+
+      <Modal open={openGameModal} onClose={handleCloseGameModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold" textAlign="center">
+            Mini Game 🎮
+          </Typography>
+          {gameNames?.map((game) => (
+            <Button key={game.id} variant="outlined" fullWidth>
+              {game.name}
+            </Button>
+          ))}
+        </Box>
+      </Modal>
     </Box>
   );
 };

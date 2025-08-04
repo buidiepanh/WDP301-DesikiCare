@@ -14,10 +14,10 @@ import {
   Logout,
   VerifiedUser,
   Phone,
+  ConfirmationNumber,
+  AccountCircle,
 } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
-import { AccountCircle } from "@mui/icons-material";
-import { Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import styles from "./HeaderSkincare.module.css";
 import logo from "../../assets/logo.jpg";
@@ -58,6 +58,7 @@ const HeaderSkincare = () => {
   useEffect(() => {
     loadUser();
     getAuthenticatedUser();
+
     const handleUserChanged = () => loadUser();
     window.addEventListener("userChanged", handleUserChanged);
     return () => window.removeEventListener("userChanged", handleUserChanged);
@@ -72,11 +73,10 @@ const HeaderSkincare = () => {
   const handleSearchFunction = () => {
     if (searchText.trim() !== "") {
       localStorage.setItem("searchText", searchText);
-      navigate("/products-page");
     } else {
       localStorage.clear();
-      navigate("/products-page");
     }
+    navigate("/products-page");
   };
 
   const handleLogout = () => {
@@ -107,7 +107,7 @@ const HeaderSkincare = () => {
               src={logo}
               alt="Desiki Care Logo"
               className={styles.logoImg}
-              onClick={() => handleLogoClick()}
+              onClick={handleLogoClick}
             />
             <Box>
               <Typography className={styles.sloganText} fontSize={14}>
@@ -179,6 +179,28 @@ const HeaderSkincare = () => {
                 </IconButton>
 
                 <Box
+                  className={styles.ticketBox}
+                  onClick={() => navigate("/mini-games")}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    cursor: "pointer",
+                    padding: "4px 8px",
+                    borderRadius: "8px",
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    "&:hover": {
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                    },
+                  }}
+                >
+                  <ConfirmationNumber sx={{ fontSize: "20px" }} />
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    {user?.account?.gameTicketCount ?? 0}
+                  </Typography>
+                </Box>
+
+                <Box
                   className={styles.userInfoBox}
                   onClick={() => navigate("/profile")}
                 >
@@ -219,7 +241,6 @@ const HeaderSkincare = () => {
           </Box>
         </Toolbar>
       </AppBar>
-
       {showChat && <ChatWidget onClose={() => setShowChat(false)} />}
     </>
   );
