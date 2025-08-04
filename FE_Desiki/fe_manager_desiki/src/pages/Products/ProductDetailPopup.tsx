@@ -25,7 +25,8 @@ type ShipmentProduct = {
     _id: string;
     productId: string;
     shipmentId: string;
-    quantity: number;
+    importQuantity: number;
+    saleQuantity: number;
     manufacturingDate: string;
     expiryDate: string;
     buyPrice: number;
@@ -78,119 +79,211 @@ export const ProductDetailPopup: React.FC<Props> = ({ product, onClose }) => {
       <Box
         sx={{
           position: "absolute",
-          top: "10%",
+          top: "50%",
           left: "50%",
-          transform: "translateX(-50%)",
-          width: 600,
-          height: 600,
-          overflowY: "scroll",
-          scrollbarWidth: "none", // Firefox
-          "&::-webkit-scrollbar": {
-            display: "none", // Chrome, Safari
-          },
+          transform: "translate(-50%, -50%)",
+          width: "90%",
+          maxWidth: 800,
+          maxHeight: "90vh",
+          overflowY: "auto",
           bgcolor: "white",
           boxShadow: 24,
-          p: 4,
-          borderRadius: 2,
-          color: "black",
+          borderRadius: 3,
         }}
       >
-        <div className="flex justify-between items-center mb-4">
-          <Typography variant="h6">Thông tin chi tiết sản phẩm</Typography>
-          <IconButton onClick={onClose}>
+        {/* Header */}
+        <div className="flex justify-between items-center p-6 border-b border-gray-200 bg-gray-50">
+          <Typography variant="h5" className="text-gray-800 font-semibold">
+            Chi tiết sản phẩm
+          </Typography>
+          <IconButton
+            onClick={onClose}
+            className="text-gray-600 hover:bg-gray-200"
+          >
             <CloseIcon />
           </IconButton>
         </div>
 
-        <div className="grid grid-cols-2">
-          <div className="w-full flex items-center justify-center">
-            <img
-              src={product.product.imageUrl}
-              alt="product"
-              style={{
-                width: 200,
-                height: 200,
-                objectFit: "cover",
-                borderRadius: 8,
-              }}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <p className="text-md text-cyan-900 font-bold">
-              {product.product.name}
-            </p>
-            <p className="text-sm">
-              <strong>Loại sản phẩm:</strong> {skinTypeName}
-            </p>
-            <p className="text-sm">
-              <strong>Mô tả:</strong> {product.product.description}
-            </p>
-            <p className="text-sm">
-              <strong>Dung tích:</strong> {product.product.volume}ml
-            </p>
-            <p className="text-sm">
-              <strong>Giá bán:</strong>{" "}
-              {product.product.salePrice.toLocaleString("vi-VN")}₫
-            </p>
-            <p className="text-sm">
-              <strong>Số lượng trong kho:</strong>{" "}
-              {product.shipmentProducts.reduce(
-                (sum: number, sp: any) => sum + sp.shipmentProduct.quantity,
-                0
-              )}
-            </p>
-            {/* <p>
-              <strong>Loại da phù hợp:</strong>{" "}
-              {product.productSkinTypes.map((s) => s.name).join(", ")}
-            </p>
-            <p>
-              <strong>Tình trạng da phù hợp:</strong>{" "}
-              {product.productSkinStatuses.map((s) => s.name).join(", ")}
-            </p> */}
-          </div>
-        </div>
-
-        <div className="w-full flex justify-center my-3">
-          <div className="w-8/12 h-0.5 bg-gray-300"></div>
-        </div>
-
-        <div className="w-full grid grid-cols-2">
-          <div className="flex flex-col items-center gap-1">
-            <p className="text-lg font-semibold text-cyan-700">
-              Loại da phù hợp
-            </p>
-            {product.productSkinTypes.map((item, index: number) => (
-              <div className="w-[130px] h-[25px] rounded-xl flex items-center justify-center bg-cyan-500 text-white text-sm">
-                <p>{item.name}</p>
-              </div>
-            ))}
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <p className="text-lg font-semibold text-orange-700">
-              Tình trạng da phù hợp
-            </p>
-            {product.productSkinStatuses.map((item, index: number) => (
-              <div className="w-[130px] h-[25px] rounded-xl flex items-center justify-center bg-orange-500 text-white text-sm">
-                <p>{item.name}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="mt-5">
-          <Typography fontWeight="bold">Thông tin lô hàng</Typography>
-          {product.shipmentProducts.map((sp) => (
-            <div
-              key={sp.shipmentProduct._id}
-              className="mt-2 ml-2 border-l-2 pl-2"
-            >
-              <Typography>
-                Lô nhập: {sp.shipment.shipmentDate}, Số lượng:{" "}
-                {sp.shipmentProduct.quantity}, Giá nhập:{" "}
-                {sp.shipmentProduct.buyPrice.toLocaleString("vi-VN")}₫
-              </Typography>
-              <Typography>HSD: {sp.shipmentProduct.expiryDate}</Typography>
+        <div className="p-6">
+          {/* Product Info Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            {/* Image */}
+            <div className="flex items-center justify-center bg-gray-50 rounded-lg p-4">
+              <img
+                src={product.product.imageUrl}
+                alt="product"
+                className="w-64 h-64 object-cover rounded-lg shadow-md"
+              />
             </div>
-          ))}
+
+            {/* Product Details */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                {product.product.name}
+              </h2>
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-gray-600 font-medium min-w-[120px]">
+                    Loại sản phẩm:
+                  </span>
+                  <span className="text-gray-800">{skinTypeName}</span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-gray-600 font-medium min-w-[120px]">
+                    Dung tích:
+                  </span>
+                  <span className="text-gray-800">
+                    {product.product.volume}ml
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-gray-600 font-medium min-w-[120px]">
+                    Giá bán:
+                  </span>
+                  <span className="text-green-600 font-semibold text-lg">
+                    {product.product.salePrice.toLocaleString("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    })}
+                  </span>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <span className="text-gray-600 font-medium min-w-[120px]">
+                    Mô tả:
+                  </span>
+                  <span className="text-gray-800 leading-relaxed">
+                    {product.product.description}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Skin Types & Status */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div className="bg-blue-50 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-blue-800 mb-3">
+                Loại da phù hợp
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {product.productSkinTypes.map((item, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-blue-500 text-white text-sm rounded-full"
+                  >
+                    {item.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-orange-50 rounded-lg p-4">
+              <h3 className="text-lg font-semibold text-orange-800 mb-3">
+                Tình trạng da phù hợp
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {product.productSkinStatuses.map((item, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-orange-500 text-white text-sm rounded-full"
+                  >
+                    {item.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Shipment Products */}
+          <div className="bg-gray-50 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Danh sách lô hàng
+            </h3>
+
+            {product.shipmentProducts.length === 0 ? (
+              <p className="text-gray-500 text-center py-4">
+                Chưa có lô hàng nào
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {product.shipmentProducts.map((sp, index) => (
+                  <div
+                    key={sp.shipmentProduct._id}
+                    className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm"
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <h4 className="font-medium text-gray-800">
+                        Lô hàng #{index + 1}
+                      </h4>
+                      <span className="text-xs text-gray-500">
+                        {new Date(sp.shipment.shipmentDate).toLocaleDateString(
+                          "vi-VN"
+                        )}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <span className="text-gray-600">Số lượng nhập:</span>
+                        <p className="font-medium text-blue-600">
+                          {sp.shipmentProduct.importQuantity.toLocaleString()}
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-600">Số lượng đã bán:</span>
+                        <p className="font-medium text-red-600">
+                          {sp.shipmentProduct.saleQuantity.toLocaleString()}
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-600">Còn lại:</span>
+                        <p className="font-medium text-green-600">
+                          {(
+                            sp.shipmentProduct.importQuantity -
+                            sp.shipmentProduct.saleQuantity
+                          ).toLocaleString()}
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-600">Giá nhập:</span>
+                        <p className="font-medium text-gray-800">
+                          {sp.shipmentProduct.buyPrice.toLocaleString("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          })}
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-600">Ngày sản xuất:</span>
+                        <p className="font-medium text-gray-800">
+                          {new Date(
+                            sp.shipmentProduct.manufacturingDate
+                          ).toLocaleDateString("vi-VN")}
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-600">Ngày hết hạn:</span>
+                        <p className="font-medium text-gray-800">
+                          {new Date(
+                            sp.shipmentProduct.expiryDate
+                          ).toLocaleDateString("vi-VN")}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </Box>
     </Modal>

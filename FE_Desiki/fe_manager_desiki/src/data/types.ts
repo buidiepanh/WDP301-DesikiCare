@@ -60,7 +60,7 @@ export type ShipmentProductDetails = {
     _id: string;
     productId: string;
     shipmentId: string;
-    quantity: number;
+    importQuantity: number;
     manufacturingDate: string;
     expiryDate: string;
     buyPrice: number;
@@ -145,6 +145,7 @@ export type Order = {
     pointUsed: number;
     totalPrice: number;
     orderStatusId: number;
+    isPaid: boolean;
     createdAt: string;
     updatedAt: string;
   };
