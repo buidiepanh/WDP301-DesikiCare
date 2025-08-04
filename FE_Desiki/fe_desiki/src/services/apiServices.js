@@ -263,3 +263,25 @@ export const getProvince = async () => {
     console.log(error);
   }
 };
+
+// COMMIT - DIEP ANH
+export const getQuiz = async () => {
+  try {
+    const res = await axios.get("/Quiz");
+    return res.data.quizQuestions;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// COMMIT - DIEP ANH
+export const submitQuiz = async (quizOptionIds) => {
+  try {
+    const res = await axios.post("/Quiz/result", {
+      quizOptionIds: quizOptionIds,
+    });
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};

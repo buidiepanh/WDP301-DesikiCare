@@ -35,6 +35,7 @@ import { IconButton, Badge } from "@mui/material";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import { GamesModal } from "./components/gamesModal";
 import toast from "react-hot-toast";
+import QuizPage from "../pages/user/quiz";
 
 function UserRouter() {
   const [isGameAvailable, setIsGameAvailable] = useState(false);
@@ -102,7 +103,7 @@ function UserRouter() {
   return (
     <div style={{ position: "relative" }}>
       <HeaderSkincare />
-      <div style={{ marginTop: "80px", marginBottom: "-75px" }}>
+      <div style={{ marginTop: "120px" }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -118,6 +119,8 @@ function UserRouter() {
           <Route path="/payment-return" element={<PaymentReturn />} />
           <Route path="/game-type/:id" element={<GameTypePage />} />
           <Route path="/game-event/:id" element={<GamePlayPage />} />
+          {/* COMMIT - DIEP ANH */}
+          <Route path="/quiz" element={<QuizPage />} />
         </Routes>
       </div>
 

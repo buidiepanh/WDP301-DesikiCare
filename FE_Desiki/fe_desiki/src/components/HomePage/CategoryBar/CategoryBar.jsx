@@ -34,7 +34,9 @@ const CategoryBar = () => {
   const [openGameModal, setOpenGameModal] = useState(false);
   const [gameNames, setGameNames] = useState([]);
 
-  const handleOpenGameModal = () => setOpenGameModal(true);
+  const handleOpenGameModal = () => {
+    navigate("/mini-games");
+  };
   const handleCloseGameModal = () => setOpenGameModal(false);
 
   const handleBanner = () => navigate("/hot-deal");
@@ -150,6 +152,13 @@ const CategoryBar = () => {
           onClick={handleOpenGameModal}
         >
           Mini Game
+        </Typography>
+        {/* COMMIT - DIEP ANH */}
+        <Typography
+          className={styles.categoryItem}
+          onClick={() => navigate("/quiz")}
+        >
+          Quiz
         </Typography>
       </Box>
 
