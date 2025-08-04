@@ -23,11 +23,12 @@ import styles from "./HeaderSkincare.module.css";
 import logo from "../../assets/logo.jpg";
 import toast from "react-hot-toast";
 import ChatWidget from "../Chatbot/ChatWidget";
-import { getMe } from "../../services/apiServices";
+import { getMe, getAllOrders } from "../../services/apiServices";
 
 const HeaderSkincare = () => {
   const [userName, setUserName] = useState(null);
   const [user, setUser] = useState(null);
+  const [totalTickets, setTotalTickets] = useState(0);
   const [showChat, setShowChat] = useState(false);
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
@@ -55,11 +56,34 @@ const HeaderSkincare = () => {
     }
   };
 
+  const fetchTotalTickets = async () => {
+    try {
+      const orders = await getAllOrders();
+      const paidOrders = orders.filter(
+        (o) => o.order?.isPaid && o.order?.gameTicketReward
+      );
+      const ticketSum = paidOrders.reduce(
+        (acc, cur) => acc + (cur.order.gameTicketReward || 0),
+        0
+      );
+      setTotalTickets(ticketSum);
+    } catch (error) {
+      console.error("Lỗi khi lấy tổng số vé:", error);
+    }
+  };
+
   useEffect(() => {
     loadUser();
     getAuthenticatedUser();
+    if (sessionStorage.getItem("user")) {
+      fetchTotalTickets();
+    }
 
-    const handleUserChanged = () => loadUser();
+    const handleUserChanged = () => {
+      loadUser();
+      fetchTotalTickets();
+    };
+
     window.addEventListener("userChanged", handleUserChanged);
     return () => window.removeEventListener("userChanged", handleUserChanged);
   }, []);
@@ -196,7 +220,7 @@ const HeaderSkincare = () => {
                 >
                   <ConfirmationNumber sx={{ fontSize: "20px" }} />
                   <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                    {user?.account?.gameTicketCount ?? 0}
+                    {totalTickets}
                   </Typography>
                 </Box>
 

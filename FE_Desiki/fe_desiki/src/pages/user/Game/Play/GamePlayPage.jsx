@@ -6,6 +6,7 @@ import {
   getGameEventDetails,
   getMe,
   joinTheGameEvent,
+  getAllOrders,
 } from "../../../../services/apiServices";
 import SpinWheelUI from "./components/SpinWheel";
 import MemoryCatchingUI from "./components/MemoryCatching";
@@ -16,6 +17,7 @@ const { Title, Text } = Typography;
 const GamePlayPage = () => {
   const [searchParams] = useSearchParams();
   const [user, setUser] = useState(null);
+  const [totalTickets, setTotalTickets] = useState(0);
   const navigate = useNavigate();
   const [gameTypeId, setGameTypeId] = useState(null);
   const [gameId, setGameId] = useState(null);
@@ -36,6 +38,7 @@ const GamePlayPage = () => {
     setGameTypeId(parseInt(typeId));
     setGameId(id);
     getUserInfo();
+    fetchTotalTickets();
   }, [searchParams, navigate]);
 
   const getUserInfo = async () => {
@@ -53,8 +56,24 @@ const GamePlayPage = () => {
     }
   };
 
+  const fetchTotalTickets = async () => {
+    try {
+      const orders = await getAllOrders();
+      const paidOrders = orders.filter(
+        (o) => o.order?.isPaid && o.order?.gameTicketReward
+      );
+      const ticketSum = paidOrders.reduce(
+        (acc, cur) => acc + (cur.order.gameTicketReward || 0),
+        0
+      );
+      setTotalTickets(ticketSum);
+    } catch (error) {
+      console.error("Lỗi khi lấy số vé:", error);
+    }
+  };
+
   const handleJoinGame = async () => {
-    if (!user?.account?.gameTicketCount || user.account.gameTicketCount <= 0) {
+    if (totalTickets <= 0) {
       toast.error(
         "Bạn không có vé chơi game. Vui lòng tích lũy vé để tham gia!"
       );
@@ -104,6 +123,7 @@ const GamePlayPage = () => {
         setIsFinished(true);
         setIsPlaying(false);
         toast.success(`Chúc mừng! Bạn đã nhận được ${points} điểm!`);
+        fetchTotalTickets(); // cập nhật lại vé sau khi chơi
       } else {
         throw new Error("Failed to finish the game event");
       }
@@ -129,7 +149,6 @@ const GamePlayPage = () => {
       }}
     >
       <div style={{ maxWidth: "800px", width: "100%" }}>
-        {/* Màn hình xác nhận tham gia */}
         {!isJoined && !isJoining && user && (
           <Card
             style={{
@@ -152,7 +171,7 @@ const GamePlayPage = () => {
               >
                 Bạn hiện có:{" "}
                 <strong style={{ color: "#1890ff" }}>
-                  {user?.account?.gameTicketCount || 0} vé chơi game
+                  {totalTickets} vé chơi game
                 </strong>
               </Text>
               <Alert
@@ -177,10 +196,7 @@ const GamePlayPage = () => {
                 type="primary"
                 size="large"
                 onClick={handleJoinGame}
-                disabled={
-                  !user?.account?.gameTicketCount ||
-                  user.account.gameTicketCount <= 0
-                }
+                disabled={totalTickets <= 0}
                 style={{
                   backgroundColor: "#ec407a",
                   borderColor: "#ec407a",
@@ -193,7 +209,6 @@ const GamePlayPage = () => {
           </Card>
         )}
 
-        {/* Màn hình đang tải */}
         {isJoining && (
           <Card
             style={{
@@ -211,7 +226,6 @@ const GamePlayPage = () => {
           </Card>
         )}
 
-        {/* Màn hình chơi game */}
         {isPlaying && gameDetails && (
           <div>
             {gameTypeId === 1 && (
@@ -236,7 +250,9 @@ const GamePlayPage = () => {
                 originalPoint={
                   gameDetails.gameEvent.configJson?.originalPoint || 100
                 }
-                minusPoint={gameDetails.gameEvent.configJson?.minusPoint || 10}
+                minusPoint={
+                  gameDetails.gameEvent.configJson?.minusPoint || 10
+                }
                 gameEventId={gameId}
                 onComplete={handleFinishGame}
               />
@@ -244,7 +260,6 @@ const GamePlayPage = () => {
           </div>
         )}
 
-        {/* Màn hình hoàn thành */}
         {isFinished && (
           <Card
             style={{
@@ -292,7 +307,6 @@ const GamePlayPage = () => {
           </Card>
         )}
 
-        {/* Loading user data */}
         {!user && (
           <Card
             style={{
