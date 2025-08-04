@@ -141,6 +141,7 @@ export const CreateGameModal: React.FC<CreateGameProps> = ({
         url: `/api/Game/gameEvents`,
         data: newGame,
       });
+      debugger;
       if (response?.status === 201) {
         toast.success(
           "Tạo game thành công! Vui lòng Kích hoạt game để bật sự kiện"

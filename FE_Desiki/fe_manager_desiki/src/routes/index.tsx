@@ -5,7 +5,6 @@ import AuthLayout from "../layouts/AuthLayout";
 import RevenueDashboard from "../pages/RevenueDashboard";
 import Products from "../pages/Products";
 import Orders from "../pages/Orders";
-import Brands from "../pages/Brands";
 import RoleAccountManagement from "../pages/AccountManagement/RoleAccountManagement";
 import PointManagement from "../pages/Points";
 import MiniGames from "../pages/MiniGames";
@@ -53,7 +52,6 @@ const router = createBrowserRouter([
           { path: "/Products", element: <Products /> },
           { path: "/Products/create", element: <CreateProduct /> },
           { path: "/Orders", element: <Orders /> },
-          { path: "/Brands", element: <Brands /> },
           { path: "/game-rules", element: <TicketRuleManagement /> },
         ],
       },

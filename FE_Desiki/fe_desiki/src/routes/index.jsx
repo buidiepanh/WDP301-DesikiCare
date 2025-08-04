@@ -34,7 +34,12 @@ import CustomerInfo from "../pages/manager/CustomerInfo";
 import HeaderSkincare from "../components/Header/HeaderSkincare";
 import FooterSkincare from "../components/Footer/FooterSkincare";
 import AdminLayout from "../layouts/admin/AdminLayout";
-import ManagerLayout from "../layouts/manager/ManagerLayout";
+import { getGamesEvent, updateGamePoints } from "../services/apiServices";
+import { IconButton, Badge } from "@mui/material";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import { GamesModal } from "./components/gamesModal";
+import toast from "react-hot-toast";
+import QuizPage from "../pages/user/quiz";
 
 function UserRouter() {
   const [isLogin, setIsLogin] = useState(false);
@@ -48,7 +53,7 @@ function UserRouter() {
   return (
     <div style={{ position: "relative" }}>
       <HeaderSkincare />
-      <div style={{ marginTop: "80px", marginBottom: "75px" }}>
+      <div style={{ marginTop: "120px" }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -62,10 +67,9 @@ function UserRouter() {
           <Route path="/blog-grid" element={<BlogGrid />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/payment-return" element={<PaymentReturn />} />
-
-          {/* Game */}
-          <Route path="/mini-games" element={<GamePage />} />
-          <Route path="/mini-games/play" element={<GamePlayPage />} />
+          <Route path="/game-type/:id" element={<GameTypePage />} />
+          <Route path="/game-event/:id" element={<GamePlayPage />} />
+          <Route path="/quiz" element={<QuizPage />} />
         </Routes>
       </div>
       <FooterSkincare />

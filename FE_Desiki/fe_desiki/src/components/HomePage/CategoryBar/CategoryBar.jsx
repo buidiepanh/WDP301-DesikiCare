@@ -153,6 +153,13 @@ const CategoryBar = () => {
         >
           Mini Game
         </Typography>
+        {/* COMMIT - DIEP ANH */}
+        <Typography
+          className={styles.categoryItem}
+          onClick={() => navigate("/quiz")}
+        >
+          Quiz
+        </Typography>
       </Box>
 
       {/* Danh mục popper */}
