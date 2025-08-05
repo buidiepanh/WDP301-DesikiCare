@@ -1,5 +1,6 @@
 import { Route, Routes, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import PrivateRoute from "./PrivateRoute";
 
 // User pages
 import Home from "../pages/user/home/home";
@@ -39,17 +40,59 @@ function UserRouter() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/cart" element={<Cart />} />
+          <Route
+            path="/cart"
+            element={
+              <PrivateRoute>
+                <Cart />
+              </PrivateRoute>
+            }
+          />
           <Route path="/products/:productId" element={<Details />} />
-          <Route path="/payment" element={<Payment />} />
+          <Route
+            path="/payment"
+            element={
+              <PrivateRoute>
+                <Payment />
+              </PrivateRoute>
+            }
+          />
           <Route path="/hot-deal" element={<BannerSection />} />
           <Route path="/warranty-policy" element={<WarrantyPolicy />} />
           <Route path="/products-page" element={<ProductsPage />} />
           <Route path="/blog-grid" element={<BlogGrid />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/payment-return" element={<PaymentReturn />} />
-          <Route path="/mini-games" element={<GamePage />} />
-          <Route path="/mini-games/play" element={<GamePlayPage />} />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/payment-return"
+            element={
+              <PrivateRoute>
+                <PaymentReturn />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/mini-games"
+            element={
+              <PrivateRoute>
+                <GamePage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/mini-games/play"
+            element={
+              <PrivateRoute>
+                <GamePlayPage />
+              </PrivateRoute>
+            }
+          />
           <Route path="/quiz" element={<QuizPage />} />
         </Routes>
       </div>

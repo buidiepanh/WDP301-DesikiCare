@@ -175,6 +175,7 @@ export const getOrderDetail = async (orderId) => {
 export const cancelOrder = async (orderId) => {
   try {
     const res = await axios.put(`/Order/orders/${orderId}/cancel`);
+    console.log(res.data);
     return res.data;
   } catch (error) {
     console.log(error);
