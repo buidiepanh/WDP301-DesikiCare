@@ -154,13 +154,24 @@ const GamePlayPage = () => {
                   {user?.account?.gameTicketCount || 0} vé chơi game
                 </strong>
               </Text>
-              <Alert
-                message="Lưu ý quan trọng"
-                description="Chơi trò chơi sẽ mất 1 vé dù có hoàn thành hay không. Bạn có chắc chắn muốn tiếp tục?"
-                type="warning"
-                showIcon
-                style={{ marginBottom: "20px" }}
-              />
+
+              {user?.account?.gameTicketCount === 0 ? (
+                <Alert
+                  message="Bạn chưa có vé chơi game"
+                  description="Vui lòng mua sắm để nhận vé và tham gia trò chơi."
+                  type="error"
+                  showIcon
+                  style={{ marginBottom: "20px" }}
+                />
+              ) : (
+                <Alert
+                  message="Lưu ý quan trọng"
+                  description="Chơi trò chơi sẽ mất 1 vé dù có hoàn thành hay không. Bạn có chắc chắn muốn tiếp tục?"
+                  type="warning"
+                  showIcon
+                  style={{ marginBottom: "20px" }}
+                />
+              )}
             </div>
             <div
               style={{ display: "flex", gap: "16px", justifyContent: "center" }}
