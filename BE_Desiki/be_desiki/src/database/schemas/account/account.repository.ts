@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Account, AccountModel } from "./account.schema";
+import { ClientSession, Types } from "mongoose";
 
 @Injectable()
 export class AccountRepository {
@@ -13,26 +14,28 @@ export class AccountRepository {
   }
 
   async findAll(): Promise<Account[]> {
-    return this.accountModel.find({ isDeleted: false }).exec();
+    return this.accountModel.find().lean().exec();
   }
 
   async findByRoleId(roleId: any): Promise<Account[]> {
-    return this.accountModel.find({ roleId: roleId, isDeleted: false }).lean().exec();
+    return this.accountModel.find({ roleId: roleId }).lean().exec();
   }
 
   async findByRoleIds(roleIds: any[]): Promise<Account[]> {
-    return this.accountModel.find({ roleId: { $in: roleIds }, isDeleted: false }).lean().exec();
+    return this.accountModel.find({ roleId: { $in: roleIds } }).lean().exec();
   }
 
   async create(account: Account): Promise<Account> {
     return this.accountModel.create(account);
   }
 
-  async update(id: any, account: Account): Promise<Account | null> {
-    return this.accountModel.findByIdAndUpdate(id, account, { new: true }).exec();
+  async update(id: any, account: Account, session : ClientSession): Promise<Account | null | undefined> {
+    const updatedAccount = await this.accountModel.findByIdAndUpdate(id, account, { new: true }).session(session).exec();
+    return updatedAccount;
   }
 
-  async delete(id: any): Promise<Account | null> {
-    return this.accountModel.findByIdAndUpdate(id, { isDeleted: true }).exec();
+  async deactivate(id: Types.ObjectId, isDeactivated: boolean): Promise<Account | null> {
+    return this.accountModel.findByIdAndUpdate(id, { isDeactivated }, { new: true }).exec();
   }
+
 }

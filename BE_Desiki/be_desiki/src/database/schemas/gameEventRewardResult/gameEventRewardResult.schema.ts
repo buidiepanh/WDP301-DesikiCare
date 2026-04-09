@@ -5,6 +5,8 @@ import { apply_Methods } from './gameEventRewardResult.methods';
 import { apply_Statics } from './gameEventRewardResult.statics';
 import { apply_Virtuals } from './gameEventRewardResult.virtuals';
 import { apply_Indexes } from './gameEventRewardResult.indexes';
+import { GameEvent } from '../gameEvent/gameEvent.schema';
+import { Account } from '../account/account.schema';
 
 interface IGameEventRewardResult_Statics {}
 interface IGameEventRewardResult_Methods {}
@@ -16,10 +18,10 @@ export type GameEventRewardResultDocument = GameEventRewardResult & Document & I
 export class GameEventRewardResult {
   _id?: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'GameEvent', required: true })
+  @Prop({ type: Types.ObjectId, ref: GameEvent.name, required: true })
   gameEventId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Account', required: true })
+  @Prop({ type: Types.ObjectId, ref: Account.name, required: true })
   accountId: Types.ObjectId;
 
   @Prop({ required: true })

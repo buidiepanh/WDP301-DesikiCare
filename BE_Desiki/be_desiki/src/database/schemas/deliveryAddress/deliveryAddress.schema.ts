@@ -5,6 +5,7 @@ import { apply_Methods } from './deliveryAddress.methods';
 import { apply_Statics } from './deliveryAddress.statics';
 import { apply_Virtuals } from './deliveryAddress.virtuals';
 import { apply_Indexes } from './deliveryAddress.indexes';
+import { Account } from '../account/account.schema';
 
 interface IDeliveryAddress_Statics {}
 interface IDeliveryAddress_Methods {}
@@ -16,17 +17,17 @@ export type DeliveryAddressDocument = DeliveryAddress & Document & IDeliveryAddr
 export class DeliveryAddress {
   _id?: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Account', required: true })
+  @Prop({ type: Types.ObjectId, ref: Account.name, required: true })
   accountId: Types.ObjectId;
 
   @Prop({ required: true })
-  provinceCode: string;
+  provinceCode: number;
 
   @Prop({ required: true })
-  districtCode: string;
+  districtCode: number;
 
   @Prop({ required: true })
-  wardCode: string;
+  wardCode: number;
 
   @Prop({ required: true })
   addressDetailDescription: string;

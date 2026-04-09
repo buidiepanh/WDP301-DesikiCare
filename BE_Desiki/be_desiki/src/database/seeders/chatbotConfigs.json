@@ -1,0 +1,14 @@
+[
+  {
+    "_id": { "$oid": "665f1a1e72d193188e860001" },
+    "template": "default",
+    "initPrompt": "Xin chào! Tôi có thể giúp gì cho bạn hôm nay?",
+    "isDeactivated": false
+  },
+  {
+    "_id": { "$oid": "665f1a1e72d193188e860002" },
+    "template": "faq",
+    "initPrompt": "Bạn cần hỏi về sản phẩm, dịch vụ hay hỗ trợ kỹ thuật?",
+    "isDeactivated": true
+  }
+]

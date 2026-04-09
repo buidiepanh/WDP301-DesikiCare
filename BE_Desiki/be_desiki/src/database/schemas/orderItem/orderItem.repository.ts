@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { OrderItem, OrderItemModel } from "./orderItem.schema";
+import { ClientSession } from "mongoose";
 
 @Injectable()
 export class OrderItemRepository {
@@ -16,8 +17,10 @@ export class OrderItemRepository {
     return this.orderItemModel.find().exec();
   }
 
-  async create(orderItem: OrderItem): Promise<OrderItem> {
-    return this.orderItemModel.create(orderItem);
+  async create(orderItem: OrderItem, session: ClientSession): Promise<OrderItem> {
+    const created = new this.orderItemModel(orderItem);
+    await created.save({ session });
+    return created;
   }
 
   async update(id: any, orderItem: OrderItem): Promise<OrderItem | null> {

@@ -1,0 +1,38 @@
+[
+  {
+    "_id": { "$oid": "665f1a1e72d193188e850001" },
+    "productId": { "$oid": "665f1a1e72d193188e810001" },
+    "shipmentId": "SHIP0001",
+    "quantity": 100,
+    "manufacturingDate": "2025-05-01T00:00:00.000Z",
+    "expiryDate": "2026-05-01T00:00:00.000Z",
+    "buyPrice": 100000,
+    "isDeactivated": false,
+    "createdAt": "2025-06-01T08:00:00.000Z",
+    "updatedAt": "2025-06-01T08:00:00.000Z"
+  },
+  {
+    "_id": { "$oid": "665f1a1e72d193188e850002" },
+    "productId": { "$oid": "665f1a1e72d193188e810002" },
+    "shipmentId": "SHIP0001",
+    "quantity": 80,
+    "manufacturingDate": "2025-05-05T00:00:00.000Z",
+    "expiryDate": "2026-05-05T00:00:00.000Z",
+    "buyPrice": 180000,
+    "isDeactivated": false,
+    "createdAt": "2025-06-01T08:00:00.000Z",
+    "updatedAt": "2025-06-01T08:00:00.000Z"
+  },
+  {
+    "_id": { "$oid": "665f1a1e72d193188e850003" },
+    "productId": { "$oid": "665f1a1e72d193188e810003" },
+    "shipmentId": "SHIP0002",
+    "quantity": 60,
+    "manufacturingDate": "2025-05-10T00:00:00.000Z",
+    "expiryDate": "2026-05-10T00:00:00.000Z",
+    "buyPrice": 120000,
+    "isDeactivated": true,
+    "createdAt": "2025-06-03T08:00:00.000Z",
+    "updatedAt": "2025-06-03T08:00:00.000Z"
+  }
+]

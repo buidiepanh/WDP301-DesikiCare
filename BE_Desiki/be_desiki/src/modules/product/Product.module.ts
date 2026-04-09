@@ -18,19 +18,31 @@ import { ProductSkinStatusRepository } from 'src/database/schemas/productSkinSta
 import { SkinTypeRepository } from 'src/database/schemas/skinType/skinType.repository';
 import { SkinStatusRepository } from 'src/database/schemas/skinStatus/skinStatus.repository';
 import { SkinsService } from './services/skins.service';
+import { Shipment, ShipmentSchema } from 'src/database/schemas/shipment/shipment.schema';
+import { ShipmentProduct, ShipmentProductSchema } from 'src/database/schemas/shipmentProduct/shipmentProduct.schema';
+import { ShipmentProductRepository } from 'src/database/schemas/shipmentProduct/shipmentProduct.repository';
+import { ShipmentRepository } from 'src/database/schemas/shipment/shipment.repository';
+import { ShipmentsService } from './services/shipments.service';
+import { CartItemRepository } from 'src/database/schemas/cartItem/cartItem.repository';
+import { CartItem, CartItemSchema } from 'src/database/schemas/cartItem/cartItem.schema';
+import { AccountModule } from '../account/Account.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Product.name, schema: ProductSchema },                        // products
-      { name: Category.name, schema: CategorySchema },                       // categories
+      { name: Category.name, schema: CategorySchema },                      // categories
       { name: ProductSkinType.name, schema: ProductSkinTypeSchema },        // productSkinTypes
       { name: ProductSkinStatus.name, schema: ProductSkinStatusSchema },    // productSkinStatuses
       { name: SkinType.name, schema: SkinTypeSchema },                      // skinTypes
       { name: SkinStatus.name, schema: SkinStatusSchema },                  // skinStatuses
+      { name: Shipment.name, schema: ShipmentSchema },                      // shipments
+      { name: ShipmentProduct.name, schema: ShipmentProductSchema },        // shipmentProducts
+      { name: CartItem.name, schema: CartItemSchema },                      // cartItems
     ]),
     // BookingModule,
     // ServiceModule
+    AccountModule
   ],
   controllers: [ProductController],
   providers: [
@@ -41,11 +53,15 @@ import { SkinsService } from './services/skins.service';
     ProductSkinStatusRepository,
     SkinTypeRepository,
     SkinStatusRepository,
+    ShipmentProductRepository,
+    ShipmentRepository,
+    CartItemRepository,
 
 
     // Inner Services
     ProductsService,
     SkinsService,
+    ShipmentsService,
 
     // Common Services
     JwtService,
@@ -62,10 +78,13 @@ import { SkinsService } from './services/skins.service';
     ProductSkinStatusRepository,
     SkinTypeRepository,
     SkinStatusRepository,
+    ShipmentProductRepository,
+    ShipmentRepository,
 
     // Inner Services
     ProductsService,
     SkinsService,
+    ShipmentsService,
   ]
 })
 export class ProductModule implements NestModule {

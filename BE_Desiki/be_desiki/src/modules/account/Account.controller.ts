@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpException, Param, Post, Query, UseFilters, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpException, Param, Post, Put, Query, Req, UnauthorizedException, UseFilters, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AccountsService } from './services/accounts.service';
 import { HttpExceptionFilter } from 'src/common/filters/HttpException.filter';
 import { get, Types } from 'mongoose';
@@ -9,8 +9,11 @@ import { JwtCheckGuard_With_Option } from 'src/common/guards/Auth/JwtCheckGuard_
 import { Roles } from 'src/common/decorators/role.decorator';
 import { RolesGuard } from 'src/common/guards/Auth/RoleGuard.guard';
 import { LoginJwtGuard } from 'src/common/guards/Auth/LoginJwtGuard.guard';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
+import { DeliveryAddress } from 'src/database/schemas/deliveryAddress/deliveryAddress.schema';
 
-@Controller('accounts')
+@Controller('Account')
 @UseGuards(JwtCheckGuard_With_Option('public_private'))
 export class AccountController {
 
@@ -25,9 +28,10 @@ export class AccountController {
   // Đăng nhập tài khoản
   @Post('login')
   async login(
-    @Body() body: { username: string, password: string }
+    @Body() body: { loginInfo: { email: string, password: string } }
   ) {
-    const token = await this.accountsService.login(body.username, body.password);
+    const { loginInfo } = body;
+    const token = await this.accountsService.login(loginInfo.email, loginInfo.password);
     return {
       "token": token,
       "message": "Login successfully"
@@ -40,161 +44,188 @@ export class AccountController {
     whitelist: true,
   }))
   async register(
+    @Req() req,
     @Body() body: {
-      account: Account,
-      imageBase64: string
+      account: Account & {
+        imageBase64: string
+      }
     }
   ) {
-    await this.accountsService.addAccount({ ...body.account, roleId: 1 }, body.imageBase64);
+    const user = req.user;
+
+    if ((body.account.roleId === 1 || body.account.roleId === 2)) {
+      if (!user || (user && user.role._id === 3)) {
+        throw new UnauthorizedException('You do not have permission to register this account type');
+      }
+    }
+    const errors = await validate(plainToInstance(Account, body.account));
+    if (errors.length > 0) {
+      console.log('Validation failed. Errors: ', errors);
+      throw new HttpException(errors.map((error) => Object.values(error.constraints)).join(', '), 400);
+    }
+    await this.accountsService.addAccount({ ...body.account });
     return { message: 'Register successfully' };
   }
 
-  // Thêm account mới
-  @Post('')
-  @Roles('Manager')
-  @UseGuards(RolesGuard)
-  @UsePipes(new ValidationPipe({
-    whitelist: true,
-  }))
-  async addAccount(
-    @Body() body: {
-      account: Account,
-      imageBase64: string
-    }
-  ) {
-    await this.accountsService.addAccount(body.account, body.imageBase64);
-    return { message: 'Add account successfully' };
-  }
-
-  // Lấy danh sách accounts nhân viên
-  @Get('staffs')
-  @Roles('Manager')
-  @UseGuards(RolesGuard)
-  async getStaff() {
-    const accounts = await this.accountsService.getAllStaff();
-    return {
-      "accounts": accounts,
-    };
-  }
-
-  // Lấy danh sách accounts khách hàng
-  @Get('customers')
-  @Roles('Manager',"Staff")
-  @UseGuards(RolesGuard)
-  async getCustomer() {
-    const accounts = await this.accountsService.getAllCustomer();
-    return {
-      "accounts": accounts,
-    };
-  }
-
-  // Lấy account detail (không gồm danh sách background, service đảm nhiệm và lịch nghỉ)
-  @Get(':accountId')
+  // Lấy thông tin người dùng hiện tại
+  @Get('me')
   @UseGuards(LoginJwtGuard)
-  async getAccountById(
+  async getMe(
+    @Req() req
+  ) {
+    const user = req.user;
+    const account = await this.accountsService.getAccountDetail(new Types.ObjectId(user._id));
+    return account;
+  }
+
+  // Lấy thông tin tài khoản theo ID
+  @Get('accounts/:accountId')
+  async getAccountDetail(
     @Param('accountId') accountId: Types.ObjectId
   ) {
-    const account = await this.accountsService.getAccountDetail(accountId);
-    return {
-      "account": account,
-    };
+
+    const account = await this.accountsService.getAccountDetail(new Types.ObjectId(accountId));
+    return account;
   }
 
-  // Cập nhật account
-  @Post(':accountId')
-  @UseGuards(LoginJwtGuard)
+  // Cập nhật tài khoản
+  @Put('accounts/:accountId')
   @UsePipes(new ValidationPipe({
     whitelist: true,
   }))
-  async updateAccountById(
+  async updateAccount(
     @Param('accountId') accountId: Types.ObjectId,
     @Body() body: {
-      account: Account,
-      imageBase64: string
+      account: Account & {
+        imageBase64: string
+      }
     }
   ) {
-    await this.accountsService.updateAccount(accountId, body.account, body.imageBase64);
-    return { message: 'Update successfully' };
+    const errors = await validate(plainToInstance(Account, body.account));
+    if (errors.length > 0) {
+      console.log('Validation failed. Errors: ', errors);
+      throw new HttpException(errors.map((error) => Object.values(error.constraints)).join(', '), 400);
+    }
+    const updatedAccount = await this.accountsService.updateAccount(new Types.ObjectId(accountId), body.account);
+    return {
+      message: 'Update account successfully',
+    };
   }
 
-  // Xóa account
-  @Delete(':accountId')
+  // Cập nhật mật khẩu tài khoản
+  @Put('accounts/:accountId/password')
+  @UsePipes(new ValidationPipe({
+    whitelist: true,
+  }))
+  async updateAccountPassword(
+    @Param('accountId') accountId: Types.ObjectId,
+    @Body() body: {
+      oldPassword: string,
+      newPassword: string
+    }
+  ) {
+    
+    await this.accountsService.updateAccountPassword(new Types.ObjectId(accountId), body.oldPassword, body.newPassword);
+    return {
+      message: 'Update account successfully',
+    };
+  }
 
-  async deleteAccountById(
+  // Vô hiệu / kích hoạt tài khoản
+  @Put('accounts/:accountId/deactivate/:isDeactivate')
+  async deactivateAccount(
+    @Param('accountId') accountId: Types.ObjectId,
+    @Param('isDeactivate') isDeactivate: string 
+  ) {
+    const isDeactivateBool = isDeactivate === 'true' ;
+
+    if (isDeactivate !== 'true' && isDeactivate !== 'false') {
+      throw new BadRequestException('Invalid value for isDeactivate parameter');
+    }
+    const result = await this.accountsService.deactivateAccount(new Types.ObjectId(accountId), isDeactivateBool);
+    return {
+      message: `Account ${isDeactivate ? 'deactivated' : 'activated'} successfully`,
+    };
+  }
+
+  // Danh sách tài khoản
+  // [WARNING] chỉnh lại sau khi phải lọc role trong danh sách theo role người gửi request và các yếu tốc khác như query string, phân trang, tìm kiếm...
+  @Get('accounts')
+  @Roles('admin', 'manager')
+  @UseGuards(RolesGuard)
+  async getAccounts() {
+    const accounts = await this.accountsService.getAccounts(1, 1, 100); // Lấy tất cả tài khoản với phân trang giả lập
+    return {
+      accounts: accounts
+    }
+  }
+
+  // Lấy danh sách vai trò
+  @Get('roles')
+  @Roles('admin', 'manager')
+  @UseGuards(RolesGuard)
+  async getRoles() {
+    const roles = await this.accountsService.getRoles();
+    return {
+      roles: roles
+    }
+  }
+
+
+  // Lấy danh sách địa chỉ của tài khoản
+  @Get('accounts/:accountId/deliveryAddresses')
+  async getDeliveryAddresses(
     @Param('accountId') accountId: Types.ObjectId
   ) {
-    await this.accountsService.deleteAccount(accountId);
-    return { message: 'Delete successfully' };
+    const deliveryAddresses = await this.accountsService.getDeliveryAddresses(new Types.ObjectId(accountId));
+    return {
+      deliveryAddresses: deliveryAddresses
+    };
   }
 
-
-
-
-
-
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-  @Get('test/hello')
-  async hello() {
-    return { message: 'Hello' };
-  }
-
-  @Get('test/test_exception')
-  async test_exception(
-    @Body() body: { password: string }
+  // Thêm địa chỉ cho tài khoản
+  @Post('accounts/:accountId/deliveryAddresses')
+  @UseGuards(LoginJwtGuard)
+  async addDeliveryAddress(
+    @Param('accountId') accountId: Types.ObjectId,
+    @Body() body: {
+      deliveryAddress: DeliveryAddress
+    }
   ) {
-    throw new HttpException('Test exception', 500);
+    const deliveryAddress = await this.accountsService.addDeliveryAddress(new Types.ObjectId(accountId), body.deliveryAddress);
+    return {
+      message: 'Delivery address added successfully'
+    };
+    
   }
 
-  @Get('test/test_undeleteAllAccount')
-  async test_undeleteAllAccount() {
-    await this.accountsService.undeleteAllAccount();
-    return { message: 'Undelete all account successfully' };
-  }
 
-  @Post('test/test_uploadImage')
-  async test_uploadImage(
-    @Body() body: { image: string }
+  // Đặt địa chỉ mặc định cho tài khoản
+  @Put('deliveryAddresses/:deliveryAddressId/set-default')
+  @UseGuards(LoginJwtGuard)
+  async setDefaultDeliveryAddress(
+    @Param('deliveryAddressId') deliveryAddressId: Types.ObjectId,
+    @Req() req
   ) {
-    const folderPath = this.configService.get<string>('imagePathConfig.ACCOUNT_IMAGE_PATH');
-    await this.fileService.saveBase64File(body.image, folderPath, "ngu_2");
-    return { message: 'Upload image successfully' };
+    const user = req.user;
+    const result = await this.accountsService.setDefaultDeliveryAddress(new Types.ObjectId(deliveryAddressId), new Types.ObjectId(user._id));
+    return {
+      message: 'Default delivery address set successfully',
+    };
   }
 
-  @Post('test/test_deleteImage')
-  async test_deleteImage(
-    @Body() body: { image: string }
+  // Xóa địa chỉ của tài khoản
+  @Delete('deliveryAddresses/:deliveryAddressId')
+  @UseGuards(LoginJwtGuard)
+  async deleteDeliveryAddress(
+    @Param('deliveryAddressId') deliveryAddressId: Types.ObjectId,
+    @Req() req
   ) {
-    const folderPath = this.configService.get<string>('imagePathConfig.ACCOUNT_IMAGE_PATH');
-    await this.fileService.deleteFile(folderPath, body.image);
-    return { message: 'Delete image successfully' };
+    const user = req.user;
+    const result = await this.accountsService.deleteDeliveryAddress(new Types.ObjectId(deliveryAddressId), new Types.ObjectId(user._id));
+    return {
+      message: 'Delivery address deleted successfully'
+    };
   }
-
-  @Post('test/test_deleteFolder')
-  async test_deleteFolder(
-    @Body() body: { image: string }
-  ) {
-    const folderPath = this.configService.get<string>('imagePathConfig.ACCOUNT_IMAGE_PATH');
-    await this.fileService.deleteFolder(folderPath + "/nguuuuuu");
-    return { message: 'Delete image successfully' };
-  }
-
-  @Post('test/test_copyFile')
-  async test_copyFile(
-    @Body() body: { image: string }
-  ) {
-    const folderPath = this.configService.get<string>('imagePathConfig.ACCOUNT_IMAGE_PATH');
-    const sourcePath = folderPath ;
-    const sourceFileName = "unknown.jpg";
-    const destinationPath = folderPath + "/hahaha";
-    const destinationFileName = "unknown_222.jpg";
-    await this.fileService.copyFile(sourcePath,sourceFileName, destinationPath,destinationFileName);
-    return { message: 'Copy image successfully' };
-  }
-
-
-
-
 
 }

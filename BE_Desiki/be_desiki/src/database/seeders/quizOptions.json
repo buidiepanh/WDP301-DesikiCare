@@ -1,0 +1,442 @@
+[
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8c1"
+        },
+        "content": "Vùng T (trán, mũi, cằm)",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8c9d"
+        },
+        "createdAt": "2024-12-05T10:00:00.000Z",
+        "updatedAt": "2024-12-05T10:00:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8c2"
+        },
+        "content": "Toàn bộ mặt",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8c9d"
+        },
+        "createdAt": "2024-12-05T10:00:00.000Z",
+        "updatedAt": "2024-12-05T10:00:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8c3"
+        },
+        "content": "Hiếm khi ra dầu",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8c9d"
+        },
+        "createdAt": "2024-12-05T10:00:00.000Z",
+        "updatedAt": "2024-12-05T10:00:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8c4"
+        },
+        "content": "Ra dầu vừa phải",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8c9d"
+        },
+        "createdAt": "2024-12-05T10:00:00.000Z",
+        "updatedAt": "2024-12-05T10:00:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8c5"
+        },
+        "content": "Khô căng, cần dưỡng ẩm ngay",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8c9e"
+        },
+        "createdAt": "2024-12-05T10:05:00.000Z",
+        "updatedAt": "2024-12-05T10:05:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8c6"
+        },
+        "content": "Thoải mái, không khô cũng không dầu",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8c9e"
+        },
+        "createdAt": "2024-12-05T10:05:00.000Z",
+        "updatedAt": "2024-12-05T10:05:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8c7"
+        },
+        "content": "Hơi khô ở má, bình thường ở vùng T",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8c9e"
+        },
+        "createdAt": "2024-12-05T10:05:00.000Z",
+        "updatedAt": "2024-12-05T10:05:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8c8"
+        },
+        "content": "Hơi nhờn, muốn rửa lại",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8c9e"
+        },
+        "createdAt": "2024-12-05T10:05:00.000Z",
+        "updatedAt": "2024-12-05T10:05:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8c9"
+        },
+        "content": "Rất nhỏ, khó nhìn thấy",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8c9f"
+        },
+        "createdAt": "2024-12-05T10:10:00.000Z",
+        "updatedAt": "2024-12-05T10:10:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8ca"
+        },
+        "content": "Kích thước trung bình",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8c9f"
+        },
+        "createdAt": "2024-12-05T10:10:00.000Z",
+        "updatedAt": "2024-12-05T10:10:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8cb"
+        },
+        "content": "To và dễ thấy ở vùng T",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8c9f"
+        },
+        "createdAt": "2024-12-05T10:10:00.000Z",
+        "updatedAt": "2024-12-05T10:10:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8cc"
+        },
+        "content": "To trên toàn bộ mặt",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8c9f"
+        },
+        "createdAt": "2024-12-05T10:10:00.000Z",
+        "updatedAt": "2024-12-05T10:10:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8cd"
+        },
+        "content": "Hiếm khi có mụn",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca0"
+        },
+        "createdAt": "2024-12-05T10:15:00.000Z",
+        "updatedAt": "2024-12-05T10:15:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8ce"
+        },
+        "content": "Mụn ít, chủ yếu ở vùng T",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca0"
+        },
+        "createdAt": "2024-12-05T10:15:00.000Z",
+        "updatedAt": "2024-12-05T10:15:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8cf"
+        },
+        "content": "Mụn nhiều trên toàn mặt",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca0"
+        },
+        "createdAt": "2024-12-05T10:15:00.000Z",
+        "updatedAt": "2024-12-05T10:15:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8d0"
+        },
+        "content": "Mụn thường xuất hiện khi stress",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca0"
+        },
+        "createdAt": "2024-12-05T10:15:00.000Z",
+        "updatedAt": "2024-12-05T10:15:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8d1"
+        },
+        "content": "Không có phản ứng gì đặc biệt",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca1"
+        },
+        "createdAt": "2024-12-05T10:20:00.000Z",
+        "updatedAt": "2024-12-05T10:20:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8d2"
+        },
+        "content": "Khô hơn khi trời lạnh",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca1"
+        },
+        "createdAt": "2024-12-05T10:20:00.000Z",
+        "updatedAt": "2024-12-05T10:20:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8d3"
+        },
+        "content": "Dầu hơn khi trời nóng",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca1"
+        },
+        "createdAt": "2024-12-05T10:20:00.000Z",
+        "updatedAt": "2024-12-05T10:20:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8d4"
+        },
+        "content": "Dễ bị kích ứng, đỏ da",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca1"
+        },
+        "createdAt": "2024-12-05T10:20:00.000Z",
+        "updatedAt": "2024-12-05T10:20:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8d5"
+        },
+        "content": "Da thích ứng tốt",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca2"
+        },
+        "createdAt": "2024-12-05T10:25:00.000Z",
+        "updatedAt": "2024-12-05T10:25:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8d6"
+        },
+        "content": "Có thể bị khô hoặc kích ứng nhẹ",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca2"
+        },
+        "createdAt": "2024-12-05T10:25:00.000Z",
+        "updatedAt": "2024-12-05T10:25:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8d7"
+        },
+        "content": "Thường xuyên bị kích ứng, nổi mẩn",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca2"
+        },
+        "createdAt": "2024-12-05T10:25:00.000Z",
+        "updatedAt": "2024-12-05T10:25:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8d8"
+        },
+        "content": "Phải test kỹ trước khi dùng",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca2"
+        },
+        "createdAt": "2024-12-05T10:25:00.000Z",
+        "updatedAt": "2024-12-05T10:25:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8d9"
+        },
+        "content": "Vẫn ổn, không thay đổi",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca3"
+        },
+        "createdAt": "2024-12-05T10:30:00.000Z",
+        "updatedAt": "2024-12-05T10:30:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8da"
+        },
+        "content": "Hơi dầu ở vùng T",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca3"
+        },
+        "createdAt": "2024-12-05T10:30:00.000Z",
+        "updatedAt": "2024-12-05T10:30:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8db"
+        },
+        "content": "Rất nhờn, cần thấm dầu",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca3"
+        },
+        "createdAt": "2024-12-05T10:30:00.000Z",
+        "updatedAt": "2024-12-05T10:30:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8dc"
+        },
+        "content": "Khô, cần dưỡng ẩm",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca3"
+        },
+        "createdAt": "2024-12-05T10:30:00.000Z",
+        "updatedAt": "2024-12-05T10:30:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8dd"
+        },
+        "content": "Không có thâm nám",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca4"
+        },
+        "createdAt": "2024-12-05T10:35:00.000Z",
+        "updatedAt": "2024-12-05T10:35:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8de"
+        },
+        "content": "Có ít thâm mụn",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca4"
+        },
+        "createdAt": "2024-12-05T10:35:00.000Z",
+        "updatedAt": "2024-12-05T10:35:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8df"
+        },
+        "content": "Có nhiều đốm nâu, thâm nám",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca4"
+        },
+        "createdAt": "2024-12-05T10:35:00.000Z",
+        "updatedAt": "2024-12-05T10:35:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8e0"
+        },
+        "content": "Có vết thâm từ mụn cũ",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca4"
+        },
+        "createdAt": "2024-12-05T10:35:00.000Z",
+        "updatedAt": "2024-12-05T10:35:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8e1"
+        },
+        "content": "Bình thường, không thay đổi",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca5"
+        },
+        "createdAt": "2024-12-05T10:40:00.000Z",
+        "updatedAt": "2024-12-05T10:40:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8e2"
+        },
+        "content": "Hơi đỏ nhưng không sao",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca5"
+        },
+        "createdAt": "2024-12-05T10:40:00.000Z",
+        "updatedAt": "2024-12-05T10:40:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8e3"
+        },
+        "content": "Dễ bị cháy nắng, đỏ da",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca5"
+        },
+        "createdAt": "2024-12-05T10:40:00.000Z",
+        "updatedAt": "2024-12-05T10:40:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8e4"
+        },
+        "content": "Xuất hiện thêm thâm nám",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca5"
+        },
+        "createdAt": "2024-12-05T10:40:00.000Z",
+        "updatedAt": "2024-12-05T10:40:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8e5"
+        },
+        "content": "Rất đều màu",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca6"
+        },
+        "createdAt": "2024-12-05T10:45:00.000Z",
+        "updatedAt": "2024-12-05T10:45:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8e6"
+        },
+        "content": "Khá đều, có vài vùng khác màu nhẹ",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca6"
+        },
+        "createdAt": "2024-12-05T10:45:00.000Z",
+        "updatedAt": "2024-12-05T10:45:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8e7"
+        },
+        "content": "Không đều, có nhiều vùng khác màu",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca6"
+        },
+        "createdAt": "2024-12-05T10:45:00.000Z",
+        "updatedAt": "2024-12-05T10:45:00.000Z"
+    },
+    {
+        "_id": {
+            "$oid": "675120a1b2c3d4e5f6a7b8e8"
+        },
+        "content": "Có nhiều vết thâm và đốm nâu",
+        "quizQuestionId": {
+            "$oid": "67511a1b2c3d4e5f6a7b8ca6"
+        },
+        "createdAt": "2024-12-05T10:45:00.000Z",
+        "updatedAt": "2024-12-05T10:45:00.000Z"
+    }
+]
